@@ -175,7 +175,62 @@
                                     message: {
                                         required: "请输入分值"
                                     }
-                                }, {
+                                }, 
+                                {
+                                    type: 'select',
+                                    name: 'responsibleDepartment',
+                                    id: 'responsibleDepartment',
+                                    label: '责任部门',
+                                    cls: 'input-large',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '企业工作处',
+                                            value: 0
+                                        },
+                                        {
+                                            text: '财务处',
+                                            value: 1
+                                        },
+                                        {
+                                            text: '科技部',
+                                            value: 2
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: 'select',
+                                    name: 'relatedField',
+                                    id: 'relatedField',
+                                    label: '相关领域',
+                                    cls: 'input-large',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '工程领域',
+                                            value: 0
+                                        },
+                                        {
+                                            text: '建筑领域',
+                                            value: 1
+                                        },
+                                        {
+                                            text: '信息领域',
+                                            value: 2
+                                        }
+                                    ]
+                                },
+                                {
                                     type: 'text',
                                     name: 'sort',
                                     id: 'sort',
@@ -571,7 +626,62 @@
                                     message: {
                                         required: "请输入分值"
                                     }
-                                }, {
+                                }, 
+                                {
+                                    type: 'select',
+                                    name: 'responsibleDepartment',
+                                    id: 'responsibleDepartment',
+                                    label: '责任部门',
+                                    cls: 'input-large',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '企业工作处',
+                                            value: 0
+                                        },
+                                        {
+                                            text: '财务处',
+                                            value: 1
+                                        },
+                                        {
+                                            text: '科技部',
+                                            value: 2
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: 'select',
+                                    name: 'relatedField',
+                                    id: 'relatedField',
+                                    label: '相关领域',
+                                    cls: 'input-large',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '工程领域',
+                                            value: 0
+                                        },
+                                        {
+                                            text: '建筑领域',
+                                            value: 1
+                                        },
+                                        {
+                                            text: '信息领域',
+                                            value: 2
+                                        }
+                                    ]
+                                },
+                                {
                                     type: 'text',
                                     name: 'sort',
                                     id: 'sort',
