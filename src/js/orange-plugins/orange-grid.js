@@ -168,7 +168,7 @@
         contentType: "table",
         showContentType: false,
         contentTypeItems: "table,card,list",
-        showSearch: false,
+        showSearch: true,
         showPaging: true,
         simplePaging: true,
         actionColumnText: "操作",

@@ -27,6 +27,7 @@
     var initEvents = function () {
         var grid;
         var tree;
+		var itemGrid;
         var options = {
             url: App.href + "/api/core/scoreItem/list",
             contentType: "table",
@@ -124,7 +125,7 @@
                                     name: 'title',
                                     id: 'title',
                                     label: '题目名称',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -136,7 +137,7 @@
                                     name: 'type',
                                     id: 'type',
                                     label: '选项类型',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -162,13 +163,13 @@
                                     name: 'optionLogic',
                                     id: 'optionLogic',
                                     label: '填空逻辑',
-                                    cls: 'input-large'
+                                    cls: 'input-xxlarge'
                                 }, {
                                     type: 'text',
                                     name: 'score',
                                     id: 'score',
                                     label: '题目分值',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -181,7 +182,7 @@
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -208,7 +209,7 @@
                                     name: 'relatedField',
                                     id: 'relatedField',
                                     label: '相关领域',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -235,13 +236,41 @@
                                     name: 'sort',
                                     id: 'sort',
                                     label: '排序',
-                                    cls: 'input-large'
+                                    cls: 'input-xxlarge'
                                 }
                             ]
                         };
                         var form = modal.$body.orangeForm(formOpts);
                         form.loadRemote(App.href + "/api/core/scoreItem/load/" + data.id);
                         modal.show();
+                    }
+                }, {
+                    text: "删除",
+                    cls: "btn-danger btn-sm",
+                    handle: function (index, data) {
+                        bootbox.confirm("确定该操作?", function (result) {
+                            if (result) {
+                                var requestUrl = App.href + "/api/core/scoreItem/delete";
+                                $.ajax({
+                                    type: "GET",
+                                    dataType: "json",
+                                    data: {
+                                        id: data.id
+                                    },
+                                    url: requestUrl,
+                                    success: function (data) {
+                                        if (data.code === 200) {
+                                            grid.reload();
+                                        } else {
+                                            alert(data.message);
+                                        }
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            }
+                        });
                     }
                 }, {
                     text: "管理选项",
@@ -251,7 +280,7 @@
 						return false;
 					},
                     handle: function (index, data, grid) {
-                        var modal = $.orangeModal({
+                        var itemModal = $.orangeModal({
                             id: "scoreItemOptionGrid",
                             title: "管理选项-" + data.title,
                             destroy: true,
@@ -259,7 +288,69 @@
                         }).show();
                         var itemId = data.id;
                         var requestUrl = App.href + "/api/core/scoreItemOption/list?itemId=" + itemId;
-                        modal.$body.orangeGrid({
+						 itemModal.$body.orangeForm({
+                                            id: "static_item_edit_form",
+                                            name: "static_item_edit_form",
+                                            method: "POST",
+                                            action: App.href + "/api/core/scoreItemOption/insert",
+                                            ajaxSubmit: true,
+											rowEleNum:3,
+                                            ajaxSuccess: function () {
+                                                document.getElementById("static_item_edit_form").reset();
+                                                itemGrid.reload();
+                                            },
+                                            submitText: "添加",
+                                            showReset: true,
+                                            resetText: "重置",
+                                            isValidate: true,
+                                            
+                                            buttonsAlign: "center",
+                                            items: [
+                                                {
+                                                    type: 'hidden',
+                                                    name: 'id',
+                                                    id: 'id'
+                                                }, {
+                                                    type: 'hidden',
+                                                    name: 'itemId',
+                                                    id: 'itemId',
+                                                    value: itemId
+                                                }, {
+                                                    type: 'text',
+                                                    name: 'optionTitle',
+                                                    id: 'optionTitle',
+                                                    label: '选项文本',
+                                                    cls: 'input-xxlarge',
+                                                    rule: {
+                                                        required: true
+                                                    },
+                                                    message: {
+                                                        required: "请输入选项文本"
+                                                    }
+                                                }, {
+                                                    type: 'text',
+                                                    name: 'optionRate',
+                                                    id: 'optionRate',
+                                                    label: '系数',
+                                                    cls: 'input-xxlarge',
+                                                    rule: {
+                                                        required: true
+                                                    },
+                                                    message: {
+                                                        required: "请输入选项系数"
+                                                    }
+                                                }, {
+                                                    type: 'text',
+                                                    name: 'optionDesc',
+                                                    id: 'optionDesc',
+                                                    label: '选项描述',
+                                                    cls: 'input-xxlarge'
+                                                }
+                                            ]
+                                        }
+							
+						);
+                        itemGrid = itemModal.$body.orangeGrid({
                             url: requestUrl,
                             contentType: "table",
                             contentTypeItems: "table,card,list",
@@ -307,7 +398,7 @@
                                             ajaxSubmit: true,
                                             ajaxSuccess: function () {
                                                 modal.hide();
-                                                grid.reload();
+                                                itemGrid.reload();
                                             },
                                             submitText: "保存",
                                             showReset: true,
@@ -335,7 +426,7 @@
                                                     name: 'optionTitle',
                                                     id: 'optionTitle',
                                                     label: '选项文本',
-                                                    cls: 'input-large',
+                                                    cls: 'input-xxlarge',
                                                     rule: {
                                                         required: true
                                                     },
@@ -347,7 +438,7 @@
                                                     name: 'optionRate',
                                                     id: 'optionRate',
                                                     label: '选项系数',
-                                                    cls: 'input-large',
+                                                    cls: 'input-xxlarge',
                                                     rule: {
                                                         required: true
                                                     },
@@ -359,13 +450,13 @@
                                                     name: 'optionDesc',
                                                     id: 'optionDesc',
                                                     label: '描述',
-                                                    cls: 'input-large'
+                                                    cls: 'input-xxlarge'
                                                 }, {
                                                     type: 'text',
                                                     name: 'optionSort',
                                                     id: 'optionSort',
                                                     label: '排序',
-                                                    cls: 'input-large'
+                                                    cls: 'input-xxlarge'
                                                 }
                                             ]
                                         };
@@ -390,7 +481,7 @@
                                                     url: requestUrl,
                                                     success: function (data) {
                                                         if (data.code === 200) {
-                                                            grid.reload();
+                                                            itemGrid.reload();
                                                         } else {
                                                             alert(data.message);
                                                         }
@@ -404,13 +495,13 @@
                                     }
                                 }
                             ],
-                            tools: [
+                           /* tools: [
                                 {
                                     text: "添加选项",
                                     cls: "btn btn-primary",
                                     icon: "fa fa-plus",
                                     handle: function (grid) {
-                                        var modal = $.orangeModal({
+                                        var itemModal = $.orangeModal({
                                             id: "add_sub_modal",
                                             title: "添加选项",
                                             destroy: true
@@ -423,8 +514,8 @@
                                             ajaxSubmit: true,
                                             rowEleNum: 1,
                                             ajaxSuccess: function () {
-                                                modal.hide();
-                                                grid.reload();
+                                                itemModal.hide();
+                                                itemGrid.reload();
                                             },
                                             submitText: "保存",//保存按钮的文本
                                             showReset: true,//是否显示重置按钮
@@ -434,8 +525,8 @@
                                                 type: 'button',
                                                 text: '关闭',
                                                 handle: function () {
-                                                    modal.hide();
-                                                    grid.reload();
+                                                    itemModal.hide();
+                                                    itemGrid.reload();
                                                 }
                                             }],
                                             buttonsAlign: "center",
@@ -450,7 +541,7 @@
                                                     name: 'optionTitle',
                                                     id: 'optionTitle',
                                                     label: '选项文本',
-                                                    cls: 'input-large',
+                                                    cls: 'input-xxlarge',
                                                     rule: {
                                                         required: true
                                                     },
@@ -462,7 +553,7 @@
                                                     name: 'optionRate',
                                                     id: 'optionRate',
                                                     label: '选项系数',
-                                                    cls: 'input-large',
+                                                    cls: 'input-xxlarge',
                                                     rule: {
                                                         required: true
                                                     },
@@ -474,48 +565,20 @@
                                                     name: 'optionDesc',
                                                     id: 'optionDesc',
                                                     label: '描述',
-                                                    cls: 'input-large'
+                                                    cls: 'input-xxlarge'
                                                 }, {
                                                     type: 'text',
                                                     name: 'optionSort',
                                                     id: 'optionSort',
                                                     label: '排序',
-                                                    cls: 'input-large'
+                                                    cls: 'input-xxlarge'
                                                 }
                                             ]
                                         };
-                                        modal.$body.orangeForm(formOpts);
+                                        itemModal.$body.orangeForm(formOpts);
                                     }
                                 }
-                            ]
-                        });
-                    }
-                }, {
-                    text: "删除",
-                    cls: "btn-danger btn-sm",
-                    handle: function (index, data) {
-                        bootbox.confirm("确定该操作?", function (result) {
-                            if (result) {
-                                var requestUrl = App.href + "/api/core/scoreItem/delete";
-                                $.ajax({
-                                    type: "GET",
-                                    dataType: "json",
-                                    data: {
-                                        id: data.id
-                                    },
-                                    url: requestUrl,
-                                    success: function (data) {
-                                        if (data.code === 200) {
-                                            grid.reload();
-                                        } else {
-                                            alert(data.message);
-                                        }
-                                    },
-                                    error: function (e) {
-                                        alert("请求异常。");
-                                    }
-                                });
-                            }
+                            ]*/
                         });
                     }
                 }],
@@ -575,7 +638,7 @@
                                     name: 'title',
                                     id: 'title',
                                     label: '题目名称',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -587,7 +650,7 @@
                                     name: 'type',
                                     id: 'type',
                                     label: '选项类型',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -613,13 +676,13 @@
                                     name: 'optionLogic',
                                     id: 'optionLogic',
                                     label: '填空逻辑',
-                                    cls: 'input-large'
+                                    cls: 'input-xxlarge'
                                 }, {
                                     type: 'text',
                                     name: 'score',
                                     id: 'score',
                                     label: '题目分值',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -632,7 +695,7 @@
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -659,7 +722,7 @@
                                     name: 'relatedField',
                                     id: 'relatedField',
                                     label: '相关领域',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -686,7 +749,7 @@
                                     name: 'sort',
                                     id: 'sort',
                                     label: '排序',
-                                    cls: 'input-large'
+                                    cls: 'input-xxlarge'
                                 }
                             ]
                         };

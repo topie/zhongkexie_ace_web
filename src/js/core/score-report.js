@@ -79,10 +79,50 @@
             ],
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",
-            actionColumns: [
+            actionColumns: [{
+                    text: "预览",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        var paper = {};
+                        var modal = $.orangeModal({
+                            id: "scorePaperView",
+                            title: "预览",
+                            destroy: true
+                        }).show();
+                        var js = JSON.parse(data.contentJson);
+                        paper = modal.$body.orangePaperView(js);
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id
+                            },
+                            url: App.href + "/api/core/scorePaper/getAnswer",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    paper.loadAnswer(data.data);
+									modal.$body.find('input').each(function(){
+										if($(this).attr('name')!='button')
+											$(this).attr("disabled","true");
+									});
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                }, 
                 {
                     text: "填报",
                     cls: "btn-primary btn-sm",
+					visible:function(index,data){
+						if(data.status==1)
+							return false;
+						return true;
+					},
                     handle: function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({

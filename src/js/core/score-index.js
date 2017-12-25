@@ -145,7 +145,7 @@
                                 name: 'name',
                                 id: 'name',
                                 label: '指标名称',
-                                cls: 'input-large',
+                                cls: 'input-xxlarge',
                                 rule: {
                                     required: true
                                 },
@@ -157,7 +157,7 @@
                                 name: 'score',
                                 id: 'score',
                                 label: '指标分值',
-                                cls: 'input-large',
+                                cls: 'input-xxlarge',
                                 rule: {
                                     required: true
                                 },
@@ -169,7 +169,7 @@
                                 name: 'sort',
                                 id: 'sort',
                                 label: '排序',
-                                cls: 'input-large'
+                                cls: 'input-xxlarge'
                             }
                         ]
                     };
@@ -257,7 +257,7 @@
                                     name: 'name',
                                     id: 'name',
                                     label: '指标名称',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -269,7 +269,7 @@
                                     name: 'score',
                                     id: 'score',
                                     label: '指标分值',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -281,7 +281,7 @@
                                     name: 'sort',
                                     id: 'sort',
                                     label: '排序',
-                                    cls: 'input-large'
+                                    cls: 'input-xxlarge'
                                 }
                             ]
                         };
@@ -442,7 +442,7 @@
                         name: 'name',
                         id: 'name',
                         label: '指标名称',
-                        cls: 'input-large',
+                        cls: 'input-xxlarge',
                         rule: {
                             required: true
                         },
@@ -454,7 +454,7 @@
                         name: 'score',
                         id: 'score',
                         label: '指标分值',
-                        cls: 'input-large',
+                        cls: 'input-xxlarge',
                         rule: {
                             required: true
                         },
