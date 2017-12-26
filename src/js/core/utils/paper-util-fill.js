@@ -222,7 +222,7 @@
                     var id = $(this).parent().parent().attr("id");
                     var ps = $(this).serialize().split('=');
                     if (ps.length > 0 && ps[1] !== '') {
-                        that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check"></i>');
+                        that.$main.find('a[href="#' + id + '"]').append('<i style="color: red" class="fa fa-check"></i>');
                     }
                 }
             );
