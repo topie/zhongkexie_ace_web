@@ -106,7 +106,7 @@
                                     name: 'title',
                                     id: 'title',
                                     label: '试卷名称',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
@@ -118,6 +118,7 @@
                                     name: 'begin',
                                     id: 'begin',
                                     label: '开始时间',
+                                    cls: 'input-xlarge',
                                     config: {
                                         timePicker: true,
                                         singleDatePicker: true,
@@ -126,16 +127,25 @@
                                         }
                                     },
                                     rule: {
-                                        required: true
+                                        required: true,
+										remote:{type:"GET",
+										   url:App.href+"/api/core/util/dateEqual",             //servlet
+										   data:{
+											 start:function(){return $("#begin").val();},
+											 end:function(){return $("#end").val();}
+										   } 
+										}
                                     },
                                     message: {
-                                        required: "请选择开始时间"
+                                        required: "请选择开始时间",
+										remote:"开始时间不能大于结束时间"
                                     }
                                 }, {
                                     type: 'datepicker',
                                     name: 'end',
                                     id: 'end',
                                     label: '结束时间',
+                                    cls: 'input-xlarge',
                                     config: {
                                         timePicker: true,
                                         singleDatePicker: true,
@@ -144,10 +154,18 @@
                                         }
                                     },
                                     rule: {
-                                        required: true
+                                        required: true,
+										remote:{type:"GET",
+										   url:App.href+"/api/core/util/dateEqual",             //servlet
+										   data:{
+											 start:function(){return $("#begin").val();},
+											 end:function(){return $("#end").val();}
+										   } 
+										}
                                     },
                                     message: {
-                                        required: "请选择结束时间"
+                                        required: "请选择结束时间",
+										remote:"结束时间不能小于开始时间"
                                     }
                                 }
                             ]
@@ -190,6 +208,28 @@
                     cls: "btn-warning btn-sm",
                     handle: function (index, data) {
                     	
+                    }
+                }
+				,
+					{
+                    text: "刷新缓存",
+                    cls: "btn-warning btn-sm",
+                    handle: function (index, data) {
+                    	$.ajax({
+							url:App.href + "/api/core/scorePaper/update",
+							type:"POST",
+							data:{id:data.id,title:data.title},
+							success:function(res){
+								if(res.code==200){
+									bootbox.alert("刷新成功!");
+								}else{
+									alert(res.message);
+								}
+							},
+							error:function(status){
+								alert("操作异常");
+							}
+						});
                     }
                 }/*, {
                     text: "做题",
@@ -303,6 +343,7 @@
                                     name: 'begin',
                                     id: 'begin',
                                     label: '开始时间',
+                                    cls: 'input-xlarge',
                                     config: {
                                         timePicker: true,
                                         singleDatePicker: true,
@@ -311,16 +352,25 @@
                                         }
                                     },
                                     rule: {
-                                        required: true
+                                        required: true,
+										remote:{type:"GET",
+										   url:App.href+"/api/core/util/dateEqual",             //servlet
+										   data:{
+											 start:function(){return $("#begin").val();},
+											 end:function(){return $("#end").val();}
+										   } 
+										}
                                     },
                                     message: {
-                                        required: "请选择开始时间"
+                                        required: "请选择开始时间",
+										remote:"开始时间不能大于结束时间"
                                     }
                                 }, {
                                     type: 'datepicker',
                                     name: 'end',
                                     id: 'end',
                                     label: '结束时间',
+                                    cls: 'input-xlarge',
                                     config: {
                                         timePicker: true,
                                         singleDatePicker: true,
@@ -329,10 +379,18 @@
                                         }
                                     },
                                     rule: {
-                                        required: true
+                                        required: true,
+										remote:{type:"GET",
+										   url:App.href+"/api/core/util/dateEqual",             //servlet
+										   data:{
+											 start:function(){return $("#begin").val();},
+											 end:function(){return $("#end").val();}
+										   } 
+										}
                                     },
                                     message: {
-                                        required: "请选择结束时间"
+                                        required: "请选择结束时间",
+										remote:"结束时间不能小于开始时间"
                                     }
                                 }
                             ]

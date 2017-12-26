@@ -789,7 +789,7 @@
                 return ele;
             },
             'datepicker': function (data, form) {
-                var dateTmpl = '<div class="input-group input-medium">'
+                var dateTmpl = '<div class="input-group ${cls_}">'
                     + '<input drole="main" type="text" role="date-input" id="${id_}" name=${name_} value="${value_}" class="form-control">'
                     + '<span role="icon" class="input-group-addon">'
                     + '<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>' + '</span></div>';
@@ -797,7 +797,7 @@
                     return $.tmpl(dateTmpl, {
                         "id_": (data.id === undefined ? data.name : data.id),
                         "name_": data.name,
-                        "cls_": data.cls === undefined ? "" : data.cls,
+                        "cls_": data.cls === undefined ? "input-medium" : data.cls,
                         "value_": ""
                     });
                 }
