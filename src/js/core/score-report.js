@@ -13,10 +13,10 @@
             var content = $('<div class="panel-body" >' +
                 '<div class="row">' +
                 '<div class="col-md-12" >' +
-              //  '<div class="panel panel-default" >' +
-              //  '<div class="panel-heading">题库试卷管理</div>' +
+                //  '<div class="panel panel-default" >' +
+                //  '<div class="panel-heading">题库试卷管理</div>' +
                 '<div class="panel-body" id="grid"></div>' +
-              //  '</div>' +
+                //  '</div>' +
                 '</div>' +
                 '</div>' +
                 '</div>');
@@ -43,12 +43,12 @@
             indexNumWidth: "5%",
             pageSelect: [2, 15, 30, 50],
             columns: [
-               /* {
-                    title: "ID",
-                    field: "id",
-                    sort: true,
-                    width: "5%"
-                }, */{
+                /* {
+                     title: "ID",
+                     field: "id",
+                     sort: true,
+                     width: "5%"
+                 }, */{
                     title: "试卷名称",
                     field: "title",
                     sort: true
@@ -136,6 +136,12 @@
                                     cls: "btn btn-primary",
                                     handle: function (m) {
                                         var das = {};
+                                        var msg = paper.getValidation();
+                                        if (msg.length > 0) {
+                                            bootbox.alert(msg[0].text + "未填写");
+                                            paper.$tab.go(msg[0].index);
+                                            return;
+                                        }
                                         var as = paper.getAnswer();
                                         das['answers'] = as;
                                         das['paperId'] = data.id;
@@ -195,5 +201,5 @@
         grid = window.App.content.find("#grid").orangeGrid(options);
 
     };
-	
+
 })(jQuery, window, document);
