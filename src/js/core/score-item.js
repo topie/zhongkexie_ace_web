@@ -12,12 +12,24 @@
             window.App.title(title);
             var content = $('<div class="panel-body" >' +
                 '<div class="row">' +
-                '<div class="col-md-12" >' +
-               // '<div class="panel panel-default" >' +
-              //  '<div class="panel-heading">题库题目管理</div>' +
-                '<div class="panel-body" id="grid"></div>' +
-               // '</div>' +
-                '</div>' +
+					'<div class="col-md-4" >' +
+						'<div class="panel panel-default" >' +
+							'<div class="panel-heading">'+
+							'<select class="form-control input-sm" id="paperSelect">'+
+								/*'<option>TODO 动态加载考评表</option>'+
+								'<option>2018全国学会综合能力指标体系考评表</option>'+
+								'<option>2017全国学会综合能力指标体系考评表</option>'+*/
+							'</select>'+
+							'</div>' +
+							'<ul id="tree" class="ztree"></ul>' +
+						'</div>' +
+					'</div>' +
+					'<div class="col-md-8" >' +
+				   // '<div class="panel panel-default" >' +
+				  //  '<div class="panel-heading">题库题目管理</div>' +
+						'<div class="panel-body" id="grid"></div>' +
+				   // '</div>' +
+					'</div>' +
                 '</div>' +
                 '</div>');
             window.App.content.append(content);
@@ -25,6 +37,89 @@
         }
     };
     var initEvents = function () {
+		//初始化选择评价表，
+		var currentPaper='';
+		var tree;
+		var $paper = $("#paperSelect");
+		$.ajax({
+			url:App.href+"/api/core/scorePaper/getPaperOptions",
+			type:"GET",
+			async:false,
+			success:function(data){
+				if(data.code==200){
+					if(data.data.length<=0){
+						bootbox.alert("没有评价表，请先添加评价表！");
+					}else{
+						for(var i=0;i<data.data.length;i++){
+							var item = data.data[i];
+							if(i==0){currentPaper=item.id;}
+							var option = '<option value="'+item.id+'">'+item.name+'</option>';
+							$paper.append(option);
+						}
+					}
+				}else{
+					bootbox.alert(data.message);
+				}
+			}
+		});
+		//绑定onchange事件
+		$paper.bind("change",function(){
+			currentPaper = $(this).val();
+			//tree.reAsyncChildNodes(null, "refresh");
+			setting.async.url= App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper;
+			tree.destroy();
+			 $.fn.zTree.init($("#tree"), setting);
+			tree = $.fn.zTree.getZTreeObj("tree");
+			//var url = App.href + "/api/core/scoreIndex/list?paperId="+currentPaper;
+			//grid.reload({url:url});
+		});
+		var setting = {
+            async: {
+                enable: true,
+                url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
+                autoParam: ["id", "name", "pId"]
+            },
+            edit: {
+                enable: false
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+			view:{
+				addDiyDom: addDiyDom  
+			},
+            callback: {
+                onAsyncSuccess: function (event, treeId, treeNode, msg) {
+                    var zTree = $.fn.zTree.getZTreeObj(treeId);
+                    zTree.expandAll(true);
+                },
+				onclick:function(event, treeId, treeNode, msg){
+				
+				}
+            }
+        };
+		function addDiyDom(treeId, treeNode) {  
+			var spaceWidth = 5;  
+			var switchObj = $("#" + treeNode.tId + "_switch"),  
+			icoObj = $("#" + treeNode.tId + "_ico");  
+			switchObj.remove();  
+			icoObj.before(switchObj);  
+			if (treeNode.level > 1) {  
+				var spaceStr = "<span style='display: inline-block;width:" + (spaceWidth * treeNode.level)+ "px'></span>";  
+				switchObj.before(spaceStr);  
+			}  
+			var spantxt=$("#" + treeNode.tId + "_span").html();  
+			if(spantxt.length>17){  
+				spantxt=spantxt.substring(0,17)+"...";  
+				$("#" + treeNode.tId + "_span").html(spantxt);  
+			}
+		} ;
+
+        $.fn.zTree.init($("#tree"), setting);
+        tree = $.fn.zTree.getZTreeObj("tree");
+
         var grid;
         var tree;
 		var itemGrid;

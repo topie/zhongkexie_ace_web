@@ -18,9 +18,9 @@
 				'<div class="row">'+
 				'<div class="col-md-9">'+
 				'<select class="form-control input-sm" id="paperSelect">'+
-					'<option>TODO 动态加载考评表</option>'+
+					/*'<option>TODO 动态加载考评表</option>'+
 					'<option>2018全国学会综合能力指标体系考评表</option>'+
-					'<option>2017全国学会综合能力指标体系考评表</option>'+
+					'<option>2017全国学会综合能力指标体系考评表</option>'+*/
 				'</select>'+
                 /*'<div class="pull-right">' +
                 '<div class="btn-group">' +
@@ -56,10 +56,43 @@
         }
     };
     var initEvents = function () {
+		var $paper = $("#paperSelect");
+		$paper.bind("change",function(){
+			currentPaper = $(this).val();
+			//tree.reAsyncChildNodes(null, "refresh");
+			setting.async.url= App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper;
+			tree.destroy();
+			 $.fn.zTree.init($("#tree"), setting);
+			tree = $.fn.zTree.getZTreeObj("tree");
+			var url = App.href + "/api/core/scoreIndex/list?paperId="+currentPaper;
+			grid.reload({url:url});
+		});
+		var currentPaper = '';
+		$.ajax({
+			url:App.href+"/api/core/scorePaper/getPaperOptions",
+			type:"GET",
+			async:false,
+			success:function(data){
+				if(data.code==200){
+					if(data.data.length<=0){
+						bootbox.alert("没有评价表，请先添加评价表！");
+					}else{
+						for(var i=0;i<data.data.length;i++){
+							var item = data.data[i];
+							if(i==0){currentPaper=item.id;}
+							var option = '<option value="'+item.id+'">'+item.name+'</option>';
+							$paper.append(option);
+						}
+					}
+				}else{
+					bootbox.alert(data.message);
+				}
+			}
+		});
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scoreIndex/list",
+            url: App.href + "/api/core/scoreIndex/list?paperId="+currentPaper,
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -136,11 +169,16 @@
                                 name: 'parentId',
                                 id: 'parentId',
                                 label: '父节点',
-                                url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc",
+                                url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
                                 expandAll: true,
                                 autoParam: ["id", "name", "pId"],
                                 chkStyle: "radio"
                             }, {
+								type:'hidden',
+								name:'paperId',
+								label: '评价表ID',
+								value:currentPaper
+							}, {
                                 type: 'text',
                                 name: 'name',
                                 id: 'name',
@@ -248,11 +286,16 @@
                                     name: 'parentId',
                                     id: 'parentId',
                                     label: '父节点',
-                                    url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc",
+                                    url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
                                     expandAll: true,
                                     autoParam: ["id", "name", "pId"],
                                     chkStyle: "radio"
                                 }, {
+									type:'hidden',
+									name:'paperId',
+									label: '评价表ID',
+									value:currentPaper
+								}, {
                                     type: 'text',
                                     name: 'name',
                                     id: 'name',
@@ -308,7 +351,7 @@
         var setting = {
             async: {
                 enable: true,
-                url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc",
+                url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
                 autoParam: ["id", "name", "pId"]
             },
             edit: {
@@ -402,7 +445,7 @@
                 title: "添加节点",
                 destroy: true
             }).show();
-            modal.$body.orangeForm({
+            var form = modal.$body.orangeForm({
                 id: "add_form",
                 name: "add_form",
                 method: "POST",
@@ -428,7 +471,7 @@
                 }],
                 buttonsAlign: "center",
                 items: [
-                    {
+                    /*{
                         type: 'tree',
                         name: 'parentId',
                         id: 'parentId',
@@ -437,7 +480,12 @@
                         expandAll: true,
                         autoParam: ["id", "name", "pId"],
                         chkStyle: "radio"
-                    }, {
+                    },*/ {
+						type:'hidden',
+						name:'paperId',
+						label: '评价表ID',
+						value:currentPaper
+					},{
                         type: 'text',
                         name: 'name',
                         id: 'name',
