@@ -93,6 +93,10 @@
             tabs[0].active = true;
             var tab = mainPanel.find('div.panel-body:eq(0)').orangeTab({
                 hideOtherTab: false,
+                page: {
+                    show: true,
+                    size: 5
+                },
                 lazy: false,
                 tabs: tabs
             });
@@ -107,6 +111,13 @@
                 tab.next();
             });
             this.$tab = tab;
+            this.$main.find('form').each(
+                function () {
+                    $(this).find('input').on("change", function () {
+                        that.showCheck();
+                    });
+                }
+            );
         },
         getPanel: function (title, theme) {
             if (theme === undefined)
@@ -148,12 +159,28 @@
             );
             return answers;
         },
+        getValidation: function () {
+            var message = [];
+            this.$main.find('li[role=tab]').find('a').each(function () {
+                var that = $(this);
+                if (that.find('i.fa-check').length === 0) {
+                    message.push(
+                        {
+                            index: parseInt(that.parent('li').attr('role-index')),
+                            text: that.text()
+                        }
+                    );
+                }
+            });
+            return message;
+        },
         loadAnswer: function (ans) {
             var that = this;
             $.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue);
             });
             this.$tab.go(ans.length - 1);
+            that.showCheck();
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
@@ -186,6 +213,20 @@
                     $(this).uniform();
                 });
             }
+        },
+        showCheck: function () {
+            var that = this;
+            that.$main.find('a').find('i.fa-check').remove();
+            this.$main.find('form').each(
+                function () {
+                    var id = $(this).parent().parent().attr("id");
+                    var ps = $(this).serialize().split('=');
+                    if (ps.length > 0 && ps[1] !== '') {
+                        that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check"></i>');
+                    }
+                }
+            );
+
         }
     };
 

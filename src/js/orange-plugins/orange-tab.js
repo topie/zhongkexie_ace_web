@@ -37,6 +37,10 @@
         lazy: true,
         tabs: [],
         hideOtherTab: false,
+        page: {
+            show: true,
+            size: 10
+        },
         buttons: []
     };
     Tab.prototype = {
@@ -46,6 +50,10 @@
                 var ul = $('<ul class="nav nav-tabs"></ul>');
                 that.$element.append(ul);
                 that.$ul = ul;
+                if (this._options.page.show) {
+                    var prevLi = $('<li role="prev"><a href="javascript:void(0);"><i class="fa fa-angle-left"></i></a></li>');
+                    ul.append(prevLi);
+                }
                 var tabContent = $('<div style="border-left: 1px solid #ddd;' +
                     'border-right: 1px solid #ddd;' +
                     'border-bottom: 1px solid #ddd;' +
@@ -54,7 +62,7 @@
                 that.$element.append(tabContent);
                 $.each(that._options.tabs, function (i, tab) {
                     var tId = that._elementId + "_tab" + i;
-                    var li = $('<li ' + (tab.active === true ? 'class="active"' : '') + '>' +
+                    var li = $('<li role-index=' + i + ' role="tab" ' + (tab.active === true ? 'class="active"' : '') + '>' +
                         '<a href="#' + tId + '" data-toggle="tab" ' +
                         'aria-expanded="' + (tab.active === true ? 'true' : 'false') + '">' +
                         tab.title + '</a>' +
@@ -79,8 +87,11 @@
                             })
                         }
                     }
-
                 });
+                if (this._options.page.show) {
+                    var nextLi = $('<li role="next"><a href="javascript:void(0);"><i class="fa fa-angle-right"></i></a></li>');
+                    ul.append(nextLi);
+                }
             }
             if (this._options.hideOtherTab) {
                 this.$ul.find('a').on("click", function () {
@@ -90,6 +101,47 @@
                         $(this).hide();
                     });
                 });
+            }
+            if (this._options.page.show && this._options.page.size !== undefined) {
+                this.$ul.find('li[role=tab]').find('a').on("click", function () {
+                    var current = $(this).parent('li');
+                    var index = current.attr('role-index');
+                    var first = index - parseInt(that._options.page.size / 2);
+                    first = first < 0 ? 0 : first;
+                    var final = first + that._options.page.size - 1;
+                    final = final >= that._options.tabs.length ? (that._options.tabs.length - 1) : final;
+                    if ((final - first + 1) < that._options.page.size && final - that._options.page.size >= 0) {
+                        first = final - that._options.page.size + 1;
+                    }
+                    that.$ul.find('li[role=tab]').show();
+                    that.$ul.find('li[role=tab]:lt(' + first + ')').hide();
+                    that.$ul.find('li[role=tab]:gt(' + final + ')').hide();
+                });
+
+                this.$ul.find('li[role=prev]').find('a').on("click", function () {
+                    var firstLi = that.$ul.find('li[role=tab]:visible').first();
+                    var final = parseInt(firstLi.attr('role-index'));
+                    var first = final - that._options.page.size + 1;
+                    first = first < 0 ? 0 : first;
+                    final = final < that._options.page.size ? that._options.page.size - 1 : final;
+                    that.$ul.find('li[role=tab]').show();
+                    that.$ul.find('li[role=tab]:lt(' + first + ')').hide();
+                    that.$ul.find('li[role=tab]:gt(' + final + ')').hide();
+
+                });
+                this.$ul.find('li[role=next]').find('a').on("click", function () {
+                    var lastLi = that.$ul.find('li[role=tab]:visible').last();
+                    var first = parseInt(lastLi.attr('role-index'));
+                    var final = first + that._options.page.size - 1;
+                    final = final >= that._options.tabs.length ? (that._options.tabs.length - 1) : final;
+                    if ((final - first + 1) < that._options.page.size && final - that._options.page.size >= 0) {
+                        first = final - that._options.page.size + 1;
+                    }
+                    that.$ul.find('li[role=tab]').show();
+                    that.$ul.find('li[role=tab]:lt(' + first + ')').hide();
+                    that.$ul.find('li[role=tab]:gt(' + final + ')').hide();
+                });
+
             }
         },
         renderContent: function (spanElement, content) {
@@ -122,13 +174,13 @@
             }
         },
         prev: function () {
-            var li = this.$element.find('ul.nav').find('li.active').prev();
+            var li = this.$element.find('li.active').prev();
             if (li.length > 0) {
                 li.find('a').trigger('click');
             }
         },
         go: function (i) {
-            var li = this.$element.find('ul.nav').find('li:eq(' + i + ')');
+            var li = this.$element.find('li[role=tab]:eq(' + i + ')');
             if (li.length > 0) {
                 li.find('a').trigger('click');
             }
