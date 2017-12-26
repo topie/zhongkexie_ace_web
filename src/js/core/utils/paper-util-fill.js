@@ -95,7 +95,7 @@
                 hideOtherTab: false,
                 page: {
                     show: true,
-                    size: 5
+                    size: 13
                 },
                 lazy: false,
                 tabs: tabs

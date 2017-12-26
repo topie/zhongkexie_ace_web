@@ -27,7 +27,7 @@
 					'<div class="col-md-8" >' +
 				   // '<div class="panel panel-default" >' +
 				  //  '<div class="panel-heading">题库题目管理</div>' +
-						'<div class="panel-body" id="grid"></div>' +
+						'<div id="grid"></div>' +
 				   // '</div>' +
 					'</div>' +
                 '</div>' +
@@ -39,6 +39,8 @@
     var initEvents = function () {
 		//初始化选择评价表，
 		var currentPaper='';
+		var currentIndex='';
+		var currentIndexTitle='';
 		var tree;
 		var $paper = $("#paperSelect");
 		$.ajax({
@@ -95,8 +97,14 @@
                     var zTree = $.fn.zTree.getZTreeObj(treeId);
                     zTree.expandAll(true);
                 },
-				onclick:function(event, treeId, treeNode, msg){
-				
+				beforeClick: function(treeId, treeNode, clickFlag) {
+						return !treeNode.isParent;
+				},
+				onClick:function(event, treeId, treeNode){
+					currentIndex = treeNode.id;
+					currentIndexTitle = treeNode.name;
+					var  url = App.href + "/api/core/scoreItem/list?indexId="+currentIndex;
+					grid.reload({url:url});
 				}
             }
         };
@@ -124,7 +132,7 @@
         var tree;
 		var itemGrid;
         var options = {
-            url: App.href + "/api/core/scoreItem/list",
+            url: App.href + "/api/core/scoreItem/list?indexId=0",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -200,7 +208,17 @@
                                     type: 'hidden',
                                     name: 'id',
                                     id: 'id'
-                                }, {
+                                },{
+                                    type: 'hidden',
+                                    name: 'indexId',
+									label: '指标',
+                                    id: 'indexId'
+                                },{
+                                    type: 'display',
+                                    name: 'indexTitle',
+									label: '指标名称',
+                                    id: 'indexTitle'
+                                },/* {
                                     type: 'tree',
                                     name: 'indexId',
                                     id: 'indexId',
@@ -215,7 +233,7 @@
                                     message: {
                                         required: "请选择指标"
                                     }
-                                }, {
+                                },*/ {
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
@@ -337,6 +355,7 @@
                         };
                         var form = modal.$body.orangeForm(formOpts);
                         form.loadRemote(App.href + "/api/core/scoreItem/load/" + data.id);
+						form.loadLocal({indexTitle:currentIndexTitle});
                         modal.show();
                     }
                 }, {
@@ -683,6 +702,12 @@
                     cls: "btn btn-primary",
                     icon: "fa fa-plus",
                     handle: function (grid) {
+						if(currentIndex){
+							
+						}else{
+							bootbox.alert("请先选择指标!");
+							return;
+						}
                         var modal = $.orangeModal({
                             id: "add_modal",
                             title: "添加",
@@ -713,7 +738,7 @@
                             }],
                             buttonsAlign: "center",
                             items: [
-                                {
+                                /*{
                                     type: 'tree',
                                     name: 'indexId',
                                     id: 'indexId',
@@ -728,7 +753,17 @@
                                     message: {
                                         required: "请选择指标"
                                     }
-                                }, {
+                                },*/{
+                                    type: 'hidden',
+                                    name: 'indexId',
+                                    id: 'indexId',
+									label: '指标'	
+								},{
+                                    type: 'display',
+                                    name: 'indexTitle',
+									label: '指标名称',
+                                    id: 'indexTitle'
+                                },{
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
@@ -848,7 +883,8 @@
                                 }
                             ]
                         };
-                        modal.$body.orangeForm(formOpts);
+                       var form =  modal.$body.orangeForm(formOpts);
+					   form.loadLocal({indexId:currentIndex,indexTitle:currentIndexTitle});
                     }
                 }
             ],

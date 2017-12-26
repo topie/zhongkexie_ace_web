@@ -355,7 +355,11 @@
                 autoParam: ["id", "name", "pId"]
             },
             edit: {
-                enable: true
+                enable: true,
+				drag:{
+					isMove:false,
+					isCopy:false
+				}
             },
             data: {
                 simpleData: {
