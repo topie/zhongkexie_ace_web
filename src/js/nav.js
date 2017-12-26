@@ -67,7 +67,7 @@
                                     '<li class="hover">'
                                     + '<a data-url="' + m.action
                                     + '" data-title="' + m.functionName
-                                    + '" href="javascript:void(0);" ' + drop + '><i class="menu-icon fa fa-desktop"></i> '
+                                    + '" href="javascript:void(0);" ' + drop + '><i class="menu-icon '+m.icon+'"></i> '
                                     + '<span class="menu-text">' + m.functionName + '</span>' + b + '</a>';
 
                                 if (subMenus.length > 0) {
@@ -138,7 +138,7 @@
                                     '<li class="">'
                                     + '<a data-url="' + m.action
                                     + '" data-title="' + m.functionName
-                                    + '" href="javascript:void(0);" ' + drop + '><i class="menu-icon fa fa-desktop"></i> '
+                                    + '" href="javascript:void(0);" ' + drop + '><i class="menu-icon '+m.icon+'"></i> '
                                     + '<span class="menu-text">' + m.functionName + '</span>' + b + '</a>';
 
                                 if (subMenus.length > 0) {
@@ -219,7 +219,7 @@
                 ele += ('<li class="" data-level="sub">'
                     + '<a ' + drop + ' data-url="' + m.action
                     + '" data-title="' + m.functionName
-                    + '" href="javascript:void(0);"><i class="menu-icon fa fa-desktop"></i> '
+                    + '" href="javascript:void(0);"><i class="menu-icon '+m.icon+'"></i> '
                     + m.functionName) + b + '</a>';
                 ele += '</li>';
             });

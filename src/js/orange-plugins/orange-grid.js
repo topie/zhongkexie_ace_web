@@ -166,7 +166,7 @@
         indexNumWidth: "2%",
         indexNumText: "序号",
         contentType: "table",
-        showContentType: true,
+        showContentType: false,
         contentTypeItems: "table,card,list",
         showSearch: true,
         showPaging: true,

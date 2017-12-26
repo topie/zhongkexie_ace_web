@@ -158,6 +158,7 @@
                     },
                     showReset: false,
                     showSubmit: false,
+					labelInline:false,
                     isValidate: true,
                     buttonsAlign: "center",
                     items: its

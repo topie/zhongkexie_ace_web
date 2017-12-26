@@ -96,9 +96,9 @@
                             '                                        </h4>' +
                             '                                    </div>' +
                             '                                    <div id="collapseOne' + item.mId + '" ' + contentopne + '>' +
-                            '                                        <div class="panel-body">' +
+                            '                                        <div class="panel-body"><a href="'+App.href+'/index.html?u=/api/core/scorePaper/reportList">' +
                             item.content +
-                            '                                        </div>' +
+                            '                                        </a></div>' +
                             '                                    </div>' +
                             '                                </div>';
 

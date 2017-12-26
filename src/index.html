@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>ACE_UI</title>
+    <title>中国科协全国学会综合能力评价系统</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -65,15 +65,15 @@
         <div class="navbar-header pull-left">
             <a href="index.html" class="navbar-brand">
                 <small>
-                    <i class="fa fa-leaf"></i>
-                    Ace Admin
+                    中国科协全国学会综合能力评价系统
+                    
                 </small>
             </a>
         </div>
 
         <div class="navbar-buttons navbar-header pull-right" role="navigation">
             <ul class="nav ace-nav">
-                <li class="green dropdown-modal">
+                <!--<li class="green dropdown-modal">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <i class="ace-icon fa fa-envelope icon-animated-vertical"></i>
                         <span class="badge badge-success">5</span>
@@ -82,7 +82,7 @@
                     <ul class="dropdown-menu-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close">
                         <li class="dropdown-header">
                             <i class="ace-icon fa fa-envelope-o"></i>
-                            1 Messages
+                            
                         </li>
                         <li class="dropdown-content">
                             <ul class="dropdown-menu dropdown-navbar">
@@ -113,7 +113,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li>-->
                 <li class="light-blue dropdown-modal">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                         <span class="user-info">
@@ -126,14 +126,14 @@
                         <li>
                             <a href="#">
                                 <i class="ace-icon fa fa-cog"></i>
-                                Settings
+                                设置
                             </a>
                         </li>
 
                         <li>
-                            <a href="profile.html">
+                            <a id="user-info" href="javascript:void(0);">
                                 <i class="ace-icon fa fa-user"></i>
-                                Profile
+                                个人中心
                             </a>
                         </li>
 
@@ -206,8 +206,8 @@
         <div class="footer-inner">
             <div class="footer-content">
                 <span class="bigger-120">
-                    <span class="blue bolder">Ace</span>
-                    Application &copy; 2013-2014
+                    <span class="blue bolder"></span>
+                    中国科协全国学会综合能力评价系统 &copy; 2017
                 </span>
             </div>
         </div>
@@ -285,6 +285,9 @@
 <script src="js/core/score-report.js"></script>
 
 
+<script src="js/core/message-page.js"></script>
+
+
 <script type="text/javascript">
     bootbox.setLocale("zh_CN");
     $.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -293,7 +296,7 @@
         $.ajax(
             {
                 type: 'GET',
-                url: App.href + "/api/token/logout",
+                url: App.href + "/api/logout",
                 contentType: "application/json",
                 dataType: "json",
                 success: function (result) {
