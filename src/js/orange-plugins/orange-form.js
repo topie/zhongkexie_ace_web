@@ -847,7 +847,7 @@
                     "name_": data.name
                 });
                 if (data.uploadUrl === undefined) {
-                    data.uploadUrl = App.href + "/api/upload/uploadFile";
+                    data.uploadUrl = App.href + "/api/common/uploadFile";
                 }
                 if (data.isAjaxUpload == undefined) data.isAjaxUpload = true;
                 if (data.isAjaxUpload) {
@@ -979,7 +979,7 @@
                     ele.find("span").hide();
                 }
                 if (data.uploadUrl === undefined) {
-                    data.uploadUrl = App.href + "/api/upload/uploadImage";
+                    data.uploadUrl = App.href + "/api/common/uploadImage";
                 }
                 if (data.isAjaxUpload === undefined)
                     data.isAjaxUpload = true;
@@ -1298,7 +1298,7 @@
                 + '<input type="hidden" name="${attName_}" class="att"/>'
                 + '</tr>';
             var deleteStr = '<span >删除</span>';
-            var uploadUrl = App.href + '/api/upload/uploadFiles';
+            var uploadUrl = App.href + '/api/common/uploadFiles';
             var files = $("input[role=fileuploadInput]");
             if (files.length > 0) {
                 $.each(files, function (i, file) {
@@ -1455,7 +1455,7 @@
             if ($.trim(fileIds) == "")
                 return;
             var ids = fileIds.toString().split(",");
-            var fileInfoUrl = (elementData.fileInfoUrl === undefined ? (App.href + "/api/upload/attachment") : elementData.fileInfoUrl);
+            var fileInfoUrl = (elementData.fileInfoUrl === undefined ? (App.href + "/api/common/attachment") : elementData.fileInfoUrl);
             var dataParam = (elementData.dataParam === undefined ? "attachmentId" : elementData.dataParam);
             for (var i in ids) {
                 var dataParamValue = {};
