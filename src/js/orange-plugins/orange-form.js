@@ -631,8 +631,12 @@
                     });
                 }
                 if (data.itemsUrl !== undefined) {
+					var methodType="GET";
+					if(data.methodType){
+						methodType = data.methodType;
+					}
                     $.ajax({
-                        type: "POST",
+                        type: methodType,
                         dataType: "json",
                         async: data.async ? true : false,
                         url: data.itemsUrl,
@@ -686,9 +690,12 @@
                     );
                 }
                 if (data.itemsUrl !== undefined) {
-                    $
-                        .ajax({
-                            type: "POST",
+                    var methodType="GET";
+					if(data.methodType){
+						methodType = data.methodType;
+					}
+                    $.ajax({
+                        type: methodType,
                             dataType: "json",
                             async: data.async ? true : false,
                             url: data.itemsUrl,
@@ -753,9 +760,12 @@
                     });
                 }
                 if (data.itemsUrl !== undefined) {
-                    $
-                        .ajax({
-                            type: "POST",
+                    var methodType="GET";
+					if(data.methodType){
+						methodType = data.methodType;
+					}
+                    $.ajax({
+                        type: methodType,
                             dataType: "json",
                             async: data.async ? true : false,
                             url: data.itemsUrl,
