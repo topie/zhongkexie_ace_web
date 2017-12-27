@@ -273,7 +273,7 @@
                                         required: "请输入试卷名称"
                                     }
                                 },{
-									type:'file',
+									type:'files',
 									name:'fileId',
 									id:'fileId',
 									label: '选择文件',
