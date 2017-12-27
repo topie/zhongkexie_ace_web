@@ -15,13 +15,20 @@
 					'<div class="col-md-4" >' +
 						'<div class="panel panel-default" >' +
 							'<div class="panel-heading">'+
+							'<div class="row">'+
+							'<div class="col-md-9">'+
 							'<select class="form-control input-sm" id="paperSelect">'+
 								/*'<option>TODO 动态加载考评表</option>'+
 								'<option>2018全国学会综合能力指标体系考评表</option>'+
 								'<option>2017全国学会综合能力指标体系考评表</option>'+*/
 							'</select>'+
+							'</div>'+
+							'<div class="col-md-3">'+
+								'<a data-exp="false" id="expandAllBtn" class="btn btn-info btn-sm" href="javascript:void(0);">展开</a>'+
+							'</div>'+
+							'</div>'+
 							'</div>' +
-							'<ul id="tree" class="ztree"></ul>' +
+							'<ul id="tree" class="ztree pre-scrollable" style="max-height:600px"></ul>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-md-8" >' +
@@ -75,6 +82,18 @@
 			//var url = App.href + "/api/core/scoreIndex/list?paperId="+currentPaper;
 			//grid.reload({url:url});
 		});
+		$("#expandAllBtn").bind("click",function(){
+			var that = $("#expandAllBtn");
+			if(that.attr("data-exp")=="true"){
+				that.attr("data-exp","false");
+				tree.expandAll(false);
+				that.html("展开");
+			}else{
+				that.attr("data-exp","true");
+				tree.expandAll(true);
+				that.html("折叠");
+			}
+		});
 		var setting = {
             async: {
                 enable: true,
@@ -94,8 +113,8 @@
 			},
             callback: {
                 onAsyncSuccess: function (event, treeId, treeNode, msg) {
-                    var zTree = $.fn.zTree.getZTreeObj(treeId);
-                    zTree.expandAll(true);
+                   // var zTree = $.fn.zTree.getZTreeObj(treeId);
+                   // zTree.expandAll(true);
                 },
 				beforeClick: function(treeId, treeNode, clickFlag) {
 						return !treeNode.isParent;
