@@ -210,6 +210,87 @@
                     	
                     }
                 }
+				,{
+                    text: "导入",
+                    cls: "btn-info btn-sm",
+                    handle: function (index, data) {
+                    	var modal = $.orangeModal({
+                            id: "scorePaperIPForm",
+                            title: "导入指标",
+                            destroy: true
+                        });
+                        var formOpts = {
+                            id: "ip_form",
+                            name: "ip_form",
+                            method: "POST",
+                            action: App.href + "/api/core/importConf/import",
+                            ajaxSubmit: true,
+                            ajaxSuccess: function () {
+                                modal.hide();
+                                grid.reload();
+                            },
+                            submitText: "导入",
+                            showReset: true,
+                            resetText: "重置",
+                            isValidate: true,
+                            buttons: [{
+                                type: 'button btn-primary',
+                                text: '导入测试',
+                                handle: function () {
+                                    var $form = $("#ip_form");
+									var file = $form.find("#fileId");
+									if(file.val()===undefined || file.val()==''){
+										bootbox.alert("请先上传附件！");
+										return;
+									}
+
+                                }
+                            },{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal.hide();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+                                {
+                                    type: 'hidden',
+                                    name: 'paperId',
+                                    id: 'paperId'
+                                }, {
+                                    type: 'select',
+                                    name: 'id',
+                                    id: 'id',
+                                    label: '导入配置',
+                                    cls: 'input-xlarge',
+									itemsUrl:App.href + '/api/core/importConf/getOptions',
+									items:[],
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入试卷名称"
+                                    }
+                                },{
+									type:'file',
+									name:'fileId',
+									id:'fileId',
+									label: '选择文件',
+									rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入试卷名称"
+                                    }
+								}
+                            ]
+                        };
+                        var form = modal.$body.orangeForm(formOpts);
+						form.loadLocal({"paperId":data.id});
+                        modal.show();
+                    }
+                }
 				,
 					{
                     text: "刷新缓存",
