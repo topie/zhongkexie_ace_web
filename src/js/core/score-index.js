@@ -16,7 +16,7 @@
                 '<div class="panel panel-default" >' +
                 '<div class="panel-heading">' +
 				'<div class="row">'+
-				'<div class="col-md-9">'+
+				'<div class="col-md-8">'+
 				'<select class="form-control input-sm" id="paperSelect">'+
 					/*'<option>TODO 动态加载考评表</option>'+
 					'<option>2018全国学会综合能力指标体系考评表</option>'+
@@ -33,19 +33,21 @@
                 '</li>' +
                 '</ul>' +*/
                 '</div>' +
-					'<div class="col-md-3">'+
-					'<a id="add_node" class="btn btn-primary btn-sm" href="javascript:void(0);">添加</a>'+
+					'<div class="col-md-4">'+
+					'<a data-exp="false" id="expandAllBtn" class="btn btn-info btn-sm" href="javascript:void(0);">展开</a>'+
+					'<a id="add_node" title="添加顶级指标" class="btn btn-primary btn-sm" href="javascript:void(0);">添加</a>'+
 					'</div>'+
                 '</div>' +
                 '</div>' +
-                '<div class="panel-body">' +
+                '<div class="panel-body pre-scrollable" style="max-height:600px">' +
+				//'<div class="row well"></div>'+
                 '<ul id="tree" class="ztree"></ul>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
                 '<div class="col-md-7" >' +
                 '<div class="panel panel-default" >' +
-                '<div class="panel-heading">评价指标管理</div>' +
+                '<div class="panel-heading">子集评价指标管理</div>' +
                 '<div class="panel-body" id="grid"></div>' +
                 '</div>' +
                 '</div>' +
@@ -64,10 +66,24 @@
 			tree.destroy();
 			 $.fn.zTree.init($("#tree"), setting);
 			tree = $.fn.zTree.getZTreeObj("tree");
-			var url = App.href + "/api/core/scoreIndex/list?paperId="+currentPaper;
+			var url = App.href + "/api/core/scoreIndex/list?paperId="+currentPaper+"&parentId=0";
 			grid.reload({url:url});
 		});
-		var currentPaper = '';
+		$("#expandAllBtn").bind("click",function(){
+			var that = $("#expandAllBtn");
+			if(that.attr("data-exp")=="true"){
+				that.attr("data-exp","false");
+				tree.expandAll(false);
+				that.html("展开");
+			}else{
+				that.attr("data-exp","true");
+				tree.expandAll(true);
+				that.html("折叠");
+			}
+		});
+		var currentPaper ='';
+		var currentParentId;
+		var currentParent;
 		$.ajax({
 			url:App.href+"/api/core/scorePaper/getPaperOptions",
 			type:"GET",
@@ -92,18 +108,18 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scoreIndex/list?paperId="+currentPaper,
+            url: App.href + "/api/core/scoreIndex/list?paperId="+currentPaper+"&parentId=0",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
-            pageSize: 15,//每页显示条数
+            pageSize: 10,//每页显示条数
             idField: "id",//id域指定
             headField: "name",
             showCheck: true,//是否显示checkbox
             checkboxWidth: "3%",
             showIndexNum: true,
             indexNumWidth: "5%",
-            pageSelect: [2, 15, 30, 50],
+            pageSelect: [2, 10, 15, 30, 50],
             columns: [
                /* {
                     title: "节点id",
@@ -164,7 +180,7 @@
                                 type: 'hidden',
                                 name: 'id',
                                 id: 'id'
-                            }, {
+                            }/*, {
                                 type: 'tree',
                                 name: 'parentId',
                                 id: 'parentId',
@@ -173,6 +189,20 @@
                                 expandAll: true,
                                 autoParam: ["id", "name", "pId"],
                                 chkStyle: "radio"
+                            }*/, {
+                                type: 'hidden',
+                                name: 'parentId',
+                                id: 'parentId',
+                                label: '父节点',
+								value:currentParentId
+								
+                            }, {
+                                type: 'display',
+                                label: '父节点',
+								name:'parent',
+								id:'parent',
+								html:currentParent
+								
                             }, {
 								type:'hidden',
 								name:'paperId',
@@ -250,6 +280,12 @@
                     cls: "btn btn-primary",
                     icon: "fa fa-plus",
                     handle: function (grid) {
+						if(currentParentId){
+						
+						}else{
+							bootbox.alert('添加子指标，请选则父级指标');
+							return;
+						}
                         var modal = $.orangeModal({
                             id: "add_modal",
                             title: "添加",
@@ -281,7 +317,7 @@
                             }],
                             buttonsAlign: "center",
                             items: [
-                                {
+                                /*{
                                     type: 'tree',
                                     name: 'parentId',
                                     id: 'parentId',
@@ -290,7 +326,19 @@
                                     expandAll: true,
                                     autoParam: ["id", "name", "pId"],
                                     chkStyle: "radio"
-                                }, {
+                                },*/{
+									type:'hidden',
+									name:'parentId',
+									id:'parentId',
+									label: '父节点',
+									value:currentParentId
+								},{
+									type:'display',
+									label: '父节点',
+									name:'parent',
+									id:'parent',
+									html:currentParent
+								},{
 									type:'hidden',
 									name:'paperId',
 									label: '评价表ID',
@@ -368,13 +416,18 @@
             },
             callback: {
                 onAsyncSuccess: function (event, treeId, treeNode, msg) {
-                    var zTree = $.fn.zTree.getZTreeObj(treeId);
-                    zTree.expandAll(true);
+                    //var zTree = $.fn.zTree.getZTreeObj(treeId);
+                    //zTree.expandAll(true);
                 },
                 onRename: function (e, treeId, treeNode, isCancel) {
                     var zTree = $.fn.zTree.getZTreeObj(treeId);
                     zTree.refresh();
                 },
+				onClick:function(e,treeId,treeNode){
+					currentParent=treeNode.name;
+					currentParentId=treeNode.id;
+					grid.reload({url:App.href + "/api/core/scoreIndex/list?paperId="+currentPaper+"&parentId="+currentParentId})
+				},
                 beforeRename: beforeRename,
                 beforeRemove: beforeRemove
             }
@@ -489,6 +542,16 @@
 						name:'paperId',
 						label: '评价表ID',
 						value:currentPaper
+					}, {
+						type:'hidden',
+						name:'parentId',
+						label: '父节点',
+						value:'0'
+					}, {
+						type:'display',
+						name:'parent',
+						label: '父节点',
+						html:'<span style="color:red;">顶级指标<span>'
 					},{
                         type: 'text',
                         name: 'name',
