@@ -51,8 +51,17 @@
                             } else if (item.itemType == 2) {
                                 it.type = 'checkboxGroup';
                                 it.inline = true;
+                            } else if (item.itemType == 3) {
+                                it.type = 'list';
+                                it.span = 6;
+                                it.items = [
+                                    {
+                                        type: 'text',
+                                        name: item.id
+                                    }
+                                ]
                             }
-                            if (item.itemType > 0) {
+                            if (item.itemType == 1 || item.itemType == 2) {
                                 it.items = [];
                                 $.each(item.items, function (i, op) {
                                     var option = {
@@ -142,24 +151,35 @@
         },
         getAnswer: function () {
             var answers = [];
+            var tmpAs = {};
             this.$main.find('form').each(
                 function () {
                     var ps = $(this).serialize().split('&');
                     $.each(ps, function (ii, ppss) {
                         var pss = ppss.split('=');
                         if (pss.length == 2) {
-                            var answer = {};
-                            answer['itemId'] = pss[0];
-                            answer['itemValue'] = pss[1];
-                            answers.push(answer);
+                            console.info(tmpAs[ps[0] + '']);
+                            if (tmpAs[pss[0] + ''] === undefined) {
+                                tmpAs[pss[0] + ''] = pss[1];
+                            } else {
+                                tmpAs[pss[0] + ''] = tmpAs[pss[0] + ''] + "," + pss[1];
+                            }
                         }
                     });
 
                 }
             );
+            $.each(tmpAs, function (i, d) {
+                console.info(i, d);
+                var answer = {};
+                answer['itemId'] = i;
+                answer['itemValue'] = d;
+                answers.push(answer);
+            });
             return answers;
         },
         getValidation: function () {
+            this.showCheck();
             var message = [];
             this.$main.find('li[role=tab]').find('a').each(function () {
                 var that = $(this);
@@ -184,35 +204,8 @@
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
-            if (ele.is('input[type="radio"]')) {
-                this.$main.find(
-                    "input[type='radio'][name='" + name + "'][value='"
-                    + value + "']").attr("checked", true);
-            } else if (ele.is('input[type="checkbox"]')) {
-                if (value != null) {
-                    var values = value.split(",");
-                    for (var i in values) {
-                        this.$main.find(
-                            "input[type='checkbox'][name='" + name
-                            + "'][value='" + values[i] + "']")
-                            .attr("checked", true);
-                    }
-                }
-            } else if (ele.is('select')) {
-                ele.val(value);
-            } else {
-                ele.val(value);
-            }
-            if (!$().uniform) {
-                return;
-            }
-            var test = $("input[type=checkbox]:not(.toggle), input[type=radio]:not(.toggle, .star)");
-            if (test.size() > 0) {
-                test.each(function () {
-                    $(this).show();
-                    $(this).uniform();
-                });
-            }
+            var form = ele.parents('div[role=content]:eq(0)').data("plugin");
+            form.setValue(name, value);
         },
         showCheck: function () {
             var that = this;
@@ -222,7 +215,7 @@
                     var id = $(this).parent().parent().attr("id");
                     var ps = $(this).serialize().split('=');
                     if (ps.length > 0 && ps[1] !== '') {
-                        that.$main.find('a[href="#' + id + '"]').append('<i style="color: red" class="fa fa-check"></i>');
+                        that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
                     }
                 }
             );

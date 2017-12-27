@@ -89,7 +89,8 @@
         resetText: "重置",
         showReset: true,
         isValidate: true,
-        viewMode: false
+        viewMode: false,
+        buttons: []
     };
     Form.statics = {
         formTmpl: '<form id="${id_}" name="${name_}" action="${action_}" method="${method_}" enctype="multipart/form-data" class="${cls_}"></form>',
@@ -245,7 +246,7 @@
                 "name_": that._formName,
                 "method_": that._method,
                 "action_": that._action,
-                "cls_": (that._labelInline ? "form-horizontal" : ""  )
+                "cls_": (that._labelInline ? "form-horizontal" : "")
             });
             this.$form = form;
             this.$element.append(form);
@@ -255,13 +256,10 @@
             this.$form.append(formBody);
             this._renderFormElements(formBody.find('div.col-md-12'));
 
-            // formAction
-            var formAction = $.tmpl(Form.statics.formActionTmpl, {
-                "align_": that._buttonsAlign === undefined ? "left"
-                    : that._buttonsAlign
-            });
-            this.$form.append(formAction);
-            this._renderActionButtons(formAction);
+            if (this._showReset || this._showSubmit || this._buttons.length > 0) {
+                this._renderActionButtons(formAction);
+            }
+
         },
         _renderFormElements: function (formBody) {
             if (this._items === undefined || this._items.length == 0) {
@@ -486,6 +484,7 @@
                 return ele;
             },
             'list': function (data, form) {
+                var span = data.span === undefined ? 12 : data.span;
                 var wrapper = '<div role="list" class="row" id="${id_}" name="${name_}" ${attribute_} >' +
                     '<div role="ele" class="col-lg-12"></div>' +
                     '<div role="action" class="col-lg-12 btn-group"></div>' +
@@ -496,11 +495,11 @@
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
-                var addBtn = $('<button class="btn btn-info" type="button">添加</button>');
+                var addBtn = $('<button class="btn btn-sm btn-info" type="button">添加</button>');
                 ele.children('[role=action]').append(addBtn);
                 addBtn.on("click", function () {
                     var itemWrapper = $('<div class="row">' +
-                        '<div role="s-ele" class="col-md-12 form-group input-group">' +
+                        '<div role="s-ele" class="col-md-' + span + ' form-group input-group">' +
                         '</div>' +
                         '</div>');
                     if (data.items != undefined) {
@@ -508,15 +507,15 @@
                             var item = form._formEles[jd.type](jd, form);
                             var iWrapper;
                             if (jd.label != undefined) {
-                                iWrapper = $('<div class="form-group"><label class="control-label col-md-offset-1 col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-9"></div></div>');
+                                iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
                             } else {
-                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-offset-1 col-md-11"></div></div>');
+                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
                             }
                             iWrapper.children('[role=i-ele]').append(item);
                             itemWrapper.children('[role=s-ele]').append(iWrapper);
                         });
                         itemWrapper.children('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
-                        var deleteBtn = $('<button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>');
+                        var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
                         itemWrapper.children().children('[role=s-action]').append(deleteBtn);
                         deleteBtn.on("click", function () {
                             itemWrapper.remove();
@@ -526,7 +525,7 @@
                     }
 
                 });
-                var cleanBtn = $('<button class="btn btn-danger" type="button">清除</button>');
+                var cleanBtn = $('<button class="btn btn-sm btn-danger" type="button">清除</button>');
                 ele.children('[role=action]').append(cleanBtn);
                 cleanBtn.on("click", function () {
                     ele.children('[role=ele]').empty();
@@ -1385,9 +1384,10 @@
             var data = $(div).data("data");
             var ele = $(div);
             var value_arr = isArray(values) ? values : values.split(',');
+            var span = data.span === undefined ? 12 : data.span;
             $.each(value_arr, function (i, id) {
                 var itemWrapper = $('<div class="row">' +
-                    '<div role="s-ele" class="col-lg-12 form-group input-group"></div>' +
+                    '<div role="s-ele" class="col-lg-' + data.span + ' form-group input-group"></div>' +
                     '</div>');
                 if (data.items != undefined) {
                     if (data.items.length == 1) {
@@ -1396,7 +1396,7 @@
                         that._loadValue(it.name, id, item);
                         var iWrapper;
                         if (it.label != undefined) {
-                            iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + it.label + '</label><div role="i-ele" class="col-md-8"></div></div>');
+                            iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + it.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
                         } else {
                             iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
                         }
@@ -1408,16 +1408,16 @@
                             that._loadValue(jd.name, id[jd.name], item);
                             var iWrapper;
                             if (jd.label != undefined) {
-                                iWrapper = $('<div class="form-group"><label class="control-label col-md-offset-1 col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-9"></div></div>');
+                                iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
                             } else {
-                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-offset-1 col-md-11"></div></div>');
+                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
                             }
                             iWrapper.find('[role=i-ele]').append(item);
                             itemWrapper.find('[role=s-ele]').append(iWrapper);
                         });
                     }
                     itemWrapper.find('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
-                    var deleteBtn = $('<button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>');
+                    var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
                     itemWrapper.find('[role=s-action]').append(deleteBtn);
                     deleteBtn.on("click", function () {
                         itemWrapper.remove();

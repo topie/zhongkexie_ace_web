@@ -166,6 +166,7 @@
             if (content.afterRender != undefined) {
                 content.afterRender(rObject);
             }
+            $(spanElement).data("plugin", rObject);
         },
         next: function () {
             var li = this.$element.find('li.active').next();
