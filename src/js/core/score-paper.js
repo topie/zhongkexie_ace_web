@@ -14,7 +14,7 @@
                 '<div class="row">' +
                 '<div class="col-md-12" >' +
                // '<div class="panel panel-default" >' +
-               // '<div class="panel-heading">题库试卷管理</div>' +
+               // '<div class="panel-heading">题库评价表管理</div>' +
                 '<div class="panel-body" id="grid"></div>' +
               //  '</div>' +
                 '</div>' +
@@ -49,7 +49,7 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "试卷名称",
+                    title: "评价表名称",
                     field: "title",
                     sort: true
                 }, {
@@ -105,13 +105,13 @@
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '试卷名称',
+                                    label: '评价表名称',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入试卷名称"
+                                        required: "请输入评价表名称"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -207,7 +207,7 @@
                     text: "复制",
                     cls: "btn-warning btn-sm",
                     handle: function (index, data) {
-                    	
+                    	bootbox.alert("开发中");
                     }
                 }
 				,{
@@ -233,7 +233,7 @@
                             showReset: true,
                             resetText: "重置",
                             isValidate: true,
-                            buttons: [{
+                            buttons: [/*{
                                 type: 'button btn-primary',
                                 text: '导入测试',
                                 handle: function () {
@@ -245,7 +245,7 @@
 									}
 
                                 }
-                            },{
+                            },*/{
                                 type: 'button',
                                 text: '关闭',
                                 handle: function () {
@@ -270,7 +270,7 @@
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入试卷名称"
+                                        required: "请选择一个配置"
                                     }
                                 },{
 									type:'files',
@@ -281,7 +281,7 @@
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入试卷名称"
+                                        required: "请上传文件"
                                     }
 								}
                             ]
@@ -411,13 +411,13 @@
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '试卷名称',
+                                    label: '评价表名称',
                                     cls: 'input-large',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入试卷名称"
+                                        required: "请输入评价表名称"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -486,9 +486,9 @@
                 items: [
                     {
                         type: "text",
-                        label: "试卷名称",
+                        label: "评价表名称",
                         name: "title",
-                        placeholder: "输入要搜索的试卷名称"
+                        placeholder: "输入要搜索的评价表名称"
                     }
                 ]
             }
