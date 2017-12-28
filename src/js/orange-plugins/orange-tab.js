@@ -68,7 +68,7 @@
                         tab.title + '</a>' +
                         '</li>');
                     ul.append(li);
-                    var pane = $('<div id="' + tId + '" class="tab-pane fade' + (tab.active === true ? ' active in ' : '') + '"><div role="content"></div></div>');
+                    var pane = $('<div id="' + tId + '" class="tab-pane ' + (tab.active === true ? ' active ' : '') + '"><div role="content"></div></div>');
                     tabContent.append(pane);
                     if (!that._options.lazy) {
                         that.renderContent(pane.find('div[role=content]'), tab.content);
@@ -117,7 +117,6 @@
                     that.$ul.find('li[role=tab]:lt(' + first + ')').hide();
                     that.$ul.find('li[role=tab]:gt(' + final + ')').hide();
                 });
-
                 this.$ul.find('li[role=prev]').find('a').on("click", function () {
                     var firstLi = that.$ul.find('li[role=tab]:visible').first();
                     var final = parseInt(firstLi.attr('role-index'));

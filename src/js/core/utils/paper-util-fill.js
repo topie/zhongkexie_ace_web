@@ -158,7 +158,6 @@
                     $.each(ps, function (ii, ppss) {
                         var pss = ppss.split('=');
                         if (pss.length == 2) {
-                            console.info(tmpAs[ps[0] + '']);
                             if (tmpAs[pss[0] + ''] === undefined) {
                                 tmpAs[pss[0] + ''] = pss[1];
                             } else {
@@ -196,10 +195,14 @@
         },
         loadAnswer: function (ans) {
             var that = this;
-            $.each(ans, function (i, an) {
-                that.loadValue(an.itemId, an.answerValue);
-            });
-            this.$tab.go(ans.length - 1);
+            if (ans.length > 0) {
+                $.each(ans, function (i, an) {
+                    that.loadValue(an.itemId, an.answerValue);
+                });
+                this.$tab.go(ans.length - 1);
+            }else{
+                this.$tab.go(0);
+            }
             that.showCheck();
         },
         loadValue: function (name, value) {
