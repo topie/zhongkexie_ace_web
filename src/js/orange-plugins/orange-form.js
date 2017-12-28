@@ -257,9 +257,14 @@
             this._renderFormElements(formBody.find('div.col-md-12'));
 
             if (this._showReset || this._showSubmit || this._buttons.length > 0) {
+                // formAction
+                var formAction = $.tmpl(Form.statics.formActionTmpl, {
+                    "align_": that._buttonsAlign === undefined ? "left"
+                        : that._buttonsAlign
+                });
+                this.$form.append(formAction);
                 this._renderActionButtons(formAction);
             }
-
         },
         _renderFormElements: function (formBody) {
             if (this._items === undefined || this._items.length == 0) {
