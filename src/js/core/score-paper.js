@@ -60,14 +60,70 @@
                     title: "结束时间",
                     field: "end",
                     sort: true
+                }, {
+                    title: "审核状态",
+                    field: "status",
+                    format: function (num, data) {
+                        if (data.status == 0) {
+                            return "未审核";
+                        }
+                        else if (data.status == 1) {
+                            return "已通过";
+                        }
+                        else {
+                            return "已驳回";
+                        }
+                    },
+                    sort: true
                 }
             ],
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",
-            actionColumns: [
+            actionColumns: [{
+                    text: "预览",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        var paper = {};
+                        var modal = $.orangeModal({
+                            id: "scorePaperView",
+                            title: "填报",
+                            destroy: true
+                        }).show();
+                        var js = JSON.parse(data.contentJson);
+                        paper = modal.$body.orangePaperView(js);
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id
+                            },
+                            url: App.href + "/api/core/scorePaper/getAnswer",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    paper.loadAnswer(data.data);
+									modal.$body.find('input').each(function(){
+										if($(this).attr('name')!='button')
+											$(this).attr("disabled","true");
+									});
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                },
                 {
                     text: "编辑",
                     cls: "btn-primary btn-sm",
+					visible:function(index,data){
+						 if (data.status == 1) {
+                            return false;
+                        }
+                        return true;
+					},
                     handle: function (index, data) {
                         var modal = $.orangeModal({
                             id: "scorePaperForm",
@@ -213,6 +269,12 @@
 				,{
                     text: "导入",
                     cls: "btn-info btn-sm",
+					visible:function(index,data){
+						 if (data.status == 1) {
+                            return false;
+                        }
+                        return true;
+					},
                     handle: function (index, data) {
                     	var modal = $.orangeModal({
                             id: "scorePaperIPForm",
@@ -225,9 +287,21 @@
                             method: "POST",
                             action: App.href + "/api/core/importConf/import",
                             ajaxSubmit: true,
-                            ajaxSuccess: function () {
-                                modal.hide();
-                                grid.reload();
+                            ajaxSuccess: function (res) {
+								if(res.code==200){
+									var html='导入结果：';
+									for(var i=0;i<res.data.length;i++){
+										html+="</br>"+res.data[i].msg;	
+									}
+									if(html=='导入结果：'){
+										html="导入成功";
+									}
+									bootbox.alert(html);
+									modal.hide();
+								}else{
+									bootbox.alert("操作发生错误:"+res.message);
+								}
+                                //grid.reload();
                             },
                             submitText: "导入",
                             showReset: true,
@@ -295,6 +369,12 @@
 					{
                     text: "刷新缓存",
                     cls: "btn-warning btn-sm",
+					visible:function(index,data){
+						 if (data.status == 1) {
+                            return false;
+                        }
+                        return true;
+					},
                     handle: function (index, data) {
                     	$.ajax({
 							url:App.href + "/api/core/scorePaper/update",

@@ -19,7 +19,7 @@
         $("#login_btn").on("click", login);
     }
 
-    function alertValidate(alertText) {
+    /*function alertValidate(alertText) {
         var alertTmpl = '<div class="alert alert-${type_} alert-dismissable" role="alert">'
             + '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'
             + '${alert_}</div>';
@@ -30,8 +30,10 @@
         $("#login-form").prepend(alertDiv);
         alertDiv.delay(5 * 1000).fadeOut();
         App.scrollTo(alertDiv, -200);
-    }
-
+    }*/
+	function alertValidate(alertText) {
+		$(".widget-main h4").html(alertText);
+	}
     var login = function () {
         if ($.trim($("#username").val()) == "") {
             alertValidate("登录名不能为空!");
