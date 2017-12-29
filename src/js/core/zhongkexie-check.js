@@ -3,10 +3,10 @@
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/core/scorePaper/reportCheck": "reportCheck"
+        "/api/core/scorePaper/checkpage": "checkpage"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
-    App.reportCheck = {
+    App.checkpage = {
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
@@ -25,11 +25,10 @@
         }
     };
     var initEvents = function () {
-    	
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scorePaper/reportCheck",
+            url: App.href + "/api/core/scorePaper/zkxcheckList",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -49,36 +48,22 @@
                     width: "5%"
                 },*/ {
                     title: "试卷名称",
-                    field: "title",
-                    sort: true
-                }, {
-                    title: "开始时间",
-                    field: "begin",
-                    sort: true,
-					format:function(i,n){
-						var beg = new Date(n.begin);
-						return beg.format("yyyy-MM-dd hh:mm:ss");
-					}
-                }, {
-                    title: "结束时间",
-                    field: "end",
-                    sort: true,
-					format:function(i,n){
-						var beg = new Date(n.end);
-						return beg.format("yyyy-MM-dd hh:mm:ss");
-					}
+                    field: "title"
+                },  {
+                    title: "填报单位",
+                    field: "userName",
                 }
                 , {
                     title: "填报审核状态",
-                    field: "status",
+                    field: "checkStatus",
                     format:function(num,data){
                     	
                     	
-                    	if( data.status==0)
+                    	if(data.checkStatus==0 )
                     		{
                     		return "未审核";
                     		}
-                    	else if(data.status==1)
+                    	else if(data.checkStatus==1)
                     	{
                     		return "已通过";
                     	}
@@ -86,8 +71,7 @@
                     		{
                     		return "已驳回";
                     		}
-                    },
-                    sort: true
+                    }
                 }
             ],
             actionColumnText: "操作",//操作列文本
@@ -109,7 +93,8 @@
                             type: "POST",
                             dataType: "json",
                             data: {
-                                paperId: data.id
+                                paperId: data.id,
+								userId:data.userId
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {
@@ -128,15 +113,16 @@
                             }
                         });
                     }
-                },             
+                },{
+                    text: "评价",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                      bootbox.alert("正努力开发中");
+					}
+                }/*,             
                 {
                     text: "通过",
                     cls: "btn-primary btn-sm",
-					visible:function(index,data){
-						if( data.status==0)
-                    		return true;
-						return false;
-					},
                     handle: function (index, data) {
                     	var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
                     	$.ajax({
@@ -162,11 +148,6 @@
                 }, {
                     text: "驳回",
                     cls: "btn-danger btn-sm",
-					visible:function(index,data){
-						if( data.status==0)
-                    		return true;
-						return false;
-					},
                     handle: function (index, data) {
                     	var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
                     	$.ajax({
@@ -189,8 +170,112 @@
                             }
                         });
                     }
+                }, {
+                    text: "预览",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        var modal = $.orangeModal({
+                            id: "scorePaperView",
+                            title: "预览",
+                            destroy: true
+                        });
+                        modal.show();
+                        var js = JSON.parse(data.contentJson);
+                        modal.$body.orangePaperView(js);
+                    }
+                }*/
+            ],/*,
+            tools: [
+                {
+                    text: " 添 加",
+                    cls: "btn btn-primary",
+                    icon: "fa fa-plus",
+                    handle: function (grid) {
+                        var modal = $.orangeModal({
+                            id: "add_modal",
+                            title: "添加",
+                            destroy: true
+                        }).show();
+                        var formOpts = {
+                            id: "add_form",
+                            name: "add_form",
+                            method: "POST",
+                            action: App.href + "/api/core/scorePaper/insert",
+                            ajaxSubmit: true,
+                            rowEleNum: 1,
+                            ajaxSuccess: function () {
+                                modal.hide();
+                                grid.reload();
+                            },
+                            submitText: "保存",//保存按钮的文本
+                            showReset: true,//是否显示重置按钮
+                            resetText: "重置",//重置按钮文本
+                            isValidate: true,//开启验证
+                            buttons: [{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal.hide();
+                                    grid.reload();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+                                {
+                                    type: 'text',
+                                    name: 'title',
+                                    id: 'title',
+                                    label: '试卷名称',
+                                    cls: 'input-large',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入试卷名称"
+                                    }
+                                }, {
+                                    type: 'datepicker',
+                                    name: 'begin',
+                                    id: 'begin',
+                                    label: '开始时间',
+                                    config: {
+                                        timePicker: true,
+                                        singleDatePicker: true,
+                                        locale: {
+                                            format: 'YYYY-MM-DD HH:mm:ss'
+                                        }
+                                    },
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择开始时间"
+                                    }
+                                }, {
+                                    type: 'datepicker',
+                                    name: 'end',
+                                    id: 'end',
+                                    label: '结束时间',
+                                    config: {
+                                        timePicker: true,
+                                        singleDatePicker: true,
+                                        locale: {
+                                            format: 'YYYY-MM-DD HH:mm:ss'
+                                        }
+                                    },
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择结束时间"
+                                    }
+                                }
+                            ]
+                        };
+                        modal.$body.orangeForm(formOpts);
+                    }
                 }
-                ],
+            ],*/
             search: {
                 rowEleNum: 2,
                 //搜索栏元素

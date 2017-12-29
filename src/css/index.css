@@ -8,3 +8,4 @@
 .input-group .form-control, .input-group-addon, .input-group-btn {
   display: table-cell;
 }
+.user-info{max-width:200px}
