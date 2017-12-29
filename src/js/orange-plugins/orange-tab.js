@@ -184,6 +184,11 @@
             if (li.length > 0) {
                 li.find('a').trigger('click');
             }
+        },
+        currentDiv:function(){
+            var li = this.$element.find('li.active');
+            var id = li.find('a').attr("href").substring(1);
+            return this.$element.find('div#'+id);
         }
     };
 

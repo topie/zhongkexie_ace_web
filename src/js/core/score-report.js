@@ -80,49 +80,49 @@
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",
             actionColumns: [{
-                    text: "预览",
-                    cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
-                        var paper = {};
-                        var modal = $.orangeModal({
-                            id: "scorePaperView",
-                            title: "预览",
-                            destroy: true
-                        }).show();
-                        var js = JSON.parse(data.contentJson);
-                        paper = modal.$body.orangePaperView(js);
-                        $.ajax({
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                paperId: data.id
-                            },
-                            url: App.href + "/api/core/scorePaper/getAnswer",
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    paper.loadAnswer(data.data);
-									modal.$body.find('input').each(function(){
-										if($(this).attr('name')!='button')
-											$(this).attr("disabled","true");
-									});
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
+                text: "预览",
+                cls: "btn-primary btn-sm",
+                handle: function (index, data) {
+                    var paper = {};
+                    var modal = $.orangeModal({
+                        id: "scorePaperView",
+                        title: "预览",
+                        destroy: true
+                    }).show();
+                    var js = JSON.parse(data.contentJson);
+                    paper = modal.$body.orangePaperView(js);
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            paperId: data.id
+                        },
+                        url: App.href + "/api/core/scorePaper/getAnswer",
+                        success: function (data) {
+                            if (data.code === 200) {
+                                paper.loadAnswer(data.data);
+                                modal.$body.find('input').each(function () {
+                                    if ($(this).attr('name') != 'button')
+                                        $(this).attr("disabled", "true");
+                                });
+                            } else {
+                                alert(data.message);
                             }
-                        });
-                    }
-                }, 
+                        },
+                        error: function (e) {
+                            alert("请求异常。");
+                        }
+                    });
+                }
+            },
                 {
                     text: "填报",
                     cls: "btn-primary btn-sm",
-					visible:function(index,data){
-						if(data.status==1)
-							return false;
-						return true;
-					},
+                    visible: function (index, data) {
+                        if (data.status == 1)
+                            return false;
+                        return true;
+                    },
                     handle: function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({
@@ -163,7 +163,30 @@
                             ]
                         }).show();
                         var js = JSON.parse(data.contentJson);
-                        paper = modal.$body.orangePaperFill(js);
+                        paper = modal.$body.orangePaperFill(js, {
+                            next: function (p) {
+                                var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+                                        p.$tab.next();
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            },
+                            prev: function (p) {
+                                p.$tab.prev();
+                            }
+                        });
                         $.ajax({
                             type: "POST",
                             dataType: "json",

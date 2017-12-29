@@ -114,10 +114,18 @@
             mainPanel.find('div.panel-footer:eq(0)').append(prevBtn);
             mainPanel.find('div.panel-footer:eq(0)').append(nextBtn);
             prevBtn.on("click", function () {
-                tab.prev();
+                if (that._options.prev !== undefined) {
+                    that._options.prev(that);
+                } else {
+                    tab.prev();
+                }
             });
             nextBtn.on("click", function () {
-                tab.next();
+                if (that._options.next !== undefined) {
+                    that._options.next(that);
+                } else {
+                    tab.next();
+                }
             });
             this.$tab = tab;
             this.$main.find('form').each(
@@ -169,7 +177,6 @@
                 }
             );
             $.each(tmpAs, function (i, d) {
-                console.info(i, d);
                 var answer = {};
                 answer['itemId'] = i;
                 answer['itemValue'] = d;
@@ -200,7 +207,7 @@
                     that.loadValue(an.itemId, an.answerValue);
                 });
                 this.$tab.go(ans.length - 1);
-            }else{
+            } else {
                 this.$tab.go(0);
             }
             that.showCheck();
@@ -222,7 +229,31 @@
                     }
                 }
             );
-
+        },
+        getCurrentTabAnswer: function () {
+            var answers = [];
+            var tmpAs = {};
+            var f = this.$tab.currentDiv().find('form');
+            var ps = f.serialize().split('&');
+            $.each(ps, function (ii, ppss) {
+                var pss = ppss.split('=');
+                if (pss.length === 2) {
+                    if (tmpAs[pss[0] + ''] === undefined) {
+                        tmpAs[pss[0] + ''] = pss[1];
+                    } else {
+                        tmpAs[pss[0] + ''] = tmpAs[pss[0] + ''] + "," + pss[1];
+                    }
+                }
+            });
+            $.each(tmpAs, function (i, d) {
+                if (d != '') {
+                    var answer = {};
+                    answer['itemId'] = i;
+                    answer['itemValue'] = d;
+                    answers.push(answer);
+                }
+            });
+            return answers;
         }
     };
 
@@ -230,8 +261,11 @@
      * jquery插件扩展 ===================================================
      */
 
-    var getPaperFill = function (options) {
+    var getPaperFill = function (options, extra) {
         options = $.extend(true, {}, PaperFill.defaults, options);
+        if (extra != undefined) {
+            options = $.extend(true, {}, options, extra);
+        }
         var eles = [];
         this.each(function () {
             var self = this;
