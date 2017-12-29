@@ -80,13 +80,13 @@
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",
             actionColumns: [{
-                    text: "预览",
+                    text: "查看",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
-                            title: "填报",
+                            title: "查看评价表",
                             destroy: true
                         }).show();
                         var js = JSON.parse(data.contentJson);
