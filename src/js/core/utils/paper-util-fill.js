@@ -76,6 +76,7 @@
                             }
                             var tab = {};
                             tab['title'] = '第' + itemIndex + '题';
+                            tab['width'] = '87px';
                             tab['content'] = {
                                 plugin: 'form',
                                 options: {
@@ -104,7 +105,7 @@
                 hideOtherTab: false,
                 page: {
                     show: true,
-                    size: 11
+                    size: 10
                 },
                 lazy: false,
                 tabs: tabs

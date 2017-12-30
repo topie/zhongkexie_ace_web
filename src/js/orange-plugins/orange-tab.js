@@ -62,12 +62,15 @@
                 that.$element.append(tabContent);
                 $.each(that._options.tabs, function (i, tab) {
                     var tId = that._elementId + "_tab" + i;
-                    var li = $('<li role-index=' + i + ' role="tab" ' + (tab.active === true ? 'class="active"' : '') + '>' +
+                    var li = $('<li style="text-align: center" role-index=' + i + ' role="tab" ' + (tab.active === true ? 'class="active"' : '') + '>' +
                         '<a href="#' + tId + '" data-toggle="tab" ' +
                         'aria-expanded="' + (tab.active === true ? 'true' : 'false') + '">' +
                         tab.title + '</a>' +
                         '</li>');
                     ul.append(li);
+                    if (tab.width !== undefined) {
+                        li.css("width", tab.width);
+                    }
                     var pane = $('<div id="' + tId + '" class="tab-pane ' + (tab.active === true ? ' active ' : '') + '"><div role="content"></div></div>');
                     tabContent.append(pane);
                     if (!that._options.lazy) {
@@ -185,10 +188,10 @@
                 li.find('a').trigger('click');
             }
         },
-        currentDiv:function(){
+        currentDiv: function () {
             var li = this.$element.find('li.active');
             var id = li.find('a').attr("href").substring(1);
-            return this.$element.find('div#'+id);
+            return this.$element.find('div#' + id);
         }
     };
 
