@@ -16,7 +16,8 @@
 
     window.App = {
         token_key: "zhongkexie_token",
-        href: "http://zhongkexie.topie.com",//测试环境
+		//href:"http://192.168.43.130:81",
+        href: "http://127.0.0.1:81",//测试环境
         requestMapping: {}
     };
 
