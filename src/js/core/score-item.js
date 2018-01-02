@@ -184,6 +184,7 @@
 					 if(data.type==0)return '填空';
 					 if(data.type==1)return '单选';
 					 if(data.type==2)return '多选';
+					 if(data.type==3)return '填空[多]';
 					 return '未识别';
 					}
 				}

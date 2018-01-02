@@ -132,7 +132,7 @@
                             buttons: [
                                 {
                                     type: 'button',
-                                    text: '提交',
+                                    text: '保存',
                                     cls: "btn btn-primary",
                                     handle: function (m) {
                                         var das = {};
@@ -206,7 +206,13 @@
                             }
                         });
                     }
-                }
+                },
+				{
+                    text: "提交",
+                    cls: "btn-primary btn-sm",
+					handle:function(index,data){
+					
+					}
             ],
             search: {
                 rowEleNum: 2,
