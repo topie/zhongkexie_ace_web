@@ -109,28 +109,6 @@
                         }).show();
                         var js = JSON.parse(data.contentJson);
                         paper = modal.$body.orangePaperView(js);
-                        $.ajax({
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                paperId: data.id
-                            },
-                            url: App.href + "/api/core/scorePaper/getAnswer",
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    paper.loadAnswer(data.data);
-									modal.$body.find('input').each(function(){
-										if($(this).attr('name')!='button')
-											$(this).attr("disabled","true");
-									});
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
                     }
                 },
                 {
@@ -454,6 +432,7 @@
 							data:{id:data.id,title:data.title},
 							success:function(res){
 								if(res.code==200){
+									grid.reload();
 									bootbox.alert("刷新成功!");
 								}else{
 									alert(res.message);
