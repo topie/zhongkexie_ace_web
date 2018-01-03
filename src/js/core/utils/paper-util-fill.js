@@ -221,11 +221,11 @@
         showCheck: function () {
             var that = this;
             that.$main.find('a').find('i.fa-check').remove();
-            this.$main.find('form').each(
+            that.$main.find('form').each(
                 function () {
                     var id = $(this).parent().parent().attr("id");
                     var ps = $(this).serialize().split('=');
-                    if (ps.length > 0 && ps[1] !== '') {
+                    if (ps.length > 0 && ps[1] !== ''&& ps[1]!=undefined) {
                         that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
                     }
                 }

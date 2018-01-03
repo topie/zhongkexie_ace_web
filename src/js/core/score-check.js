@@ -62,19 +62,37 @@
                 }
                 , {
                     title: "审核状态",
-                    field: "status",
+                    field: "approveStatus",
                     format: function (num, data) {
-                        if (data.status == 0) {
+						if (data.approveStatus == 0) {
+                            return "未提交审核";
+                        }
+                        else if (data.approveStatus == 1) {
                             return "未审核";
                         }
-                        else if (data.status == 1) {
+                        else if (data.approveStatus == 2) {
                             return "已通过";
                         }
-                        else {
+                        else if(data.approveStatus==3){
                             return "已驳回";
-                        }
+                        }else{
+							return '- -';
+						}
                     },
                     sort: true
+                }, {
+                    title: "填报状态",
+                    field: "status",
+                    format: function (num, data) {
+						if (data.status == 0) {
+                            return "<span style='color:red;'>关闭</span>";
+                        }
+                        else if (data.status == 1) {
+                            return "<span style='color:green'>填报中</span>";
+                        }else{
+							return '- -';
+						}
+                    }
                 }
             ],
             actionColumnText: "操作",//操作列文本
@@ -107,7 +125,7 @@
 											$(this).attr("disabled","true");
 									});
                                 } else {
-                                    alert(data.message);
+                                    bootbox.alert(data.message);
                                 }
                             },
                             error: function (e) {
@@ -120,36 +138,7 @@
                     text: "通过",
                     cls: "btn-primary btn-sm",
 					visible:function(index,data){
-						if (data.status == 0) return true;
-						return false;
-					},
-                    handle: function (index, data) {
-                        var requestUrl = App.href + "/api/core/scorePaper/check";
-                        $.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result: 1
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
-                    }
-                }, {
-                    text: "驳回",
-                    cls: "btn-danger btn-sm",
-					visible:function(index,data){
-						if (data.status == 0) return true;
+						if (data.approveStatus == 1) return true;
 						return false;
 					},
                     handle: function (index, data) {
@@ -166,7 +155,73 @@
                                 if (data.code === 200) {
                                     grid.reload();
                                 } else {
-                                    alert(data.message);
+                                    bootbox.alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                }, {
+                    text: "驳回",
+                    cls: "btn-danger btn-sm",
+					visible:function(index,data){
+						if (data.approveStatus == 1) return true;
+						return false;
+					},
+                    handle: function (index, data) {
+                        var requestUrl = App.href + "/api/core/scorePaper/check";
+                        $.ajax({
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                id: data.id,
+                                result: 3
+                            },
+                            url: requestUrl,
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    grid.reload();
+                                } else {
+                                    bootbox.alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                },
+                {
+                    //text: "通过",
+					textHandle:function(index,data){
+						if(data.status ==1) return '关闭填报';
+						return '开启填报';
+					},
+                    cls: "btn-primary btn-sm",
+					visible:function(index,data){
+						if (data.approveStatus == 2) return true;
+						return false;
+					},
+                    handle: function (index, data) {
+                        var requestUrl = App.href + "/api/core/scorePaper/paperStatus";
+						var status=1;
+						if (data.status == 1) status=0;
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                id: data.id,
+                                status: status
+                            },
+                            url: requestUrl,
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    grid.reload();
+									bootbox.alert('操作成功！');
+                                } else {
+                                    bootbox.alert(data.message);
                                 }
                             },
                             error: function (e) {
@@ -179,7 +234,7 @@
                     text: "发送通知",
                     cls: "btn-primary btn-sm",
 					visible:function(index,data){
-						if (data.status == 1) return true;
+						if (data.approveStatus == 2) return true;
 						return false;
 					},
                     handle: function (index, data) {
@@ -194,7 +249,7 @@
                             success: function (data) {
                                 if (data.code === 200) {
                                     grid.reload();
-									alert("发送成功");
+									bootbox.alert("发送成功");
                                 } else {
                                     alert(data.message);
                                 }

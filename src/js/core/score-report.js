@@ -58,22 +58,37 @@
                     sort: true
                 }, {
                     title: "结束时间",
-                    field: "end",
-                    sort: true
+                    field: "end"
+                }, {
+                    title: "填报状态",
+                    field: "status",
+                    format: function (num, data) {
+                        if (data.status == 1) {
+                            return "<span style='color:green'>填报中</span>";
+                        }
+                        else if (data.status == 0) {
+                            return "<span style='color:red'>已关闭</span>";
+                        }
+						return '- -';
+					}
                 },
                 {
                     title: "审核状态",
                     field: "status",
                     format: function (num, data) {
-                        if (data.status == 0) {
-                            return "未审核";
+                        if (data.approveStatus == 0) {
+                            return "未提交";
                         }
-                        else if (data.status == 1) {
-                            return "已通过";
+                        else if (data.approveStatus == 1) {
+                            return "审核中";
                         }
-                        else {
+						else if (data.approveStatus == 2) {
+                            return "审核通过";
+                        }
+                        else if (data.approveStatus == 3) {
                             return "已驳回";
                         }
+						return '- - ';
                     }
                 }
             ],
@@ -119,7 +134,9 @@
                     text: "填报",
                     cls: "btn-primary btn-sm",
                     visible: function (index, data) {
-                        if (data.status == 1)
+                        if (data.approveStatus == 1)
+                            return false;
+						if (data.approveStatus == 2)
                             return false;
                         return true;
                     },
@@ -210,9 +227,36 @@
 				{
                     text: "提交",
                     cls: "btn-primary btn-sm",
+                    visible: function (index, data) {
+                        if (data.approveStatus == 1)
+                            return false;
+						if (data.approveStatus == 2)
+                            return false;
+                        return true;
+                    },
 					handle:function(index,data){
-					
+						var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
+                    	$.ajax({
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                id: data.id,
+                                result:1
+                            },
+                            url: requestUrl,
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    grid.reload();
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
 					}
+				}
             ],
             search: {
                 rowEleNum: 2,

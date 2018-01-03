@@ -53,7 +53,7 @@
                     title: "填报单位",
                     field: "userName",
                 }
-                , {
+                /*, {
                     title: "填报审核状态",
                     field: "checkStatus",
                     format:function(num,data){
@@ -72,7 +72,7 @@
                     		return "已驳回";
                     		}
                     }
-                }
+                }*/
             ],
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",

@@ -64,17 +64,35 @@
                     title: "审核状态",
                     field: "status",
                     format: function (num, data) {
-                        if (data.status == 0) {
-                            return "未审核";
+						if (data.approveStatus == 0) {
+                            return "新建";
                         }
-                        else if (data.status == 1) {
+                        else if (data.approveStatus == 1) {
+                            return "审核中";
+                        }
+                        else if (data.approveStatus == 2) {
                             return "已通过";
                         }
-                        else {
+                        else if(data.approveStatus==3){
                             return "已驳回";
-                        }
+                        }else{
+							return '- -';
+						}
                     },
                     sort: true
+                }, {
+                    title: "填报状态",
+                    field: "status",
+                    format: function (num, data) {
+						if (data.status == 0) {
+                            return "<span style='color:red;'>关闭</span>";
+                        }
+                        else if (data.status == 1) {
+                            return "<span style='color:green'>填报中</span>";
+                        }else{
+							return '- -';
+						}
+                    }
                 }
             ],
             actionColumnText: "操作",//操作列文本
@@ -119,7 +137,10 @@
                     text: "编辑",
                     cls: "btn-primary btn-sm",
 					visible:function(index,data){
-						 if (data.status == 1) {
+						 if (data.approveStatus == 1) {//审核中
+                            return false;
+                        }
+						if (data.approveStatus == 2) {//审核通过
                             return false;
                         }
                         return true;
@@ -232,6 +253,15 @@
                     }
                 }, {
                     text: "删除",
+					visible:function(index,data){
+						 if (data.approveStatus == 1) {//审核中
+                            return false;
+                        }
+						if (data.approveStatus == 2) {//审核通过
+                            return false;
+                        }
+                        return true;
+					},
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {
                         bootbox.confirm("确定该操作?", function (result) {
@@ -258,6 +288,45 @@
                             }
                         });
                     }
+                }, {
+                    text: "提交",
+                    cls: "btn-info btn-sm",
+					visible:function(index,data){
+						 if (data.approveStatus == 1) {//审核中
+                            return false;
+                        }
+						if (data.approveStatus == 2) {//审核通过
+                            return false;
+                        }
+                        return true;
+					},
+                    handle: function (index, data) {
+                        bootbox.confirm("提交审核后不能修改，确定该操作?", function (result) {
+                            if (result) {
+                                var requestUrl = App.href + "/api/core/scorePaper/check";
+								$.ajax({
+									type: "GET",
+									dataType: "json",
+									data: {
+										id: data.id,
+										result: 1
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+											bootbox.alert("提交成功请通知审核员进行审核！");
+										} else {
+											bootbox.alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+                            }
+                        });
+                    }
                 },
 					{
                     text: "复制",
@@ -268,13 +337,16 @@
                 }
 				,{
                     text: "导入",
-                    cls: "btn-info btn-sm",
 					visible:function(index,data){
-						 if (data.status == 1) {
+						 if (data.approveStatus == 1) {//审核中
+                            return false;
+                        }
+						if (data.approveStatus == 2) {//审核通过
                             return false;
                         }
                         return true;
 					},
+                    cls: "btn-info btn-sm",
                     handle: function (index, data) {
                     	var modal = $.orangeModal({
                             id: "scorePaperIPForm",
