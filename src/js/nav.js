@@ -6,7 +6,9 @@
     App.menu = {
         "initSideMenu": initSideMenu,
         "toggleMenu": toggleMenu,
-        "initHMenu": initHMenu
+        "initHMenu": initHMenu,
+        "showUserInfo": showUserInfo,
+        "showTaskInfo": showTaskInfo
     };
     App.menusMapping = {};
 
@@ -21,7 +23,46 @@
             $.cookie('spring-menu-toggle', "s", {expires: 7, path: '/'});
         }
     }
-
+	function showUserInfo() {
+        var modal = $.orangeModal({
+            id: "userForm",
+            title: "用户信息",
+            destroy: true,
+            buttons: [
+                {
+                    type: 'button',
+                    cls: 'btn-default',
+                    text: '关闭',
+                    handle: function (m) {
+                        m.hide();
+                    }
+                }
+            ]
+        }).show();
+        App.menu.userOption.ajaxSuccess = function () {
+            modal.hide();
+			window.location.href = '../login.html';
+        };
+        var form = modal.$body.orangeForm(App.menu.userOption);
+        form.loadRemote(App.href + "/api/index/loadCurrentUser");
+    }
+	function showTaskInfo() {
+        var modal = $.orangeModal({
+            id: "exportList",
+            title: "导出任务列表",
+            destroy: true,
+            buttons: [
+                {
+                    type: 'button',
+                    cls: 'btn-default',
+                    text: '关闭',
+                    handle: function (m) {
+                        m.hide();
+                    }
+                }
+            ]
+        }).show().$body.orangeGrid(App.menu.taskGridOption);
+    }
     function initHMenu() {
         var ul = "#h-menu";
         var sidebar = $('<div id="h-sidebar" class="sidebar h-sidebar navbar-collapse collapse ace-save-state">' +
@@ -50,6 +91,9 @@
                         var userInfo = result.data.user;
                         App.currentUser = userInfo;
                         $("#spring_login_user_name").text(userInfo.displayName);
+						if(userInfo.lastPasswordReset==null ||userInfo.lastPasswordReset === undefined){
+							App.menu.showUserInfo();
+						}
                         $.each(menus, function (i, m) {
                             App.menusMapping[m.action] = m.functionName;
                         });
@@ -121,6 +165,9 @@
                         var userInfo = result.data.user;
                         App.currentUser = userInfo;
                         $("#spring_login_user_name").text(userInfo.displayName);
+						if(userInfo.lastPasswordReset==null ||userInfo.lastPasswordReset === undefined){
+							App.menu.showUserInfo();
+						}
                         $.each(menus, function (i, m) {
                             App.menusMapping[m.action] = m.functionName;
                         });
@@ -308,7 +355,157 @@
             }
         );
     };
+App.menu.userOption = {
+        id: "current_user_form",//表单id
+        name: "current_user_form",//表单名
+        method: "POST",//表单method
+        action: App.href + "/api/index/updateUser",
+        ajaxSubmit: true,//是否使用ajax提交表单
+        submitText: "提交",//保存按钮的文本
+        showReset: true,//是否显示重置按钮
+        resetText: "重置",//重置按钮文本
+        isValidate: true,//开启验证
+        buttonsAlign: "center",
+        items: [
+            {
+                type: 'hidden',
+                name: 'id',
+                id: 'id'
+            }, {
+                type: 'text',//类型
+                name: 'displayName',//name
+                id: 'displayName',//id
+                label: '昵称',//左边label
+                cls: 'input-large',
+                rule: {
+                    required: true
+                },
+                message: {
+                    required: "请输入昵称"
+                }
+            }, {
+                type: 'password',//类型
+                name: 'password',//name
+                id: 'password',//id
+                label: '旧密码',//左边label
+                cls: 'input-medium',
+                rule: {
+                    required: true
+                },
+                message: {
+                    required: "请输入旧密码"
+                }
+            }, {
+                type: 'password',//类型
+                name: 'newPassword',//name
+                id: 'newPassword',//id
+                label: '新密码',//左边label
+                cls: 'input-medium',
+                rule: {
+                    minlength: 6,
+                    maxlength: 64
+                },
+                message: {
+                    minlength: "至少{0}位",
+                    maxlength: "做多{0}位"
+                }
+            }, {
+                type: 'text',//类型
+                name: 'contactPhone',//name
+                id: 'contactPhone',//id
+                label: '手机',
+                rule: {
+                    required: true
+                },
+                message: {
+                    required: "请输入手机号"
+                }
+            }, {
+                type: 'text',//类型
+                name: 'email',//name
+                id: 'email',//id
+                label: '邮箱',
+                rule: {
+                    email: true,
+					required: true
+                },
+                message: {
+                    email: "请输入正确的邮箱",
+					required: "请输入邮箱"
+                }
+            }
+        ]
+    };
 
+    App.menu.taskGridOption = {
+        url: App.href + "/api/core/exportTask/myList",
+        pageNum: 1,//当前页码
+        pageSize: 15,//每页显示条数
+        idField: "id",//id域指定
+        headField: "taskName",
+        contentTypeItems: "table,card,list",
+        showCheck: true,//是否显示checkbox
+        checkboxWidth: "3%",
+        showIndexNum: true,
+        indexNumWidth: "5%",
+        pageSelect: [2, 15, 30, 50],
+        sort: "exportTime_desc",
+        columns: [
+            {
+                title: "任务名称",
+                align: "left",
+                field: "taskName"
+            }, {
+                title: "导出时间",
+                align: "left",
+                field: "exportTime"
+            }, {
+                title: "完成时间",
+                align: "left",
+                field: "completeTime"
+            }, {
+                title: "耗时",
+                align: "left",
+                field: "costTime"
+            }, {
+                title: "状态",
+                align: "left",
+                field: "status",
+                width: "10%",
+                format: function (i, data) {
+                    if (data.status == 2) {
+                        return '<span class="label label-success">完成</span>'
+                    } else if (data.status == 1) {
+                        return '<span class="label label-warning">进行中</span>'
+                    } else {
+                        return '<span class="label label-danger">失败</span>'
+                    }
+                }
+            },
+            {
+                title: "下载",
+                field: "status",
+                align: "left",
+                format: function (index, data) {
+                    if (data.status == 2) {
+                        return '<a class="btn btn-danger btn-sm" href="' + data.attachmentUri + '">右键另存为</a>';
+                    } else {
+                        return '';
+                    }
+                }
+            }
+        ],
+        tools: [
+            {
+                type: 'button',
+                text: '刷新',
+                cls: "btn btn-warning",
+                handle: function (g) {
+                    g.reload();
+                }
+            }
+        ]
+    };
     var toggle = App.toggle = ($.cookie('spring-menu-toggle') === undefined ? "s" : $.cookie('spring-menu-toggle'));
     if (toggle === undefined) {
         toggle = "s";
@@ -324,5 +521,11 @@
             window.location.reload();
         }, 500);
     });
+ $("#user-info").click(function () {
+            App.menu.showUserInfo();
+        });
+        $("#task-info").click(function () {
+            App.menu.showTaskInfo();
+        });
 
 })(jQuery, window, document);

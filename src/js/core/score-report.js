@@ -176,6 +176,13 @@
                                             }
                                         });
                                     }
+                                },{
+                                    type: 'button',
+                                    text: '关闭',
+                                    cls: "btn",
+                                    handle: function (m) {
+                                       modal.hide();    
+                                    }
                                 }
                             ]
                         }).show();
