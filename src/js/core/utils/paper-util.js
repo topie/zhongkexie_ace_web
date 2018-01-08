@@ -230,7 +230,7 @@
             if (ele.is('input[type="radio"]')) {
                 this.$main.find(
                     "input[type='radio'][name='" + name + "'][value='"
-                    + value + "']").attr("checked", true);
+                    + value + "']").attr("checked", true).parent().addClass("selected_info");
             } else if (ele.is('input[type="checkbox"]')) {
                 if (value != null) {
                     var values = value.split(",");
@@ -238,7 +238,7 @@
                         this.$main.find(
                             "input[type='checkbox'][name='" + name
                             + "'][value='" + values[i] + "']")
-                            .attr("checked", true);
+                            .attr("checked", true).parent().addClass("selected_info");
                     }
                 }
             } else if (ele.is('select')) {

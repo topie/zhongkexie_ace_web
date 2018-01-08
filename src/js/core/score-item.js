@@ -415,6 +415,7 @@
                     cls: "btn-info btn-sm",
 					visible:function(index,data){
 						if(data.type==1)return true;
+						if(data.type==2)return true;
 						return false;
 					},
                     handle: function (index, data, grid) {

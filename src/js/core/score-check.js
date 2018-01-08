@@ -142,26 +142,30 @@
 						return false;
 					},
                     handle: function (index, data) {
-                        var requestUrl = App.href + "/api/core/scorePaper/check";
-                        $.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result: 2
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-                                } else {
-                                    bootbox.alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
+						bootbox.confirm("确认通过，通过后将不能修改?", function (result) {
+							if (result) {
+								var requestUrl = App.href + "/api/core/scorePaper/check";
+								$.ajax({
+									type: "GET",
+									dataType: "json",
+									data: {
+										id: data.id,
+										result: 2
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+										} else {
+											bootbox.alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+						});
                     }
                 }, {
                     text: "驳回",
@@ -171,26 +175,30 @@
 						return false;
 					},
                     handle: function (index, data) {
-                        var requestUrl = App.href + "/api/core/scorePaper/check";
-                        $.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result: 3
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-                                } else {
-                                    bootbox.alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
+						bootbox.confirm("确认驳回?", function (result) {
+							if (result) {
+								var requestUrl = App.href + "/api/core/scorePaper/check";
+								$.ajax({
+									type: "GET",
+									dataType: "json",
+									data: {
+										id: data.id,
+										result: 3
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+										} else {
+											bootbox.alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+						});
                     }
                 },
                 {
@@ -238,26 +246,30 @@
 						return false;
 					},
                     handle: function (index, data) {
-                    	var requestUrl = App.href + "/api/core/message/insert";
-                    	$.ajax({
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                spId: data.id
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-									bootbox.alert("发送成功");
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
+						bootbox.confirm("确认发送通知?", function (result) {
+							if (result) {
+								var requestUrl = App.href + "/api/core/message/insert";
+								$.ajax({
+									type: "POST",
+									dataType: "json",
+									data: {
+										spId: data.id
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+											bootbox.alert("发送成功");
+										} else {
+											alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+						});
                     }
                 }/*, {
                     text: "预览",

@@ -2,6 +2,10 @@
   border-radius: 0px;
 }
 
+.light-login {
+    background-size: cover;
+}
+
 .thumbnail {
   border-radius: 0px;
 }
@@ -9,3 +13,4 @@
   display: table-cell;
 }
 .user-info{max-width:200px}
+.selected_info{color:red;}

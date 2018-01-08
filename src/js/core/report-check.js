@@ -148,27 +148,31 @@
 						return false;
 					},
                     handle: function (index, data) {
-                    	var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
-                    	$.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result:2
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-									bootbox.alert("审核通过，已提交至中国科学技术协会！");
-                                } else {
-                                    bootbox.alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
+						bootbox.confirm("确认上报?", function (result) {
+                        if (result) {
+							var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
+							$.ajax({
+								type: "GET",
+								dataType: "json",
+								data: {
+									id: data.id,
+									result:2
+								},
+								url: requestUrl,
+								success: function (data) {
+									if (data.code === 200) {
+										grid.reload();
+										bootbox.alert("审核通过，已提交至中国科学技术协会！");
+									} else {
+										bootbox.alert(data.message);
+									}
+								},
+								error: function (e) {
+									alert("请求异常。");
+								}
+							});
+						}
+						});
                     }
                 }, {
                     text: "驳回",
@@ -179,27 +183,31 @@
 						return false;
 					},
                     handle: function (index, data) {
-                    	var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
-                    	$.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result:3
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-									bootbox.alert("已驳回，请联系填报员进行修改！");
-                                } else {
-                                    bootbox.alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
+						bootbox.confirm("确认驳回?", function (result) {
+							if (result) {
+								var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
+								$.ajax({
+									type: "GET",
+									dataType: "json",
+									data: {
+										id: data.id,
+										result:3
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+											bootbox.alert("已驳回，请联系填报员进行修改！");
+										} else {
+											bootbox.alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+						});
                     }
                 }
                 ],

@@ -242,26 +242,31 @@
                         return true;
                     },
 					handle:function(index,data){
-						var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
-                    	$.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result:1
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
+
+						bootbox.confirm("确认提交?", function (result) {
+							if (result) {
+								var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
+								$.ajax({
+									type: "GET",
+									dataType: "json",
+									data: {
+										id: data.id,
+										result:1
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+										} else {
+											alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+						});
 					}
 				}
             ],
