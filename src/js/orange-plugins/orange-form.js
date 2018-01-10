@@ -583,6 +583,27 @@
                     ele.val(data.value);
                 return ele;
             },
+			'number': function (data, form) {
+				var onkeyup = 'onkeyup="if(isNaN(value)){execCommand(\'undo\');}" onafterpaste="if(isNaN(value))execCommand(\'undo\')"';
+                var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_} 只能填写数字" '+onkeyup+'>';
+                var ele = $.tmpl(textTmpl, {
+                    "id_": (data.id === undefined ? data.name : data.id),
+                    "name_": data.name,
+                    "showIcon_": data.showIcon === undefined ? false
+                        : data.showIcon,
+                    "placeholder_": (data.placeholder === undefined ? ""
+                        : data.placeholder),
+                    "cls_": data.cls === undefined ? ""
+                        : (data.icon !== undefined ? "" : data.cls),
+                    "readonly_": (data.readonly ? "readonly" : ""),
+                    "disabled_": (data.disabled ? "disabled" : ""),
+                    "attribute_": (data.attribute === undefined ? ""
+                        : data.attribute)
+                });
+                if (data.value != undefined)
+                    ele.val(data.value);
+                return ele;
+            },
             'password': function (data, form) {
                 var passwordTmpl = '<input drole="main" type="password" id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}">';
                 var ele = $.tmpl(passwordTmpl, {

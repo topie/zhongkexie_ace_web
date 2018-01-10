@@ -185,6 +185,7 @@
 					 if(data.type==1)return '单选';
 					 if(data.type==2)return '多选';
 					 if(data.type==3)return '填空[多]';
+					 if(data.type==4)return '数字';
 					 return '未识别';
 					}
 				}
@@ -293,6 +294,10 @@
                                         {
                                             text: '填空[多]',
                                             value: 3
+                                        },
+                                        {
+                                            text: '数字',
+                                            value: 4
                                         }
                                     ]
                                 }, {
@@ -828,6 +833,10 @@
                                         {
                                             text: '填空[多]',
                                             value: 3
+                                        },
+                                        {
+                                            text: '数字',
+                                            value: 4
                                         }
                                     ]
                                 }, {

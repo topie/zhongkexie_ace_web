@@ -42,7 +42,7 @@
                             };
                             var it = {};
                             it.name = item.id;
-                            it.label = item.title + "(" + item.score + "分)";
+                            it.label = item.title;// + "(" + item.score + "分)";
                             if (item.itemType == 0) {
                                 it.type = 'text';
                             } else if (item.itemType == 1) {
@@ -60,6 +60,9 @@
                                         name: item.id
                                     }
                                 ]
+                            }else if (item.itemType == 4) {
+                                it.type = 'number';
+                                it.inline = true;
                             }
                             if (item.itemType == 1 || item.itemType == 2) {
                                 it.items = [];
@@ -225,7 +228,7 @@
                 function () {
                     var id = $(this).parent().parent().attr("id");
                     var ps = $(this).serialize().split('=');
-                    if (ps.length > 0 && ps[1] !== ''&& ps[1]!=undefined) {
+                    if (ps.length > 0 && ps[1] !== ''&& ps[1]!=undefined) {//TODO 空字符串输入
                         that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
                     }
                 }
