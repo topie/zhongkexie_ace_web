@@ -181,11 +181,11 @@
 					title:"类型",
 					field:"type",
 					format:function(index,data){
-					 if(data.type==0)return '填空';
+					 if(data.type==0)return '填空[文本]';
 					 if(data.type==1)return '单选';
 					 if(data.type==2)return '多选';
 					 if(data.type==3)return '填空[多]';
-					 if(data.type==4)return '数字';
+					 if(data.type==4)return '填空[数字]';
 					 return '未识别';
 					}
 				}
@@ -280,7 +280,7 @@
                                     },
                                     items: [
                                         {
-                                            text: '填空',
+                                            text: '填空[文本]',
                                             value: 0
                                         },
                                         {
@@ -296,7 +296,7 @@
                                             value: 3
                                         },
                                         {
-                                            text: '数字',
+                                            text: '填空[数字]',
                                             value: 4
                                         }
                                     ]
@@ -819,7 +819,7 @@
                                     },
                                     items: [
                                         {
-                                            text: '填空',
+                                            text: '填空[文本]',
                                             value: 0
                                         },
                                         {
@@ -835,7 +835,7 @@
                                             value: 3
                                         },
                                         {
-                                            text: '数字',
+                                            text: '填空[数字]',
                                             value: 4
                                         }
                                     ]

@@ -15,6 +15,10 @@
         this.load();
         this.init();
     };
+	 var isArray = function (object) {
+        return object && typeof object === 'object' &&
+            Array == object.constructor;
+    }
     PaperView.examples = [
         {
             "score": 1,
@@ -131,8 +135,12 @@
                         it.type = 'radioGroup';
                     } else if (item.itemType == 2) {
                         it.type = 'checkboxGroup';
+                    } else if (item.itemType == 3) {
+                        it.type = 'list';
+                    } else if (item.itemType == 4) {
+                        it.type = 'number';
                     }
-                    if (item.itemType > 0) {
+                    if (item.itemType ==1 || item.itemType==2) {
                         it.items = [];
                         $.each(item.items, function (i, op) {
                             var option = {
@@ -141,6 +149,15 @@
                             };
                             it.items.push(option);
                         });
+                    }
+					if (item.itemType == 3) {
+						it.span = 6;
+						it.items = [
+							{
+								type: 'text',
+								name: item.id
+							}
+						]
                     }
                     if (item.value != undefined && item.value != '') {
                         it.value = item.value;
@@ -243,6 +260,36 @@
                 }
             } else if (ele.is('select')) {
                 ele.val(value);
+			}else if (ele.is('div')) {
+				var that = this;
+				var data = ele.data("data");
+               var value_arr = isArray(value) ? value : value.split(',');
+			   //var span = data.span === undefined ? 12 : data.span;
+				$.each(value_arr, function (i, id) {
+					var itemWrapper = $('<div class=""col-lg-12">' +
+						'<div role="s-ele" class="col-lg-12 form-group input-group"></div>' +
+						'</div>');
+					var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" value="${value_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}">';
+					var item = $.tmpl(textTmpl, {
+						"id_": (data.id === undefined ? data.name : data.id),
+						"name_": name,
+						"value_":id,
+						"showIcon_": data.showIcon === undefined ? false
+							: data.showIcon,
+						"placeholder_": (data.placeholder === undefined ? ""
+							: data.placeholder),
+						"cls_": data.cls === undefined ? ""
+							: (data.icon !== undefined ? "" : data.cls),
+						"readonly_": (data.readonly ? "readonly" : ""),
+						"disabled_": (data.disabled ? "disabled" : ""),
+						"attribute_": (data.attribute === undefined ? ""
+							: data.attribute)
+					});
+					itemWrapper.find('[role="s-ele"]').append(item);
+					ele.find('[role=ele]').append(itemWrapper);
+						
+				});
+				ele.find('[role="action"]').remove();
             } else {
                 ele.val(value);
             }
@@ -258,7 +305,7 @@
             }
         }
     };
-
+	
     /**
      * jquery插件扩展 ===================================================
      */
