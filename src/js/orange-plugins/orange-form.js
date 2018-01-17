@@ -500,6 +500,39 @@
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
+				/*
+				//==默认添加一组数据start==
+				var hasOne = data.hasOne === undefined ? true : data.hasOne;
+				if(hasOne){
+					var itemWrapper = $('<div class="row">' +
+                        '<div role="s-ele" class="col-md-' + span + ' form-group input-group">' +
+                        '</div>' +
+                        '</div>');
+                    if (data.items != undefined) {
+                        $.each(data.items, function (j, jd) {
+                            var item = form._formEles[jd.type](jd, form);
+							item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
+                            var iWrapper;
+                            if (jd.label != undefined) {
+                                iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
+                            } else {
+                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+                            }
+                            iWrapper.children('[role=i-ele]').append(item);
+                            itemWrapper.children('[role=s-ele]').append(iWrapper);
+                        });
+                        itemWrapper.children('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
+                        var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
+                        itemWrapper.children().children('[role=s-action]').append(deleteBtn);
+                        deleteBtn.on("click", function () {
+                            itemWrapper.remove();
+                        });
+                        ele.children('[role=ele]').append(itemWrapper);
+                        form._uniform();
+                    }
+				}
+				//==默认添加一组数据end==
+				*/
                 var addBtn = $('<button class="btn btn-sm btn-info" type="button">添加</button>');
                 ele.children('[role=action]').append(addBtn);
                 addBtn.on("click", function () {
@@ -510,6 +543,7 @@
                     if (data.items != undefined) {
                         $.each(data.items, function (j, jd) {
                             var item = form._formEles[jd.type](jd, form);
+							item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
                             var iWrapper;
                             if (jd.label != undefined) {
                                 iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
@@ -584,8 +618,7 @@
                 return ele;
             },
 			'number': function (data, form) {
-				var onkeyup = 'onkeyup="if(isNaN(value)){execCommand(\'undo\');}" onafterpaste="if(isNaN(value))execCommand(\'undo\')"';
-                var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_} 只能填写数字" '+onkeyup+'>';
+                var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="只能填写数字 ${placeholder_}" >';
                 var ele = $.tmpl(textTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
                     "name_": data.name,
@@ -600,8 +633,11 @@
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
+				ele.bind("keyup",function(){if(isNaN(this.value))this.value=''});
+				ele.blur(function(){if(isNaN(this.value))this.value=''});
                 if (data.value != undefined)
-                    ele.val(data.value);
+					if(isNaN(data.value))
+						ele.val(data.value);
                 return ele;
             },
             'password': function (data, form) {

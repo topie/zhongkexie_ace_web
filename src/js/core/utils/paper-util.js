@@ -125,6 +125,7 @@
         renderSubRow: function (that, row, items) {
             if (items != undefined && items.length > 0) {
                 var its = [];
+				var hasList = false;
                 $.each(items, function (i, item) {
                     var it = {};
                     it.name = item.id;
@@ -137,10 +138,12 @@
                         it.type = 'checkboxGroup';
                     } else if (item.itemType == 3) {
                         it.type = 'list';
+						hasList = true;
                     } else if (item.itemType == 4) {
                         it.type = 'number';
                     }
                     if (item.itemType ==1 || item.itemType==2) {
+						it.inline=true;
                         it.items = [];
                         $.each(item.items, function (i, op) {
                             var option = {
@@ -166,7 +169,7 @@
                 });
                 var qi = that.getQi();
                 row.find('div.panel-body:eq(0)').append(qi);
-                qi.find('div[role=qi]').orangeForm({
+                var form = qi.find('div[role=qi]').orangeForm({
                     method: "POST",
                     action: "",
                     ajaxSubmit: true,
@@ -180,6 +183,9 @@
                     buttonsAlign: "center",
                     items: its
                 });
+				if (hasList) {
+					qi.find('div[role=qi]').find('[role="action"]').remove();
+				}
             }
         },
         getPanel: function (title, theme) {
@@ -221,7 +227,7 @@
             this.$main.find('form').each(
                 function () {
                     var ps = $(this).serialize().split('&');
-                    console.info(ps);
+                   // console.info(ps);
                     $.each(ps, function (ii, ppss) {
                         var pss = ppss.split('=');
                         if (pss.length == 2) {
@@ -241,6 +247,16 @@
             $.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue);
             });
+			var list = this.$main.find('div[formele="list"]');
+			if(list.length>0){
+				$.each(list,function(i,item){
+					var ele = $(item).find('div[role="ele"]');
+					var e_eles = ele.find('div[role="s-ele"]');
+					if(e_eles.length<=0){//如果空则添加一个
+						ele.append('<input drole="list" type="text" showicon="false" class="form-control " placeholder="">');
+					}
+				});
+			}
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
@@ -260,7 +276,7 @@
                 }
             } else if (ele.is('select')) {
                 ele.val(value);
-			}else if (ele.is('div')) {
+			}else if (ele.is('div')) {//type = list
 				var that = this;
 				var data = ele.data("data");
                var value_arr = isArray(value) ? value : value.split(',');
@@ -289,7 +305,6 @@
 					ele.find('[role=ele]').append(itemWrapper);
 						
 				});
-				ele.find('[role="action"]').remove();
             } else {
                 ele.val(value);
             }

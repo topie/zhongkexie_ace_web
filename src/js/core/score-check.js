@@ -110,7 +110,7 @@
                         }).show();
                         var js = JSON.parse(data.contentJson);
                         paper = modal.$body.orangePaperView(js);
-                        $.ajax({
+						$.ajax({
                             type: "POST",
                             dataType: "json",
                             data: {
@@ -202,7 +202,7 @@
                     }
                 },
                 {
-                    //text: "通过",
+                    text: "开启填报",
 					textHandle:function(index,data){
 						if(data.status ==1) return '关闭填报';
 						return '开启填报';

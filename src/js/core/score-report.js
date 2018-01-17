@@ -149,7 +149,23 @@
                             buttons: [
                                 {
                                     type: 'button',
-                                    text: '保存',
+                                    text: '检查',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        var das = {};
+                                        var msg = paper.getValidation();
+                                        if (msg.length > 0) {
+                                            bootbox.alert(msg[0].text + "未填写");
+                                            paper.$tab.go(msg[0].index);
+                                            return;
+                                        }else{
+											 bootbox.alert('全部填写完成');
+										}
+                                        
+                                    }
+                                },{
+                                    type: 'button',
+                                    text: '检查并保存',
                                     cls: "btn btn-primary",
                                     handle: function (m) {
                                         var das = {};
