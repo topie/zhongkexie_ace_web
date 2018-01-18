@@ -186,6 +186,8 @@
 					 if(data.type==2)return '多选';
 					 if(data.type==3)return '填空[多]';
 					 if(data.type==4)return '填空[数字]';
+					 if(data.type==5)return '单选[可填空]';
+					 if(data.type==6)return '多选[可填空]';
 					 return '未识别';
 					}
 				}
@@ -298,6 +300,14 @@
                                         {
                                             text: '填空[数字]',
                                             value: 4
+                                        },
+										{
+                                            text: '单选[可填空]',
+                                            value: 5
+                                        },
+                                        {
+                                            text: '多选[可填空]',
+                                            value: 6
                                         }
                                     ]
                                 }, {
@@ -395,6 +405,8 @@
 					visible:function(index,data){
 						if(data.type==1)return true;
 						if(data.type==2)return true;
+						if(data.type==5)return true;
+						if(data.type==6)return true;
 						return false;
 					},
                     handle: function (index, data, grid) {
@@ -811,6 +823,14 @@
                                         {
                                             text: '填空[数字]',
                                             value: 4
+                                        },
+										{
+                                            text: '单选[可填空]',
+                                            value: 5
+                                        },
+                                        {
+                                            text: '多选[可填空]',
+                                            value: 6
                                         }
                                     ]
                                 }, {

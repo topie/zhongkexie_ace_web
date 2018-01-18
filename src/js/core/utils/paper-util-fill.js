@@ -63,8 +63,14 @@
                             }else if (item.itemType == 4) {
                                 it.type = 'number';
                                 it.inline = true;
+                            }else if (item.itemType == 5) {
+                                it.type = 'radio_input';
+                                it.span = 6;
+                            }else if (item.itemType == 6) {
+                                it.type = 'checkbox_input';
+                                it.span = 6;
                             }
-                            if (item.itemType == 1 || item.itemType == 2) {
+                            if (item.itemType == 1 || item.itemType == 2|| item.itemType == 5 || item.itemType == 6) {
                                 it.items = [];
                                 $.each(item.items, function (i, op) {
                                     var option = {

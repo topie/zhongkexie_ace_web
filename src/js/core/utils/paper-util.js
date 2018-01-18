@@ -142,7 +142,13 @@
                     } else if (item.itemType == 4) {
                         it.type = 'number';
                     }
-                    if (item.itemType ==1 || item.itemType==2) {
+					 else if (item.itemType == 5) {
+                        it.type = 'radio_input';
+                    }
+					 else if (item.itemType == 6) {
+                        it.type = 'checkbox_input';
+                    }
+                    if (item.itemType ==1 || item.itemType==2|| item.itemType==5|| item.itemType==6) {
 						it.inline=true;
                         it.items = [];
                         $.each(item.items, function (i, op) {
@@ -153,6 +159,9 @@
                             it.items.push(option);
                         });
                     }
+					if(item.itemType==5|| item.timeType==6){
+						it.span = 6;
+					}
 					if (item.itemType == 3) {
 						it.span = 6;
 						it.items = [
@@ -261,9 +270,49 @@
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
             if (ele.is('input[type="radio"]')) {
-                this.$main.find(
+				if(value==='other'){
+					this.$main.find(
                     "input[type='radio'][name='" + name + "'][value='"
                     + value + "']").attr("checked", true).parent().addClass("selected_info");
+				}else if(value.indexOf('other,')==-1){
+					this.$main.find(
+                    "input[type='radio'][name='" + name + "'][value='"
+                    + value + "']").attr("checked", true).parent().addClass("selected_info");
+				}else{
+					this.$main.find(
+                    "input[type='radio'][name='" + name + "'][value='other']").attr("checked", true).parent().addClass("selected_info");
+						var that = this;
+						var radioGroup = ele.parents("[class='radio-list']");
+						var data = radioGroup.data("data");
+						var value_arr = isArray(value) ? value : value.split(',');
+					   //var span = data.span === undefined ? 12 : data.span;
+						$.each(value_arr, function (i, id) {
+							if(id==='other'){}
+							else{
+								var itemWrapper = $('<div class=""col-lg-12">' +
+									'<div role="s-ele" class="col-lg-12 form-group input-group"></div>' +
+									'</div>');
+								var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" value="${value_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}">';
+								var item = $.tmpl(textTmpl, {
+									"id_": (data.id === undefined ? data.name : data.id),
+									"name_": name,
+									"value_":id,
+									"showIcon_": data.showIcon === undefined ? false
+										: data.showIcon,
+									"placeholder_": (data.placeholder === undefined ? ""
+										: data.placeholder),
+									"cls_": data.cls === undefined ? ""
+										: (data.icon !== undefined ? "" : data.cls),
+									"readonly_": (data.readonly ? "readonly" : ""),
+									"disabled_": (data.disabled ? "disabled" : ""),
+									"attribute_": (data.attribute === undefined ? ""
+										: data.attribute)
+								});
+								itemWrapper.find('[role="s-ele"]').append(item);
+								radioGroup.parent().append(itemWrapper);
+							}
+						});
+				}
             } else if (ele.is('input[type="checkbox"]')) {
                 if (value != null) {
                     var values = value.split(",");
@@ -273,6 +322,39 @@
                             + "'][value='" + values[i] + "']")
                             .attr("checked", true).parent().addClass("selected_info");
                     }
+					var that = this;
+					var itemsValue = value.substring(value.indexOf("other,"));
+						var checkboxGroup = ele.parents("[class='checkbox-list']");
+						var data = checkboxGroup.data("data");
+						var value_arr = isArray(itemsValue) ? itemsValue : itemsValue.split(',');
+					   //var span = data.span === undefined ? 12 : data.span;
+						$.each(value_arr, function (i, id) {
+							if(id==='other'){}
+							else{
+								var itemWrapper = $('<div class=""col-lg-12">' +
+									'<div role="s-ele" class="col-lg-12 form-group input-group"></div>' +
+									'</div>');
+								var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" value="${value_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}">';
+								var item = $.tmpl(textTmpl, {
+									"id_": (data.id === undefined ? data.name : data.id),
+									"name_": name,
+									"value_":id,
+									"showIcon_": data.showIcon === undefined ? false
+										: data.showIcon,
+									"placeholder_": (data.placeholder === undefined ? ""
+										: data.placeholder),
+									"cls_": data.cls === undefined ? ""
+										: (data.icon !== undefined ? "" : data.cls),
+									"readonly_": (data.readonly ? "readonly" : ""),
+									"disabled_": (data.disabled ? "disabled" : ""),
+									"attribute_": (data.attribute === undefined ? ""
+										: data.attribute)
+								});
+								itemWrapper.find('[role="s-ele"]').append(item);
+								checkboxGroup.parent().append(itemWrapper);
+							}
+						});
+
                 }
             } else if (ele.is('select')) {
                 ele.val(value);

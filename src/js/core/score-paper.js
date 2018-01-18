@@ -421,7 +421,7 @@
                     cls: "btn-warning btn-sm",
 					visible:function(index,data){
 						 if (data.status == 1) {
-                            return false;
+                           // return false;
                         }
                         return true;
 					},
