@@ -488,6 +488,44 @@
                 }
                 return ele;
             },
+			'radio_input':function(data,form){
+				if(data.items){
+					data.items.push({'text':'其他','value':'other','name':data.name,'type':'text'});
+				}
+				var radioGroup = form._formEles['radioGroup'](data, form);
+				radioGroup.find("input[type='radio']").each(function(){
+					$(this).bind("click",function(){
+						if($(this).val()==='other'){
+							if(radioGroup.parent().find("div[role='list']").length>0){
+								return;
+							}
+							var list = form._formEles['list'](data,form);
+							radioGroup.parent().append(list);
+						}else{
+							radioGroup.parent().find("div[role='list']").remove();
+						}
+					})
+				})
+				
+				return radioGroup;
+			},
+			'checkbox_input':function(data,form){
+				if(data.items){
+					data.items.push({'text':'其他','name':data.name,'value':'other','type':'text'});
+				}
+				var checkboxGroup = form._formEles['checkboxGroup'](data, form);
+				var other = checkboxGroup.find("input[value='other']");
+				other.bind('click',function(){
+					if($(this).is(':checked')){
+						var list = form._formEles['list'](data,form);
+						checkboxGroup.parent().append(list);
+					}else{
+						checkboxGroup.parent().find("div[role='list']").remove();
+					}
+				});
+				
+				return checkboxGroup;
+			},
             'list': function (data, form) {
                 var span = data.span === undefined ? 12 : data.span;
                 var wrapper = '<div role="list" class="row" id="${id_}" name="${name_}" ${attribute_} >' +
@@ -500,39 +538,6 @@
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
-				/*
-				//==默认添加一组数据start==
-				var hasOne = data.hasOne === undefined ? true : data.hasOne;
-				if(hasOne){
-					var itemWrapper = $('<div class="row">' +
-                        '<div role="s-ele" class="col-md-' + span + ' form-group input-group">' +
-                        '</div>' +
-                        '</div>');
-                    if (data.items != undefined) {
-                        $.each(data.items, function (j, jd) {
-                            var item = form._formEles[jd.type](jd, form);
-							item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
-                            var iWrapper;
-                            if (jd.label != undefined) {
-                                iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
-                            } else {
-                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
-                            }
-                            iWrapper.children('[role=i-ele]').append(item);
-                            itemWrapper.children('[role=s-ele]').append(iWrapper);
-                        });
-                        itemWrapper.children('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
-                        var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
-                        itemWrapper.children().children('[role=s-action]').append(deleteBtn);
-                        deleteBtn.on("click", function () {
-                            itemWrapper.remove();
-                        });
-                        ele.children('[role=ele]').append(itemWrapper);
-                        form._uniform();
-                    }
-				}
-				//==默认添加一组数据end==
-				*/
                 var addBtn = $('<button class="btn btn-sm btn-info" type="button">添加</button>');
                 ele.children('[role=action]').append(addBtn);
                 addBtn.on("click", function () {
@@ -542,16 +547,18 @@
                         '</div>');
                     if (data.items != undefined) {
                         $.each(data.items, function (j, jd) {
-                            var item = form._formEles[jd.type](jd, form);
-							item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
-                            var iWrapper;
-                            if (jd.label != undefined) {
-                                iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
-                            } else {
-                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
-                            }
-                            iWrapper.children('[role=i-ele]').append(item);
-                            itemWrapper.children('[role=s-ele]').append(iWrapper);
+							if(jd.type){
+								var item = form._formEles[jd.type](jd, form);
+								item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
+								var iWrapper;
+								if (jd.label != undefined) {
+									iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
+								} else {
+									iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+								}
+								iWrapper.children('[role=i-ele]').append(item);
+								itemWrapper.children('[role=s-ele]').append(iWrapper);
+							}
                         });
                         itemWrapper.children('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
                         var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
@@ -789,6 +796,7 @@
                             }
                         });
                 }
+				ele.data("data", data);
                 return ele;
 
             },
@@ -857,6 +865,7 @@
                             }
                         });
                 }
+				ele.data("data", data);
                 return ele;
             },
             'datepicker': function (data, form) {
@@ -1462,8 +1471,14 @@
                     '<div role="s-ele" class="col-lg-' + data.span + ' form-group input-group"></div>' +
                     '</div>');
                 if (data.items != undefined) {
-                    if (data.items.length == 1) {
-                        var it = data.items[0];
+					var thisItems = [];
+					$.each(data.items, function (j, jd) {
+							if(jd.type){
+								thisItems.push(jd);
+							}
+					});
+                    if (thisItems.length == 1) {
+                        var it = thisItems[0];
                         var item = that._formEles[it.type](it, that);
                         that._loadValue(it.name, id, item);
                         var iWrapper;
@@ -1475,17 +1490,19 @@
                         iWrapper.find('[role=i-ele]').append(item);
                         itemWrapper.find('[role=s-ele]').append(iWrapper);
                     } else {
-                        $.each(data.items, function (j, jd) {
-                            var item = that._formEles[jd.type](jd, that);
-                            that._loadValue(jd.name, id[jd.name], item);
-                            var iWrapper;
-                            if (jd.label != undefined) {
-                                iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
-                            } else {
-                                iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
-                            }
-                            iWrapper.find('[role=i-ele]').append(item);
-                            itemWrapper.find('[role=s-ele]').append(iWrapper);
+                        $.each(thisItems, function (j, jd) {
+							if(jd.type){
+								var item = that._formEles[jd.type](jd, that);
+								that._loadValue(jd.name, id[jd.name], item);
+								var iWrapper;
+								if (jd.label != undefined) {
+									iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
+								} else {
+									iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+								}
+								iWrapper.find('[role=i-ele]').append(item);
+								itemWrapper.find('[role=s-ele]').append(iWrapper);
+							}
                         });
                     }
                     itemWrapper.find('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
@@ -1722,6 +1739,24 @@
                     ele.val(value);
                 }
             } else if (ele.is('input[type="radio"]')) {
+				var itemsValue ;
+				if(value==='other'){
+					var div =ele.parents('div[class="radio-list"]');
+					var data = div.data("data");
+					var list = this._formEles['list'](data,this);
+					div.parent().append(list);
+					list.data("data",data);
+				}
+				if(value.indexOf(",")!=-1){
+					itemsValue = value.substring(value.indexOf(",")+1);
+					value = value.substring(0,value.indexOf(","));
+					var div =ele.parents('div[class="radio-list"]');
+					var data = div.data("data");
+					var list = this._formEles['list'](data,this);
+					div.parent().append(list);
+					list.data("data",data);
+					this._renderDivList(list, name, itemsValue);
+				}
                 this.$form.find(
                     "input[type='radio'][name='" + name + "'][value='"
                     + value + "']").attr("checked", true);
@@ -1734,6 +1769,23 @@
                             + "'][value='" + values[i] + "']")
                             .attr("checked", true);
                     }
+					var itemsValue ;
+					if(value==='other'){
+						var div =ele.parents('div[class="checkbox-list"]');
+						var data = div.data("data");
+						var list = this._formEles['list'](data,this);
+						div.parent().append(list);
+						list.data("data",data);
+					}
+					if(value.indexOf("other,")!=-1){
+						itemsValue = value.substring(value.indexOf("other,")+6);
+						var div =ele.parents('div[class="checkbox-list"]');
+						var data = div.data("data");
+						var list = this._formEles['list'](data,this);
+						div.parent().append(list);
+						list.data("data",data);
+						this._renderDivList(list, name, itemsValue);
+					}
                 }
             } else if (ele.is('input[type="hidden"]')) {
                 if (value != null && value != "") {

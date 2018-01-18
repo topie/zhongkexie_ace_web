@@ -307,7 +307,7 @@
                                     label: '填空逻辑',
                                     cls: 'input-xxlarge'
                                 }, {
-                                    type: 'text',
+                                    type: 'number',
                                     name: 'score',
                                     id: 'score',
                                     label: '题目分值',
@@ -331,20 +331,7 @@
                                     message: {
                                         required: "请输入选项文本"
                                     },
-                                    items: [
-                                        {
-                                            text: '企业工作处',
-                                            value: 0
-                                        },
-                                        {
-                                            text: '财务处',
-                                            value: 1
-                                        },
-                                        {
-                                            text: '科技部',
-                                            value: 2
-                                        }
-                                    ]
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {
                                     type: 'select',
@@ -358,23 +345,10 @@
                                     message: {
                                         required: "请输入选项文本"
                                     },
-                                    items: [
-                                        {
-                                            text: '工程领域',
-                                            value: 0
-                                        },
-                                        {
-                                            text: '建筑领域',
-                                            value: 1
-                                        },
-                                        {
-                                            text: '信息领域',
-                                            value: 2
-                                        }
-                                    ]
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
                                 },
                                 {
-                                    type: 'text',
+                                    type: 'number',
                                     name: 'sort',
                                     id: 'sort',
                                     label: '排序',
@@ -578,7 +552,7 @@
                                                         required: "请输入选项文本"
                                                     }
                                                 }, {
-                                                    type: 'text',
+                                                    type: 'number',
                                                     name: 'optionRate',
                                                     id: 'optionRate',
                                                     label: '选项系数',
@@ -846,7 +820,7 @@
                                     label: '填空逻辑',
                                     cls: 'input-xxlarge'
                                 }, {
-                                    type: 'text',
+                                    type: 'number',
                                     name: 'score',
                                     id: 'score',
                                     label: '题目分值',
@@ -870,20 +844,7 @@
                                     message: {
                                         required: "请输入选项文本"
                                     },
-                                    items: [
-                                        {
-                                            text: '企业工作处',
-                                            value: 0
-                                        },
-                                        {
-                                            text: '财务处',
-                                            value: 1
-                                        },
-                                        {
-                                            text: '科技部',
-                                            value: 2
-                                        }
-                                    ]
+                                   itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {
                                     type: 'select',
@@ -897,23 +858,10 @@
                                     message: {
                                         required: "请输入选项文本"
                                     },
-                                    items: [
-                                        {
-                                            text: '工程领域',
-                                            value: 0
-                                        },
-                                        {
-                                            text: '建筑领域',
-                                            value: 1
-                                        },
-                                        {
-                                            text: '信息领域',
-                                            value: 2
-                                        }
-                                    ]
+                                   itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
                                 },
                                 {
-                                    type: 'text',
+                                    type: 'number',
                                     name: 'sort',
                                     id: 'sort',
                                     label: '排序',

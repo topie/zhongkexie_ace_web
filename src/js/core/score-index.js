@@ -221,7 +221,7 @@
                                     required: "请输入指标名称"
                                 }
                             }, {
-                                type: 'text',
+                                type: 'number',
                                 name: 'score',
                                 id: 'score',
                                 label: '指标分值',
@@ -233,7 +233,7 @@
                                     required: "请输入分值"
                                 }
                             }, {
-                                type: 'text',
+                                type: 'number',
                                 name: 'sort',
                                 id: 'sort',
                                 label: '排序',
@@ -356,7 +356,7 @@
                                         required: "请输入指标名称"
                                     }
                                 }, {
-                                    type: 'text',
+                                    type: 'number',
                                     name: 'score',
                                     id: 'score',
                                     label: '指标分值',
@@ -368,7 +368,7 @@
                                         required: "请输入指标分值"
                                     }
                                 }, {
-                                    type: 'text',
+                                    type: 'number',
                                     name: 'sort',
                                     id: 'sort',
                                     label: '排序',
