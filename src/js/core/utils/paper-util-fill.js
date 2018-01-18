@@ -47,10 +47,8 @@
                                 it.type = 'text';
                             } else if (item.itemType == 1) {
                                 it.type = 'radioGroup';
-                                it.inline = true;
                             } else if (item.itemType == 2) {
                                 it.type = 'checkboxGroup';
-                                it.inline = true;
                             } else if (item.itemType == 3) {
                                 it.type = 'list';
                                 it.span = 6;
@@ -72,6 +70,7 @@
                             }
                             if (item.itemType == 1 || item.itemType == 2|| item.itemType == 5 || item.itemType == 6) {
                                 it.items = [];
+                                it.inline = true;
                                 $.each(item.items, function (i, op) {
                                     var option = {
                                         'text': op.title,

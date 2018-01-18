@@ -727,7 +727,7 @@
             'checkboxGroup': function (data, form) {
                 var inlineCls = "checkbox-inline";
                 var wrapperTmpl = '<div id="${id_}_cbg" name="${name_}_cbg" ${attribute_} class="checkbox-list"></div>';
-                var checkboxTmpl = '<label class="${inline_}"><input drole="main" name="${name_}" value="${value_}" type="checkbox" ${checked_} ${attribute_} ${disabled_} >${text_}</label>';
+                var checkboxTmpl = '<div class="checkbox ${inline_}"><label><input drole="main" name="${name_}" value="${value_}" type="checkbox" ${checked_} ${attribute_} ${disabled_} >${text_}</label></div>';
                 var ele = $.tmpl(wrapperTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
                     "name_": data.name,
