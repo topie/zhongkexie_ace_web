@@ -13,10 +13,7 @@
             var content = $('<div class="panel-body" >' +
                 '<div class="row">' +
                 '<div class="col-md-12" >' +
-              //  '<div class="panel panel-default" >' +
-              //  '<div class="panel-heading">题库试卷管理</div>' +
                 '<div class="panel-body" id="grid"></div>' +
-               // '</div>' +
                 '</div>' +
                 '</div>' +
                 '</div>');
@@ -184,98 +181,131 @@
                         modal.$body.orangePaperView(js);
                     }
                 }*/
-            ],/*,
+            ],
             tools: [
                 {
-                    text: " 添 加",
+                    text: "导出",
                     cls: "btn btn-primary",
-                    icon: "fa fa-plus",
+                    icon: "fa fa-excle",
                     handle: function (grid) {
                         var modal = $.orangeModal({
-                            id: "add_modal",
-                            title: "添加",
+                            id: "export_excle",
+                            title: "导出",
                             destroy: true
                         }).show();
+						var form ;
+						var currentPaper = 3;
                         var formOpts = {
                             id: "add_form",
                             name: "add_form",
-                            method: "POST",
-                            action: App.href + "/api/core/scorePaper/insert",
                             ajaxSubmit: true,
-                            rowEleNum: 1,
+                            showSubmit: false,
+                            rowEleNum: 2,
                             ajaxSuccess: function () {
                                 modal.hide();
-                                grid.reload();
                             },
-                            submitText: "保存",//保存按钮的文本
                             showReset: true,//是否显示重置按钮
                             resetText: "重置",//重置按钮文本
                             isValidate: true,//开启验证
                             buttons: [{
                                 type: 'button',
+								cls: "btn btn-primary",
+                                text: '查看',
+                                handle: function () {
+									var data = form.getFormSerialize()+"&paperId=3";
+									 $.ajax({
+										url:App.href +"/api/core/scorePaper/getPaperJson",
+										type:"post",
+										dataType: "json",
+										data:data,
+										success: function (data) {
+											if (data.code === 200) {
+												var paper = {};
+												var modal = $.orangeModal({
+													id: "scorePaperView_1",
+													title: "查看",
+													destroy: true
+												}).show();
+												var js = data.data;
+												paper = modal.$body.orangePaperView(js);
+												$.ajax({
+													type: "POST",
+													dataType: "json",
+													data: {
+														paperId: currentPaper
+													},
+													url: App.href + "/api/core/scorePaper/getAnswer",
+													success: function (data) {
+														if (data.code === 200) {
+															paper.loadAnswer(data.data);
+															modal.$body.find('input').each(function(){
+																if($(this).attr('name')!='button')
+																	$(this).attr("disabled","true");
+															});
+														} else {
+															alert(data.message);
+														}
+													},
+													error: function (e) {
+														alert("请求异常。");
+													}
+												});
+											} else {
+												alert(data.message);
+											}
+										},
+										error: function (e) {
+											alert("请求异常。");
+										}
+									});
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '开始导出',
+                                handle: function () {
+                                }
+                            },{
+                                type: 'button',
                                 text: '关闭',
                                 handle: function () {
                                     modal.hide();
-                                    grid.reload();
                                 }
                             }],
                             buttonsAlign: "center",
                             items: [
-                                {
-                                    type: 'text',
-                                    name: 'title',
-                                    id: 'title',
-                                    label: '试卷名称',
-                                    cls: 'input-large',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入试卷名称"
-                                    }
-                                }, {
-                                    type: 'datepicker',
-                                    name: 'begin',
-                                    id: 'begin',
-                                    label: '开始时间',
-                                    config: {
-                                        timePicker: true,
-                                        singleDatePicker: true,
-                                        locale: {
-                                            format: 'YYYY-MM-DD HH:mm:ss'
-                                        }
-                                    },
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请选择开始时间"
-                                    }
-                                }, {
-                                    type: 'datepicker',
-                                    name: 'end',
-                                    id: 'end',
-                                    label: '结束时间',
-                                    config: {
-                                        timePicker: true,
-                                        singleDatePicker: true,
-                                        locale: {
-                                            format: 'YYYY-MM-DD HH:mm:ss'
-                                        }
-                                    },
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请选择结束时间"
-                                    }
-                                }
+								{
+									type: 'tree',//类型
+									name: 'orgIds',
+									id: 'orgIds',//id
+									label: '机构',//左边label
+									url: App.href + "/api/core/dept/tree",
+									expandAll: true,
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"}
+								},
+								{
+									type: 'tree',//类型
+									name: 'indexIds',
+									id: 'indexIds',//id
+									label: '指标',//左边label
+									url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
+									expandAll: true,
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"}
+								},
+									
+                                
                             ]
                         };
-                        modal.$body.orangeForm(formOpts);
+                         form = modal.$body.orangeForm(formOpts);
+						  
+						
                     }
                 }
-            ],*/
+            ],
             search: {
                 rowEleNum: 2,
                 //搜索栏元素

@@ -113,6 +113,9 @@
         reset: function () {
             this._reset();
         },
+		getFormSerialize: function () {
+            return this.$form.serialize();
+        },
         setValue: function (name, value) {
             this._loadValue(name, value)
         },
