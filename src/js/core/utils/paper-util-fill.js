@@ -58,17 +58,17 @@
                                         name: item.id
                                     }
                                 ]
-                            }else if (item.itemType == 4) {
+                            } else if (item.itemType == 4) {
                                 it.type = 'number';
                                 it.inline = true;
-                            }else if (item.itemType == 5) {
+                            } else if (item.itemType == 5) {
                                 it.type = 'radio_input';
                                 it.span = 6;
-                            }else if (item.itemType == 6) {
+                            } else if (item.itemType == 6) {
                                 it.type = 'checkbox_input';
                                 it.span = 6;
                             }
-                            if (item.itemType == 1 || item.itemType == 2|| item.itemType == 5 || item.itemType == 6) {
+                            if (item.itemType == 1 || item.itemType == 2 || item.itemType == 5 || item.itemType == 6) {
                                 it.items = [];
                                 it.inline = true;
                                 $.each(item.items, function (i, op) {
@@ -176,9 +176,9 @@
                         var pss = ppss.split('=');
                         if (pss.length == 2) {
                             if (tmpAs[pss[0] + ''] === undefined) {
-                                tmpAs[pss[0] + ''] = pss[1];
+                                tmpAs[pss[0] + ''] = decodeURI(pss[1]);
                             } else {
-                                tmpAs[pss[0] + ''] = tmpAs[pss[0] + ''] + "," + pss[1];
+                                tmpAs[pss[0] + ''] = decodeURI(tmpAs[pss[0] + ''] + "," + pss[1]);
                             }
                         }
                     });
@@ -233,7 +233,7 @@
                 function () {
                     var id = $(this).parent().parent().attr("id");
                     var ps = $(this).serialize().split('=');
-                    if (ps.length > 0 && ps[1] !== ''&& ps[1]!=undefined) {//TODO 空字符串输入
+                    if (ps.length > 0 && ps[1] !== '' && ps[1] != undefined) {//TODO 空字符串输入
                         that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
                     }
                 }
