@@ -248,9 +248,9 @@
                 var pss = ppss.split('=');
                 if (pss.length === 2) {
                     if (tmpAs[pss[0] + ''] === undefined) {
-                        tmpAs[pss[0] + ''] = pss[1];
+                        tmpAs[pss[0] + ''] = decodeURI(pss[1]);
                     } else {
-                        tmpAs[pss[0] + ''] = tmpAs[pss[0] + ''] + "," + pss[1];
+                        tmpAs[pss[0] + ''] = decodeURI(tmpAs[pss[0] + ''] + "," + pss[1]);
                     }
                 }
             });
