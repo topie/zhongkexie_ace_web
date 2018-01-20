@@ -283,7 +283,8 @@
 									expandAll: true,
 									autoParam: ["id", "name", "pId"],
 									chkStyle: "checkbox",
-									chkboxType:{"Y": "ps", "N": "s"}
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false
 								},
 								{
 									type: 'tree',//类型
@@ -294,7 +295,8 @@
 									expandAll: true,
 									autoParam: ["id", "name", "pId"],
 									chkStyle: "checkbox",
-									chkboxType:{"Y": "ps", "N": "s"}
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false
 								},
 									
                                 
