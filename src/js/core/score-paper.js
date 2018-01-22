@@ -310,7 +310,120 @@
                     text: "复制",
                     cls: "btn-warning btn-sm",
                     handle: function (index, data) {
-                    	bootbox.alert("开发中");
+                    	var title = "复制“"+data.title+"”生成新评价表";
+						var paperId = data.id;
+						var modal = $.orangeModal({
+                            id: "copy_modal",
+                            title: title,
+                            destroy: true
+                        }).show();
+                        var formOpts = {
+                            id: "copy_form",
+                            name: "copy_form",
+                            method: "POST",
+                            action: App.href + "/api/core/scorePaper/insert",
+                            ajaxSubmit: true,
+                            rowEleNum: 1,
+                            ajaxSuccess: function () {
+                                modal.hide();
+                                grid.reload();
+                            },
+                            submitText: "复制保存",//保存按钮的文本
+                            showReset: true,//是否显示重置按钮
+                            resetText: "重置",//重置按钮文本
+                            isValidate: true,//开启验证
+                            buttons: [{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal.hide();
+                                    grid.reload();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+                                {
+                                    type: 'hidden',
+                                    name: 'copyPaperId',
+                                    id: 'copyPaperId',
+                                    label: '复制评价表ID',
+                                    cls: 'input-xxlarge',
+									value:paperId
+                                },{
+                                    type: 'display',
+                                    label: '复制评价表',
+                                    cls: 'input-xxlarge',
+									html:data.title
+                                },{
+                                    type: 'text',
+                                    name: 'title',
+                                    id: 'title',
+                                    label: '新评价表名称',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入评价表名称"
+                                    }
+                                }, {
+                                    type: 'datepicker',
+                                    name: 'begin',
+                                    id: 'begin',
+                                    label: '开始时间',
+                                    cls: 'input-xlarge',
+                                    config: {
+                                        timePicker: true,
+                                        singleDatePicker: true,
+                                        locale: {
+                                            format: 'YYYY-MM-DD HH:mm:ss'
+                                        }
+                                    },
+                                    rule: {
+                                        required: true,
+										remote:{type:"GET",
+										   url:App.href+"/api/core/util/dateEqual",             //servlet
+										   data:{
+											 start:function(){return $("#begin").val();},
+											 end:function(){return $("#end").val();}
+										   } 
+										}
+                                    },
+                                    message: {
+                                        required: "请选择开始时间",
+										remote:"开始时间不能大于结束时间"
+                                    }
+                                }, {
+                                    type: 'datepicker',
+                                    name: 'end',
+                                    id: 'end',
+                                    label: '结束时间',
+                                    cls: 'input-xlarge',
+                                    config: {
+                                        timePicker: true,
+                                        singleDatePicker: true,
+                                        locale: {
+                                            format: 'YYYY-MM-DD HH:mm:ss'
+                                        }
+                                    },
+                                    rule: {
+                                        required: true,
+										remote:{type:"GET",
+										   url:App.href+"/api/core/util/dateEqual",             //servlet
+										   data:{
+											 start:function(){return $("#begin").val();},
+											 end:function(){return $("#end").val();}
+										   } 
+										}
+                                    },
+                                    message: {
+                                        required: "请选择结束时间",
+										remote:"结束时间不能小于开始时间"
+                                    }
+                                }
+                            ]
+                        };
+                        modal.$body.orangeForm(formOpts);
                     }
                 }
 				,{
@@ -543,7 +656,7 @@
                                     name: 'title',
                                     id: 'title',
                                     label: '评价表名称',
-                                    cls: 'input-large',
+                                    cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
