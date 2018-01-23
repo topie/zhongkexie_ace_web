@@ -27,7 +27,7 @@
      */
     App.download = function (href) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', ".." + href, true);
+        xhr.open('GET', href, true);
         xhr.responseType = 'arraybuffer';
         xhr.onload = function () {
             if (this.status === 200) {

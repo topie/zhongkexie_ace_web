@@ -454,11 +454,13 @@
                         if (data.code === 200) {
                             tree.reAsyncChildNodes(null, "refresh");
                         } else {
-                            alert(data.message);
+                            bootbox.alert(data.message);
+							return false;
                         }
                     },
                     error: function (e) {
                         alert("请求异常。");
+						return false;
                     }
                 });
             }
@@ -472,6 +474,7 @@
                     $.ajax({
                         type: "GET",
                         dataType: "json",
+						async:false,
                         data: {
                             id: treeNode.id
                         },
@@ -479,15 +482,17 @@
                         success: function (data) {
                             if (data.code === 200) {
                                 grid.reload();
+								tree.reAsyncChildNodes(null, "refresh");
                             } else {
-                                alert(data.message);
+                                bootbox.alert(data.message);
+								tree.reAsyncChildNodes(null, "refresh");
                             }
                         },
                         error: function (e) {
                             alert("请求异常。");
+                            tree.reAsyncChildNodes(null, "refresh");
                         }
                     });
-                    return true;
                 } else {
                     return false;
                 }

@@ -264,6 +264,8 @@
 								cls: "btn btn-primary",
                                 text: '开始导出',
                                 handle: function () {
+									var data = form.getFormSerialize()+"&paperId=3";
+									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data)
                                 }
                             },{
                                 type: 'button',
