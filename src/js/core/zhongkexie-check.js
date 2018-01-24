@@ -194,7 +194,7 @@
                             destroy: true
                         }).show();
 						var form ;
-						var currentPaper = 3;
+						var currentPaper = 2;
                         var formOpts = {
                             id: "add_form",
                             name: "add_form",
@@ -212,7 +212,7 @@
 								cls: "btn btn-primary",
                                 text: '查看',
                                 handle: function () {
-									var data = form.getFormSerialize()+"&paperId=3";
+									var data = form.getFormSerialize()+"&paperId="+currentPaper;
 									 $.ajax({
 										url:App.href +"/api/core/scorePaper/getPaperJson",
 										type:"post",
@@ -264,7 +264,7 @@
 								cls: "btn btn-primary",
                                 text: '开始导出',
                                 handle: function () {
-									var data = form.getFormSerialize()+"&paperId=3";
+									var data = form.getFormSerialize()+"&paperId="+currentPaper;
 									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data)
                                 }
                             },{
