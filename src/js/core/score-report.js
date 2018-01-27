@@ -246,7 +246,30 @@
                             }
                         });
                     }
-                },
+                },{
+                    text: "查看意见",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        $.ajax({
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id
+                            },
+                            url: App.href + "/api/core/scorePaper/getFeedback",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                  bootbox.alert(data.data.feedback);
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                },     
 				{
                     text: "提交",
                     cls: "btn-primary btn-sm",

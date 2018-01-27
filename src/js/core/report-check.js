@@ -138,6 +138,29 @@
                             }
                         });
                     }
+                }, {
+                    text: "查看意见",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        $.ajax({
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id
+                            },
+                            url: App.href + "/api/core/scorePaper/getFeedback",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                  bootbox.alert(data.data.feedback);
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
                 },             
                 {
                     text: "上报",
@@ -183,29 +206,41 @@
 						return false;
 					},
                     handle: function (index, data) {
-						bootbox.confirm("确认驳回?", function (result) {
-							if (result) {
-								var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
-								$.ajax({
-									type: "GET",
-									dataType: "json",
-									data: {
-										id: data.id,
-										result:3
-									},
-									url: requestUrl,
-									success: function (data) {
-										if (data.code === 200) {
-											grid.reload();
-											bootbox.alert("已驳回，请联系填报员进行修改！");
-										} else {
-											bootbox.alert(data.message);
-										}
-									},
-									error: function (e) {
-										alert("请求异常。");
+						bootbox.prompt(
+							{
+								title: "请填写驳回原因：",
+								inputType: 'textarea',
+								callback: function (result) {
+									if(result==null){
+										return true;
 									}
-								});
+									var fb = result;
+									if(result==""){
+										bootbox.alert("请填写原因！");
+										return false;
+									}
+									var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
+									$.ajax({
+										type: "GET",
+										dataType: "json",
+										data: {
+											id: data.id,
+											result:3,
+											feedback:fb
+										},
+										url: requestUrl,
+										success: function (data) {
+											if (data.code === 200) {
+												grid.reload();
+												bootbox.alert("已驳回，请联系填报员进行修改！");
+											} else {
+												bootbox.alert(data.message);
+											}
+										},
+										error: function (e) {
+											alert("请求异常。");
+										}
+									});
 							}
 						});
                     }

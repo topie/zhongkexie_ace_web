@@ -139,6 +139,13 @@
                     } else if (item.itemType == 3) {
                         it.type = 'list';
 						hasList = true;
+						it.span = 6;
+						it.items = [
+							{
+								type: 'text',
+								name: item.id
+							}
+						]
                     } else if (item.itemType == 4) {
                         it.type = 'number';
                     }
@@ -162,15 +169,6 @@
 					if(item.itemType==5|| item.timeType==6){
 						it.span = 6;
 					}
-					if (item.itemType == 3) {
-						it.span = 6;
-						it.items = [
-							{
-								type: 'text',
-								name: item.id
-							}
-						]
-                    }
                     if (item.value != undefined && item.value != '') {
                         it.value = item.value;
                     }

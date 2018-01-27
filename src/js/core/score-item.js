@@ -349,12 +349,7 @@
                                     id: 'relatedField',
                                     label: '相关领域',
                                     cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入选项文本"
-                                    },
+                                    
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
                                 },
                                 {

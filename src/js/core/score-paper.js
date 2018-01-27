@@ -109,6 +109,7 @@
                         }).show();
                         var js = JSON.parse(data.contentJson);
                         paper = modal.$body.orangePaperView(js);
+						paper.loadAnswer({});
                     }
                 },
                 {
