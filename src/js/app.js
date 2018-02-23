@@ -33,11 +33,13 @@
             if (this.status === 200) {
                 var filename = "";
                 var disposition = xhr.getResponseHeader('Content-Disposition');
+				//console.log(disposition);
                 if (disposition && disposition.indexOf('attachment') !== -1) {
                     var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                     var matches = filenameRegex.exec(disposition);
                     if (matches != null && matches[1]) {
                         filename = matches[1].replace(/['"]/g, '');
+						filename = decodeURI(filename);
                     }
                 }
                 var type = xhr.getResponseHeader('Content-Type');
