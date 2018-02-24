@@ -303,7 +303,12 @@
         var location = window.location.href;
         var url = location.substring(location.lastIndexOf("?u=") + 3);
         if (location.lastIndexOf("?u=") > 0 && url != undefined && $.trim(url) != "") {
-            var title = App.menusMapping[url];
+           
+        } else {
+            //window.location.href = App.href + "/index.html?u=/api/index";
+			url="/api/index";
+        }
+		 var title = App.menusMapping[url];
             var f = App.requestMapping[url];
             var a = $(ul).find("a[data-url='" + url + "']");
             var li1 = a.parent('li');
@@ -325,9 +330,6 @@
             } else {
                 loadCommonMenu(url, title);
             }
-        } else {
-            window.location.href = App.href + "/index.html?u=/api/index";
-        }
 
     };
 
@@ -372,7 +374,7 @@ App.menu.userOption = {
                 name: 'id',
                 id: 'id'
             }, {
-                type: 'text',//类型
+                type: 'display',//类型
                 name: 'displayName',//name
                 id: 'displayName',//id
                 label: '昵称',//左边label

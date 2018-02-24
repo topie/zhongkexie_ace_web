@@ -151,7 +151,20 @@
                             url: App.href + "/api/core/scorePaper/getFeedback",
                             success: function (data) {
                                 if (data.code === 200) {
-                                  bootbox.alert(data.data.feedback);
+									if(data.data===null){
+										bootbox.alert("没有意见");
+										return ;
+									}
+									if(data.data.feedback===null){
+										bootbox.alert("没有意见");
+										return ;
+									} 
+									if(data.data.feedback=='' ){
+										bootbox.alert("没有意见");
+										return ;
+									}
+									bootbox.alert(data.data.feedback);
+									
                                 } else {
                                     alert(data.message);
                                 }

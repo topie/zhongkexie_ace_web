@@ -75,13 +75,13 @@
             actionColumnWidth: "20%",
             actionColumns: [
 				{
-                    text: "预览",
+                    text: "查看",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
-                            title: "预览",
+                            title: "查看-"+data.userName,
                             destroy: true
                         }).show();
                         var js = JSON.parse(data.contentJson);
@@ -114,7 +114,7 @@
                     text: "评价",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
-                      bootbox.alert("正努力开发中");
+                      bootbox.alert("正努力开发中。。");
 					}
                 }/*,             
                 {
@@ -181,20 +181,19 @@
                         modal.$body.orangePaperView(js);
                     }
                 }*/
-            ],
-            tools: [
-                {
+				,{
                     text: "导出",
-                    cls: "btn btn-primary",
+                    cls: " btn-primary btn-sm",
                     icon: "fa fa-excle",
-                    handle: function (grid) {
+                    handle: function (index,griddata) {
                         var modal = $.orangeModal({
                             id: "export_excle",
                             title: "导出",
                             destroy: true
                         }).show();
 						var form ;
-						var currentPaper = 2;
+						var currentPaper = griddata.id;
+						var currentU = griddata.userName;
                         var formOpts = {
                             id: "add_form",
                             name: "add_form",
@@ -207,7 +206,7 @@
                             showReset: true,//是否显示重置按钮
                             resetText: "重置",//重置按钮文本
                             isValidate: true,//开启验证
-                            buttons: [{
+                            buttons: [/*{
                                 type: 'button',
 								cls: "btn btn-primary",
                                 text: '查看',
@@ -259,7 +258,7 @@
 										}
 									});
                                 }
-                            },{
+                            },*/{
                                 type: 'button',
 								cls: "btn btn-primary",
                                 text: '开始导出',
@@ -309,6 +308,9 @@
 						
                     }
                 }
+            ],
+            tools: [
+                
             ],
             search: {
                 rowEleNum: 2,
