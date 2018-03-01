@@ -353,6 +353,26 @@
                 "label_": item.label === undefined ? "" : item.label
             });
             wrapper.find(".form-group").append(label);
+			if(item.itemActions!==undefined && item.itemActions.length>0){
+				$.each(item.itemActions, function (i, button) {
+                    var btn = $.tmpl(Form.statics.buttonTmpl, {
+                        "type_": button.type === undefined ? "button"
+                            : button.type,
+                        "attribute_": button.attribute === undefined ? ""
+                            : button.attribute,
+                        "cls_": button.cls === undefined ? "btn-default "
+                            : button.cls,
+                        "text_": button.text
+                    });
+                    if (button.handle !== undefined) {
+                        btn.on("click", function () {
+                            button.handle(item,label);
+                        });
+                    }
+                    label.after(btn);
+                    label.after("&nbsp;");
+                });
+			}
             var help;
             if (item.detail !== undefined) {
                 help = $.tmpl(Form.statics.blockSpanTmpl, {

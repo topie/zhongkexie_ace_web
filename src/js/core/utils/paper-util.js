@@ -101,7 +101,9 @@
     ];
     PaperView.defaults = {
         title: '',
-        data: []
+        data: [],
+		itemActions:[],
+		showSocre:false
     };
     PaperView.prototype = {
         load: function () {
@@ -128,8 +130,13 @@
 				var hasList = false;
                 $.each(items, function (i, item) {
                     var it = {};
+					it.itemActions = that._options.itemActions;
                     it.name = item.id;
                     it.label = item.title;
+                    it.score = item.score;
+					if(that._options.showSocre){
+						it.label = item.title+"（"+item.score+"分）";
+					}
                     if (item.itemType == 0) {
                         it.type = 'text';
                     } else if (item.itemType == 1) {
@@ -249,6 +256,31 @@
             );
             return answers;
         },
+			
+		loadReals: function (reals) {
+            var that = this;
+            $.each(reals, function (i, an) {
+                that.loadReal(an.itemId, an.answerReal);
+            });
+        },
+		loadReal:function(name, value){
+			var ele = this.$main.find("[name='" + name + "']");
+			var label = ele.parents(".form-group").find(".control-label");
+			if(value===false){
+				label.after('<label class="realmarker" style="color:red">(已标记为虚假)</label>');
+			}
+		},
+		loadScores: function (reals) {
+            var that = this;
+            $.each(reals, function (i, an) {
+                that.loadScore(an.itemId, an.answerScore);
+            });
+        },
+		loadScore:function(name, value){
+			var ele = this.$main.find("[name='" + name + "']");
+			var label = ele.parents(".form-group").find(".control-label");
+			label.after('<label class="anserScore" style="color:blue">(得分：'+value+')</label>');
+		},
         loadAnswer: function (ans) {
             var that = this;
             $.each(ans, function (i, an) {

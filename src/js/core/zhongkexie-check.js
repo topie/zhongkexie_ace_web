@@ -111,76 +111,189 @@
                         });
                     }
                 },{
-                    text: "评价",
+                    text: "专家评价",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
-                      bootbox.alert("正努力开发中。。");
-					}
-                }/*,             
-                {
-                    text: "通过",
-                    cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
-                    	var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
-                    	$.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result:1
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
-                    }
-                }, {
-                    text: "驳回",
-                    cls: "btn-danger btn-sm",
-                    handle: function (index, data) {
-                    	var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
-                    	$.ajax({
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                id: data.id,
-                                result:2
-                            },
-                            url: requestUrl,
-                            success: function (data) {
-                                if (data.code === 200) {
-                                    grid.reload();
-                                } else {
-                                    alert(data.message);
-                                }
-                            },
-                            error: function (e) {
-                                alert("请求异常。");
-                            }
-                        });
-                    }
-                }, {
-                    text: "预览",
-                    cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
+                        var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
-                            title: "预览",
+                            title: "专家评价-"+data.userName,
                             destroy: true
-                        });
-                        modal.show();
+                        }).show();
                         var js = JSON.parse(data.contentJson);
-                        modal.$body.orangePaperView(js);
+
+						js.showSocre=true;
+						js.itemActions=[
+							{
+								text: "评分",
+								cls: "btn-info btn-sm",
+								handle: function ( item,label) {
+									var score = item.score;
+									bootbox.prompt({
+										title: "请评价最终得分：",
+										inputType: 'number',
+										callback: function (result) {
+											if(result==null || result==''){
+												return;
+											}
+											var sc=result;
+											if(parseInt(sc)>parseInt(score)){
+												bootbox.alert("分数不能大于总分数！");
+												return false;
+											}
+											if(parseInt(sc)<0){
+												bootbox.alert("分数不能为负数！");
+												return false;
+											}
+											$.ajax({
+												type: "POST",
+												dataType: "json",
+												data: {
+													paperId: data.id,
+													userId:data.userId,
+													itemId:item.name,
+													answerScore:sc
+												},
+												url: App.href + "/api/core/scorePaper/updateAnswerScore",
+												success: function (data) {
+													if (data.code === 200) {
+														var tab = label.parent().find("label.anserScore");
+														if(tab.length>0)tab.remove();
+														label.after('<label class="anserScore" style="color:blue">(得分：'+sc+')</label>');
+													} else {
+														bootbox.alert(data.message);
+													}
+												},
+												error: function (e) {
+													alert("请求异常。");
+												}
+											});
+										}
+									});
+									
+								}
+							},{
+								text: "取消虚假标记",
+								cls: "btn-info btn-sm",
+								attribute:'role=realinfo',
+								handle: function ( item,label) {
+
+									$.ajax({
+										type: "POST",
+										dataType: "json",
+										data: {
+											paperId: data.id,
+											userId:data.userId,
+											itemId:item.name,
+											answerReal:true
+										},
+										url: App.href + "/api/core/scorePaper/updateAnswerReal",
+										success: function (data) {
+											if (data.code === 200) {
+												var tab = label.parent().find("label.realmarker");
+												if(tab.length>0)tab.remove();
+												label.after('<label class="realmarker" style="color:red">(已取消)</label>');
+											} else {
+												alert(data.message);
+											}
+										},
+										error: function (e) {
+											alert("请求异常。");
+										}
+									});
+								}
+							},
+							{
+								text: "信息虚假",
+								cls: "btn-primary btn-sm",
+								attribute:'role=realinfo',
+								handle: function ( item,label) {
+									 $.ajax({
+										type: "POST",
+										dataType: "json",
+										data: {
+											paperId: data.id,
+											userId:data.userId,
+											itemId:item.name,
+											answerReal:false
+										},
+										url: App.href + "/api/core/scorePaper/updateAnswerReal",
+										success: function (data) {
+											if (data.code === 200) {
+												var tab = label.parent().find("label.realmarker");
+												if(tab.length>0)tab.remove();
+												label.after('<label class="realmarker" style="color:red">(已标记为虚假)</label>');
+											} else {
+												alert(data.message);
+											}
+										},
+										error: function (e) {
+											alert("请求异常。");
+										}
+									});
+								}
+							}
+						];
+                        paper = modal.$body.orangePaperView(js);
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id,
+								userId:data.userId
+                            },
+                            url: App.href + "/api/core/scorePaper/getAnswer",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    paper.loadAnswer(data.data);
+                                    modal.$body.find('input').each(function(){
+										if($(this).attr('name')!='button')
+											$(this).attr("disabled","true");
+									});
+									
+                                    paper.loadReals(data.data);
+									paper.loadScores(data.data);
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
                     }
-                }*/
+                }, {
+                    text: "退回",
+                    cls: "btn-danger btn-sm",
+                    handle: function (index, data) {
+						bootbox.confirm("确定退回到填报员？",function(res){
+							if(res){
+								var requestUrl = App.href + "/api/core/scorePaper/reportBack";
+								$.ajax({
+									type: "GET",
+									dataType: "json",
+									data: {
+										id: data.id,
+										userId:data.userId
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+										} else {
+											alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+							return;
+						})
+                    	
+                    }
+                }
 				,{
                     text: "导出",
                     cls: " btn-primary btn-sm",
