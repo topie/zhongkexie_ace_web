@@ -280,8 +280,9 @@
 									success: function (data) {
 										if (data.code === 200) {
 											grid.reload();
+											bootbox.alert("已成功退回,请联系填报员！");
 										} else {
-											alert(data.message);
+											bootbox.alert("错误："+data.message);
 										}
 									},
 									error: function (e) {

@@ -15,3 +15,12 @@
 .user-info{max-width:200px}
 .selected_info{color:red;}
 .checkbox, .radio {margin-top: 0px;}
+
+.spinbox-buttons.btn-group-vertical>.btn{
+	font-size: 10px;
+    padding: 0;
+    width: 22px;
+    height: 16px;
+    line-height: 8px;
+    margin-left: 0;
+}

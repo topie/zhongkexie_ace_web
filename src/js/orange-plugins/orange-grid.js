@@ -1686,7 +1686,8 @@
                                 p.find('p').css("cursor", "pointer");
                                 p.find('p').css("color", "red");
                                 p.find('p').on("click", function () {
-                                    column.dataClick(num, grid);
+									$this = $(this);
+									column.dataClick(num, grid,$this);
                                 })
                             }
                         });
@@ -1798,7 +1799,8 @@
                                 p.find('p').css("cursor", "pointer");
                                 p.find('p').css("color", "red");
                                 p.find('p').on("click", function () {
-                                    column.dataClick(num, grid);
+									$this = $(this);
+									column.dataClick(num, grid,$this);
                                 })
                             }
                         });
@@ -1994,7 +1996,8 @@
                         td.css("cursor", "pointer");
                         td.css("color", "red");
                         td.on("click", function () {
-                            column.dataClick(num, grid);
+							$this = $(this);
+                            column.dataClick(num, grid,$this);
                         })
                     }
                 });

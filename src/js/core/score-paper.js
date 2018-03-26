@@ -52,6 +52,10 @@
                     title: "评价表名称",
                     field: "title",
                     sort: true
+                },{
+                    title: "总分数",
+                    field: "score",
+                    sort: true
                 }, {
                     title: "开始时间",
                     field: "begin",
@@ -168,6 +172,18 @@
                                     },
                                     message: {
                                         required: "请输入评价表名称"
+                                    }
+                                }, {
+                                    type: 'number',
+                                    name: 'socre',
+                                    id: 'socre',
+                                    label: '总分数',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入评价表总分数"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -663,6 +679,18 @@
                                     },
                                     message: {
                                         required: "请输入评价表名称"
+                                    }
+                                }, {
+                                    type: 'number',
+                                    name: 'socre',
+                                    id: 'socre',
+                                    label: '总分数',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入评价表总分数"
                                     }
                                 }, {
                                     type: 'datepicker',
