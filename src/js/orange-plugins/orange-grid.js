@@ -2370,7 +2370,9 @@
                 this._options = $.extend(true, {}, this._options, options);
                 this._setOptions(this._options, this);
             }
+			this.$element.find('div[role="alert"]').remove();
             this._load();
+
         }
     };
 

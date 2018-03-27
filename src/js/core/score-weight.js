@@ -127,6 +127,7 @@
             showCheck: true,//是否显示checkbox
             checkboxWidth: "3%",
             showIndexNum: true,
+			showPaging:false,
             indexNumWidth: "5%",
             pageSelect: [2, 10, 15, 30, 50],
             columns: [
@@ -157,7 +158,8 @@
                     field: "score",
                     sort: true
                 }
-            ]
+            ],
+			afterInit:afterInit
            
         };
         grid = window.App.content.find("#grid").orangeGrid(options);
@@ -173,6 +175,7 @@
             showCheck: true,//是否显示checkbox
             checkboxWidth: "3%",
             showIndexNum: true,
+			showPaging:false,
             indexNumWidth: "5%",
             pageSelect: [2, 15, 30, 50],
             columns: [
@@ -198,7 +201,8 @@
                     field: "score",
                     sort: true
                 }
-            ]
+            ],
+			afterInit:afterInit
 		};
         var setting = {
             async: {
@@ -422,6 +426,17 @@
 						});*/
 
 		};
+		function afterInit(grid){
+			var data = grid._data.data;
+			var weight = 0;
+			$.each(data,function(num,content){
+				weight+=content.weight;
+			})
+			if(weight!=100){
+				grid.alert('权重之和为：'+weight+'%，请检查并修改为100%');
+			}
 		}
+
+	}
 
 })(jQuery, window, document);

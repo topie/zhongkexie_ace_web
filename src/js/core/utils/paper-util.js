@@ -257,17 +257,22 @@
             return answers;
         },
 			
-		loadReals: function (reals) {
+		loadReals: function (reals,text) {
             var that = this;
             $.each(reals, function (i, an) {
-                that.loadReal(an.itemId, an.answerReal);
+                that.loadReal(an.itemId, an.answerReal,text);
             });
         },
-		loadReal:function(name, value){
+		loadReal:function(name, value,text){
+			if(text){
+				
+			}else{
+				text='已标记为虚假';
+			}
 			var ele = this.$main.find("[name='" + name + "']");
 			var label = ele.parents(".form-group").find(".control-label");
 			if(value===false){
-				label.after('<label class="realmarker" style="color:red">(已标记为虚假)</label>');
+				label.after('<label class="realmarker" style="color:red">('+text+')</label>');
 			}
 		},
 		loadScores: function (reals) {
