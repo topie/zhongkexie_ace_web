@@ -747,6 +747,56 @@
                 }
                 return ele;
             },
+			'select2': function (data, form) {
+
+				var selectTmpl = '<select multiple="multiple" id="${id_}" name="${name_}" ${attribute_} ${disabled_} class="select2 ${cls_}" data-placeholder="${placeholder_}" tabindex="-1" aria-hidden="true"></select>';
+                var optionTmpl = '<option value=${value_} ${selected}>${text_}</option>';
+                var ele = $.tmpl(selectTmpl, {
+                    "id_": (data.id === undefined ? data.name : data.id),
+                    "name_": data.name,
+                    "cls_": data.cls === undefined ? "" : data.cls,
+                    "disabled_": (data.disabled ? "disabled" : ""),
+                    "attribute_": (data.attribute === undefined ? ""
+                        : data.attribute),
+					"placeholder_": (data.placeholder === undefined ? ""
+                        : data.placeholder)
+                });
+                if (data.items !== undefined && data.items.length > 0) {
+                    $.each(data.items, function (i, option) {
+                        var opt = $.tmpl(optionTmpl, {
+                            "value_": option.value,
+                            "text_": option.text,
+                            "selected": (option.selected ? "selected" : "")
+                        });
+                        ele.append(opt);
+                    });
+                }
+                if (data.itemsUrl !== undefined) {
+					var methodType="GET";
+					if(data.methodType){
+						methodType = data.methodType;
+					}
+                    $.ajax({
+                        type: methodType,
+                        dataType: "json",
+                        async: data.async ? true : false,
+                        url: data.itemsUrl,
+                        success: function (options) {
+                            $.each(options, function (i, option) {
+                                var opt = $.tmpl(optionTmpl, {
+                                    "value_": option.value,
+                                    "text_": option.text,
+                                    "selected": (option.selected ? "selected"
+                                        : "")
+                                });
+                                ele.append(opt);
+                            });
+                        }
+                    });
+                }
+
+                return ele;
+            },
             'checkboxGroup': function (data, form) {
                 var inlineCls = "checkbox-inline";
                 var wrapperTmpl = '<div id="${id_}_cbg" name="${name_}_cbg" ${attribute_} class="checkbox-list"></div>';
@@ -1198,6 +1248,8 @@
                 var chkboxType = data.chkboxType === undefined ? {"Y": "p", "N": "p"} : data.chkboxType;
                 var beforeCheck = data.beforeCheck === undefined ? function () {
                 } : data.beforeCheck;
+				var onAsyncSuccess = data.onAsyncSuccess === undefined ? function () {
+                } : data.onAsyncSuccess;
                 var setting = {
                     check: {
                         enable: (data.checkable === undefined ? true : data.checkable),
@@ -1257,6 +1309,7 @@
                             }
                             zTree.expandAll(data.expandAll === undefined ? false
                                 : data.expandAll);
+							onAsyncSuccess(zTree);
                         }
                     }
                 };
@@ -1287,12 +1340,13 @@
         },
         _uniform: function () {
             var that = this;
-            if (this._options.select2 && $().select2) {
-                var selects = this.$form.find("select");
+            if ($().select2) {
+                var selects = this.$form.find(".select2");
                 if (selects.size() > 0) {
                     selects.each(function () {
                         $(this).select2({
-                            width: "100%"
+                            width: "70%",
+							theme:"default"
                         });
                     });
                 }
@@ -1857,7 +1911,11 @@
                     }
                 }
             } else if (ele.is('select')) {
-                ele.val(value);
+				if(ele.is('.select2')){
+					ele.select2().val(value.split(",")).trigger('change');
+				}else{
+					ele.val(value);
+				}
             } else if (ele.is('textarea')) {
                 if (ele.attr("role") == "kindEditor") {
                     ele.text(value);

@@ -1,5 +1,5 @@
 /**
- * Created by chenguojun on 2017/2/10.
+ * 
  */
 (function ($, window, document, undefined) {
     var mapping = {
@@ -420,7 +420,7 @@
 									chkStyle: "checkbox",
 									chkboxType:{"Y": "ps", "N": "s"},
 									expandAll:false
-								},
+								}
 									
                                 
                             ]

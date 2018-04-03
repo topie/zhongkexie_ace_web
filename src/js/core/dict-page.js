@@ -1,5 +1,5 @@
 /**
- * Created by chenguojun on 2017/2/10.
+ *
  */
 (function ($, window, document, undefined) {
     var mapping = {

@@ -1,5 +1,5 @@
 /**
- * Created by chenguojun on 2017/2/10.
+ * .
  */
 (function ($, window, document, undefined) {
     var mapping = {
@@ -10,6 +10,7 @@
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
+			
             var content = $('<div class="panel-body" >' +
                 '<div class="row">' +
                 '<div class="col-md-12" >' +
