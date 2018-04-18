@@ -175,8 +175,8 @@
                                     }
                                 }, {
                                     type: 'number',
-                                    name: 'socre',
-                                    id: 'socre',
+                                    name: 'score',
+                                    id: 'score',
                                     label: '总分数',
                                     cls: 'input-xxlarge',
                                     rule: {
@@ -382,6 +382,18 @@
                                     },
                                     message: {
                                         required: "请输入评价表名称"
+                                    }
+                                }, {
+                                    type: 'number',
+                                    name: 'score',
+                                    id: 'score',
+                                    label: '总分数',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入评价表总分数"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -682,8 +694,8 @@
                                     }
                                 }, {
                                     type: 'number',
-                                    name: 'socre',
-                                    id: 'socre',
+                                    name: 'score',
+                                    id: 'score',
                                     label: '总分数',
                                     cls: 'input-xxlarge',
                                     rule: {

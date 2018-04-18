@@ -275,7 +275,7 @@
 			/*'<span class="input-group-addon">'+
 			'<i class="ace-icon fa fa-check"></i>'+
 			'</span>'+*/
-			'<input type="text" class="spinbox-input editable inline-edit-cell" placeholder="" style="width:100%" value="'+data.weight+'">'+
+			'<input type="text" class="spinbox-input editable inline-edit-cell" placeholder="" style="width:50px" value="'+data.weight+'">'+
 
 			'<div class="spinbox-buttons input-group-btn btn-group-vertical">'+
 			'<button type="button" class="btn spinbox-up btn-sm btn-info">'+

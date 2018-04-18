@@ -94,7 +94,8 @@
     };
     Form.statics = {
         formTmpl: '<form id="${id_}" name="${name_}" action="${action_}" method="${method_}" enctype="multipart/form-data" class="${cls_}"></form>',
-        formBodyTmpl: '<div style="margin-right: 0px;margin-left: 0px;" class="row"><div class="col-md-12"></div></div>',
+        formBodyTmpl: '<div style="margin-right: 0px;margin-left: 0px;" class="row"><div class="col-md-12 formbody"></div></div>',
+        //formBodyTmpl: '<div style="margin-right: 0px;margin-left: 0px;" class="row"><div class="col-md-8 formbody"></div><div class="col-md-4"></div></div>',
         formActionTmpl: '<div class="form-actions" style="padding-bottom:20px;text-align:${align_};"></div>',
         rowTmpl: '<div data-row=${row_} class="row"></div>',
         eleTmpl: '<div class="col-md-${span_}"><div class="form-group"></div></div>',
@@ -153,7 +154,7 @@
                             that._data = data.data;
                         }
                         if (callback !== undefined) {
-                            callback();
+                            callback(data.data);
                         }
                     } else {
                         alert(data.message);
@@ -255,9 +256,14 @@
             this.$element.append(form);
 
             // formBody
-            var formBody = $.tmpl(Form.statics.formBodyTmpl, {});
+			var formBodyTmp =this._options.formBodyTmpl==undefined ? Form.statics.formBodyTmpl : this._options.formBodyTmpl;
+			if( typeof (formBodyTmp) == "function"){
+				formBody = formBodyTmp();
+			}else{
+				formBody = $.tmpl(formBodyTmp, {});
+			}
             this.$form.append(formBody);
-            this._renderFormElements(formBody.find('div.col-md-12'));
+            this._renderFormElements(formBody.find('div.formbody'));
 
             if (this._showReset || this._showSubmit || this._buttons.length > 0) {
                 // formAction

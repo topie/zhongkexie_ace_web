@@ -113,8 +113,66 @@
                 },{
                     text: "专家评价",
                     cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
-                        var paper = {};
+                    handle: function (index, coll) {
+						var modal = $.orangeModal({
+                            id: "scorePaperView",
+                            title: "专家评价-"+coll.userName,
+                            destroy: true
+                        }).show();
+						var data = JSON.parse(coll.contentJson);
+						data.paperId=coll.id;
+						data.userId=coll.userId;
+						var paper = modal.$body.orangePaperViewScore(data);
+						$.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                paperId: coll.id,
+								userId:coll.userId
+                            },
+                            url: App.href + "/api/core/scorePaper/getAnswer",
+                            success: function (res) {
+                                if (res.code === 200) {
+                                    paper.loadAnswer(res.data,function(an){
+										var url =App.href + "/api/core/scorePaper/getAnswerOfRanking";
+										var msg = an.answerValue;
+											$.ajax({
+													type: "POST",
+													dataType: "json",
+													async:false,
+													data: {
+														itemId:an.itemId,
+														answer:an.answerValue
+													},
+													url: url,
+													success: function (result) {
+														if (result.code === 200) {
+															msg = "<font style='color:#f00;margin-left:10px;' >"+result.message+"</font>";
+														} else {
+															bootbox.alert(result.message);
+														}
+													},
+													error: function (e) {
+														alert("请求异常。");
+													}
+												});
+											return msg;
+									});
+									paper.loadScores(res.data);
+									$("#main-body").find('div.formbody input').each(function(){
+										if($(this).attr('name')!='button')
+											$(this).attr("disabled","true");
+									});
+                                } else {
+                                    alert(res.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+					}	
+                        /*var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
                             title: "专家评价-"+data.userName,
@@ -269,7 +327,7 @@
                                 alert("请求异常。");
                             }
                         });
-                    }
+                    }*/
                 }, {
                     text: "退回",
                     cls: "btn-danger btn-sm",

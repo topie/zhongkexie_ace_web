@@ -70,8 +70,7 @@
                             type: "POST",
                             dataType: "json",
                             data: {
-                                paperId: data.id,
-								userId:data.userId
+                                paperId: data.paperId
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {

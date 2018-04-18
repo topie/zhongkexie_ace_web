@@ -190,6 +190,15 @@
 					 if(data.type==6)return '多选[可填空]';
 					 return '未识别';
 					}
+				},{
+					title:"评分类型",
+					field:"scoreType",
+					format:function(index,data){
+					 if(data.scoreType==1)return '统计项';
+					 if(data.scoreType==2)return '线性打分项';
+					 if(data.scoreType==3)return '专家打分项';
+					 return '未识别';
+					}
 				}
             ],
             actionColumnText: "操作",//操作列文本
@@ -311,6 +320,70 @@
                                         }
                                     ]
                                 }, {
+                                    type: 'select',
+                                    name: 'scoreType',
+                                    id: 'scoreType',
+                                    label: '评分类型',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入评分类型"
+                                    },
+                                    items: [
+                                        {
+                                            text: '统计项（不评分）',
+                                            value: 1
+                                        },
+                                        {
+                                            text: '线性评分项',
+                                            value: 2
+                                        },
+                                        {
+                                            text: '专家评分项',
+                                            value: 3
+                                        }
+                                    ]
+                                },{
+                                    type: 'text',
+                                    name: 'maxValue',
+                                    id: 'maxValue',
+                                    label: '满分值',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入满分值"
+                                    }
+                                }, {
+                                    type: 'select',
+                                    name: 'showLevel',
+                                    id: 'showLevel',
+                                    label: '展示等级',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '学会',
+                                            value: 7
+                                        },
+                                        {
+                                            text: '专家',
+                                            value: 4
+                                        },
+                                        {
+                                            text: '中国科协',
+                                            value: 1
+                                        }
+                                    ]
+                                }, {
                                     type: 'textarea',
                                     name: 'optionLogic',
                                     id: 'optionLogic',
@@ -361,8 +434,27 @@
                                 }
                             ]
                         };
-                        var form = modal.$body.orangeForm(formOpts);
-                        form.loadRemote(App.href + "/api/core/scoreItem/load/" + data.id);
+                        var form = modal.$body.orangeForm(formOpts,function(){
+							var AddFrom = this.$form;
+							var max = AddFrom.find("#maxValue").parent().parent().parent();
+							max.hide();
+							AddFrom.find("#scoreType").bind("change",function(){
+								var selected = $(this).val();
+								if(selected==2){
+									max.show();
+								}else{
+									max.hide();
+								}
+							});
+						});
+                        form.loadRemote(App.href + "/api/core/scoreItem/load/" + data.id,function(res){
+							var scoreType = res.scoreType;
+							if(scoreType == 2){
+								var AddFrom = form.$form;
+								var max = AddFrom.find("#maxValue").parent().parent().parent();
+								max.show();
+							}
+						});
 						form.loadLocal({indexTitle:currentIndexTitle});
                         modal.show();
                     }
@@ -829,6 +921,70 @@
                                         }
                                     ]
                                 }, {
+                                    type: 'select',
+                                    name: 'scoreType',
+                                    id: 'scoreType',
+                                    label: '评分类型',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入评分类型"
+                                    },
+                                    items: [
+                                        {
+                                            text: '统计项（不评分）',
+                                            value: 1
+                                        },
+                                        {
+                                            text: '线性评分项',
+                                            value: 2
+                                        },
+                                        {
+                                            text: '专家评分项',
+                                            value: 3
+                                        }
+                                    ]
+                                },{
+                                    type: 'text',
+                                    name: 'maxValue',
+                                    id: 'maxValue',
+                                    label: '满分值',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入满分值"
+                                    }
+                                }, {
+                                    type: 'select',
+                                    name: 'showLevel',
+                                    id: 'showLevel',
+                                    label: '展示等级',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '学会',
+                                            value: 7
+                                        },
+                                        {
+                                            text: '专家',
+                                            value: 4
+                                        },
+                                        {
+                                            text: '中国科协',
+                                            value: 1
+                                        }
+                                    ]
+                                }, {
                                     type: 'textarea',
                                     name: 'optionLogic',
                                     id: 'optionLogic',
@@ -884,7 +1040,19 @@
                                 }
                             ]
                         };
-                       var form =  modal.$body.orangeForm(formOpts);
+                       var form =  modal.$body.orangeForm(formOpts,function(){
+							var AddFrom = this.$form;
+							var max = AddFrom.find("#maxValue").parent().parent().parent();
+							max.hide();
+							AddFrom.find("#scoreType").bind("change",function(){
+								var selected = $(this).val();
+								if(selected==2){
+									max.show();
+								}else{
+									max.hide();
+								}
+							});
+						});
 					   form.loadLocal({indexId:currentIndex,indexTitle:currentIndexTitle});
                     }
                 }
