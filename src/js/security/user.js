@@ -142,6 +142,19 @@
                                     span: 2,
                                     detail: '不修改则留空'
                                 }, {
+                                    type: 'select',
+                                    name: 'userType',
+                                    id: 'userType',
+                                    label: '用户类型',
+									itemsUrl:App.href +"/api/core/dict/getItems?code=YHLX",
+                                    span: 2,
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择"
+                                    }
+                                }, {
                                     type: 'text',
                                     name: 'email',
                                     id: 'email',
@@ -447,6 +460,19 @@
                                     id: 'contactPhone',
                                     span: 2,
                                     label: '手机'
+                                }, {
+                                    type: 'select',
+                                    name: 'userType',
+                                    id: 'userType',
+                                    label: '用户类型',
+									itemsUrl:App.href +"/api/core/dict/getItems?code=YHLX",
+                                    span: 2,
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择"
+                                    }
                                 }, {
                                     type: 'text',
                                     name: 'email',

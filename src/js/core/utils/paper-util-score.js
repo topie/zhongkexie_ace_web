@@ -128,7 +128,7 @@
             if (items != undefined && items.length > 0) {
                 var its = [];
 				var hasList = false;
-				var currentItem = null;
+				var currentItems = [];
                 $.each(items, function (i, item) {
                     var it = {};
 					it.itemActions = that._options.itemActions;
@@ -136,7 +136,7 @@
                     it.label = item.title;
                     it.score = item.score;
 					if(item.scoreType==3){
-						currentItem = item;
+						currentItems.push(item);
 						if(that._options.showSocre){
 							it.label = item.title+"（"+item.score+"分）";
 						}
@@ -199,60 +199,66 @@
                     }
                     its.push(it);
                 });
-				var subs = '';
-				if(currentItem!=null){
-					 subs = $('<div class="form-group">'
-						+'请对专家评分项进行评分：'
-						+'</div><div class="form-group">'
-						+'<input drole="main" type="text" showicon="false" name="itemId_'+currentItem.id+'" class="form-control " placeholder="  只能填写数字  ">'
-						+'</div><div class="form-group">'
-						+'<button type="button" class="btn btn-info btn-sm">评分</button>'
-						+'</div>');
-					subs.on("click",'button',function(){
-						var value = subs.find("input").val();
-						if(isNaN(value)||value==null||value==''){
-							bootbox.alert("请输入数字");
-							return false;
-						}
-						if(parseFloat(value)>currentItem.score){
-							bootbox.alert("输入不能超过满分！满分为"+currentItem.score+"分!");
-							return false;
-						}
-						if(parseInt(value)<0){
-							bootbox.alert("输入分数不能为负分！");
-							return false;
-						}
-						$.ajax({
-								type: "POST",
-								dataType: "json",
-								data: {
-									paperId: that._options.paperId,
-									userId:that._options.userId,
-									itemId:currentItem.id,
-									answerScore:value
-								},
-								url: App.href + "/api/core/scorePaper/updateAnswerScore",
-								success: function (data) {
-									if (data.code === 200) {
-										bootbox.alert("评分成功！");
-									} else {
-										bootbox.alert(data.message);
+				var subss = [];
+				var getFormBodyTmpl;
+				if(currentItems.length>0){
+					for(var i =0;i<currentItems.length;i++){
+						var currentItem = currentItems[i];
+						var  subs = $('<div class="form-group">'
+							+'请对专家评分项进行评分：'
+							+'</div><div class="form-group">'
+							+'<input drole="main" type="text" showicon="false" name="itemId_'+currentItem.id+'" class="form-control " placeholder="  只能填写数字  ">'
+							+'</div><div class="form-group">'
+							+'<button type="button" class="btn btn-info btn-sm" data-item="'+currentItem.id+'">评分</button>'
+							+'</div>');
+						subs.on("click",'button[data-item="'+currentItem.id+'"]',function(){
+							var value = subs.find('input[name="itemId_'+currentItem.id+'"]').val();
+							if(isNaN(value)||value==null||value==''){
+								bootbox.alert("请输入数字");
+								return false;
+							}
+							if(parseFloat(value)>currentItem.score){
+								bootbox.alert("输入不能超过满分！满分为"+currentItem.score+"分!");
+								return false;
+							}
+							if(parseInt(value)<0){
+								bootbox.alert("输入分数不能为负分！");
+								return false;
+							}
+							$.ajax({
+									type: "POST",
+									dataType: "json",
+									data: {
+										paperId: that._options.paperId,
+										userId:that._options.userId,
+										itemId:currentItem.id,
+										answerScore:value
+									},
+									url: App.href + "/api/core/scorePaper/updateAnswerScore",
+									success: function (data) {
+										if (data.code === 200) {
+											bootbox.alert("评分成功！");
+										} else {
+											bootbox.alert(data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
 									}
-								},
-								error: function (e) {
-									alert("请求异常。");
-								}
-							});
+								});
 
-					});
-				}
-				var getFormBodyTmpl =  function(){
-					var body = $('<div style="margin-right: 0px;margin-left: 0px;" class="row"></div>');
-						body.append('<div class="col-md-8 formbody" style="border-right: dashed 2px #ca9d9d;"></div>');
-						var right = $('<div class="col-md-4"></div>');
-						right.append(subs);
-						body.append(right);
-				   return body;
+						});
+						subss.push(subs);
+					}
+					getFormBodyTmpl =  function(){
+						var body = $('<div style="margin-right: 0px;margin-left: 0px;" class="row"></div>');
+							body.append('<div class="col-md-8 formbody" style="border-right: dashed 2px #ca9d9d;"></div>');
+							var right = $('<div class="col-md-4"></div>');
+							for(var i=0;i<subss.length;i++)
+								right.append(subss[i]);
+							body.append(right);
+					   return body;
+					}
 				}
                 var qi = that.getQi();
                 row.find('div.panel-body:eq(0)').append(qi);
