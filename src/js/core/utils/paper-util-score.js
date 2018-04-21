@@ -211,18 +211,23 @@
 							+'</div><div class="form-group">'
 							+'<button type="button" class="btn btn-info btn-sm" data-item="'+currentItem.id+'">评分</button>'
 							+'</div>');
+						subs.find('button[data-item="'+currentItem.id+'"]').data("info",currentItem);
 						subs.on("click",'button[data-item="'+currentItem.id+'"]',function(){
-							var value = subs.find('input[name="itemId_'+currentItem.id+'"]').val();
+							var currentItem = $(this).data("info");
+							var value = $('input[name="itemId_'+currentItem.id+'"]').val();
 							if(isNaN(value)||value==null||value==''){
 								bootbox.alert("请输入数字");
+								$('input[name="itemId_'+currentItem.id+'"]').val('');
 								return false;
 							}
 							if(parseFloat(value)>currentItem.score){
 								bootbox.alert("输入不能超过满分！满分为"+currentItem.score+"分!");
+								$('input[name="itemId_'+currentItem.id+'"]').val('');
 								return false;
 							}
 							if(parseInt(value)<0){
 								bootbox.alert("输入分数不能为负分！");
+								$('input[name="itemId_'+currentItem.id+'"]').val('');
 								return false;
 							}
 							$.ajax({

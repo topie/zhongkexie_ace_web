@@ -23,7 +23,7 @@
             $.cookie('spring-menu-toggle', "s", {expires: 7, path: '/'});
         }
     }
-	function showUserInfo() {
+	function showUserInfo(title) {
         var modal = $.orangeModal({
             id: "userForm",
             title: "用户信息",
@@ -39,6 +39,9 @@
                 }
             ]
         }).show();
+		if(title){
+			modal.$body.append('<div class="alert alert-danger">'+title+'</div>');
+		}
         App.menu.userOption.ajaxSuccess = function () {
             modal.hide();
 			window.location.href = '../login.html';
@@ -166,7 +169,7 @@
                         App.currentUser = userInfo;
                         $("#spring_login_user_name").text(userInfo.displayName);
 						if(userInfo.lastPasswordReset==null ||userInfo.lastPasswordReset === undefined){
-							App.menu.showUserInfo();
+							App.menu.showUserInfo("初次登录请修改密码！");
 						}
                         $.each(menus, function (i, m) {
                             App.menusMapping[m.action] = m.functionName;

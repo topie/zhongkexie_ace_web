@@ -44,8 +44,8 @@
                     field: "name"
                 },
 					{
-                    title: "指标组描述",
-                    field: "description"
+                    title: "所属领域",
+                    field: "relatedField"
                 },
                 
                 
@@ -159,13 +159,13 @@
                                         required: "请输入"
                                     }
                                 }, {
-                                    type: 'select2',
-                                    name: 'tags',
-                                    id: 'tags',
-                                    label: '标签',
+                                    type: 'select',
+                                    name: 'relatedField',
+                                    id: 'relatedField',
+                                    label: '专业领域',
                                     cls: 'input-xxlarge',
                                     items:[],
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYBQ"
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
                                 },{
 									type: 'tree',//类型
 									name: 'indexCollection',
@@ -306,10 +306,10 @@
                                         required: "请输入"
                                     }
                                 }, {
-                                    type: 'select2',
-                                    name: 'tags',
-                                    id: 'tags',
-                                    label: '标签',
+                                    type: 'select',
+                                    name: 'relatedField',
+                                    id: 'relatedField',
+                                    label: '所属领域',
                                     cls: 'input-xxlarge',
                                     items:[],
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYBQ"
@@ -345,7 +345,6 @@
                             ]
                         };
 						var form = modal.$body.orangeForm(formOpt);
-						form.loadLocal({tags:"财务,行政"});
                         modal.show();
 
 					}

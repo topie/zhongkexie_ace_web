@@ -128,63 +128,9 @@
                                     label: '登录名',
                                     cls: 'input-xxlarge'
                                 }, {
-                                    type: 'text',
-                                    name: 'workUnits',
-                                    id: 'workUnits',
-                                    label: '工作单位',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                }, {
-                                    type: 'text',
-                                    name: 'telPhone',
-                                    id: 'telPhone',
-                                    label: '工作电话',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                },{
-                                    type: 'text',
-                                    name: 'phone',
-                                    id: 'phone',
-                                    label: '联系电话',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                }, {
-                                    type: 'text',
-                                    name: 'email',
-                                    id: 'email',
-                                    label: '邮箱',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                }, {
-                                    type: 'textarea',
-                                    name: 'address',
-                                    id: 'address',
-                                    label: '通信地址',
-                                    cls: 'input-xxlarge'
-                                }, {
                                     type: 'select',
-                                    name: 'field_type',
-                                    id: 'field_type',
+                                    name: 'fieldType',
+                                    id: 'fieldType',
                                     label: '专业分类',
                                     cls: 'input-xxlarge',
                                     rule: {
@@ -194,6 +140,20 @@
                                         required: "请选择"
                                     },
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYFL"
+                                },
+                                {
+                                    type: 'select',
+                                    name: 'relatedField',
+                                    id: 'relatedField',
+                                    label: '相关领域',
+                                    cls: 'input-xxlarge',
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY",
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入"
+                                    }
                                 }, 
                                 {
                                     type: 'select',
@@ -202,14 +162,36 @@
                                     label: '相关职称',
                                     cls: 'input-xxlarge',
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=XGZC"
-                                },
-                                {
-                                    type: 'select',
-                                    name: 'relatedField',
-                                    id: 'relatedField',
-                                    label: '相关领域',
-                                    cls: 'input-xxlarge',
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
+                                }, {
+                                    type: 'text',
+                                    name: 'workUnits',
+                                    id: 'workUnits',
+                                    label: '工作单位',
+                                    cls: 'input-xxlarge'
+                                }, {
+                                    type: 'text',
+                                    name: 'telPhone',
+                                    id: 'telPhone',
+                                    label: '工作电话',
+                                    cls: 'input-xxlarge'
+                                },{
+                                    type: 'text',
+                                    name: 'phone',
+                                    id: 'phone',
+                                    label: '联系电话',
+                                    cls: 'input-xxlarge'
+                                }, {
+                                    type: 'text',
+                                    name: 'email',
+                                    id: 'email',
+                                    label: '邮箱',
+                                    cls: 'input-xxlarge'
+                                }, {
+                                    type: 'textarea',
+                                    name: 'address',
+                                    id: 'address',
+                                    label: '通信地址',
+                                    cls: 'input-xxlarge'
                                 }
                             ]
                         };
@@ -356,63 +338,9 @@
                                         equalTo: "与密码不一致"
                                     }
                                 }, {
-                                    type: 'text',
-                                    name: 'workUnits',
-                                    id: 'workUnits',
-                                    label: '工作单位',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                }, {
-                                    type: 'text',
-                                    name: 'telPhone',
-                                    id: 'telPhone',
-                                    label: '工作电话',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                },{
-                                    type: 'text',
-                                    name: 'phone',
-                                    id: 'phone',
-                                    label: '联系电话',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                }, {
-                                    type: 'text',
-                                    name: 'email',
-                                    id: 'email',
-                                    label: '邮箱',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入"
-                                    }
-                                }, {
-                                    type: 'textarea',
-                                    name: 'address',
-                                    id: 'address',
-                                    label: '通信地址',
-                                    cls: 'input-xxlarge'
-                                }, {
                                     type: 'select',
-                                    name: 'field_type',
-                                    id: 'field_type',
+                                    name: 'fieldType',
+                                    id: 'fieldType',
                                     label: '专业分类',
                                     cls: 'input-xxlarge',
                                     rule: {
@@ -422,7 +350,21 @@
                                         required: "请选择"
                                     },
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYFL"
-                                }, 
+                                },
+                                {
+                                    type: 'select',
+                                    name: 'relatedField',
+                                    id: 'relatedField',
+                                    label: '专业领域',
+                                    cls: 'input-xxlarge',
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY",
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入"
+                                    }
+                                },
                                 {
                                     type: 'select',
                                     name: 'title',
@@ -430,15 +372,38 @@
                                     label: '相关职称',
                                     cls: 'input-xxlarge',
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=XGZC"
-                                },
-                                {
-                                    type: 'select',
-                                    name: 'relatedField',
-                                    id: 'relatedField',
-                                    label: '相关领域',
-                                    cls: 'input-xxlarge',
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
+                                }, {
+                                    type: 'text',
+                                    name: 'workUnits',
+                                    id: 'workUnits',
+                                    label: '工作单位',
+                                    cls: 'input-xxlarge'
+                                }, {
+                                    type: 'text',
+                                    name: 'telPhone',
+                                    id: 'telPhone',
+                                    label: '工作电话',
+                                    cls: 'input-xxlarge'
+                                },{
+                                    type: 'text',
+                                    name: 'phone',
+                                    id: 'phone',
+                                    label: '联系电话',
+                                    cls: 'input-xxlarge'
+                                }, {
+                                    type: 'text',
+                                    name: 'email',
+                                    id: 'email',
+                                    label: '邮箱',
+                                    cls: 'input-xxlarge'
+                                }, {
+                                    type: 'textarea',
+                                    name: 'address',
+                                    id: 'address',
+                                    label: '通信地址',
+                                    cls: 'input-xxlarge'
                                 }
+                                
                             ]
                         };
                        var form =  modal.$body.orangeForm(formOpts);
