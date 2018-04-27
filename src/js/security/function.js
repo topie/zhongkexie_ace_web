@@ -285,7 +285,14 @@
                                 message: {
                                     required: "菜单路径"
                                 }
-                            }, {
+                            },{
+								type: 'text',//类型
+								name: 'icon',//name
+								id: 'icon',//id
+								label: '菜单图标',//左边label
+								showIcon: true,
+								cls: 'input-large'
+							}, {
                                 type: 'radioGroup',
                                 name: 'display',
                                 id: 'display',

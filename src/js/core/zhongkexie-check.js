@@ -214,7 +214,7 @@
 									}
 								});
 					}
-				},
+				}/*,
 				{	
 					text: "  配置虚假条数",
 					cls: "btn btn-primary",
@@ -285,7 +285,7 @@
                         modal.show();
 
 					}
-				}
+				}*/
             ],
             search: {
                 rowEleNum: 2,

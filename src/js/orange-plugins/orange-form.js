@@ -1830,7 +1830,7 @@
 					div.parent().append(list);
 					list.data("data",data);
 				}
-				if(value.indexOf(",")!=-1){
+				if(typeof(value)=="string" && value.indexOf(",")!=-1){
 					itemsValue = value.substring(value.indexOf(",")+1);
 					value = value.substring(0,value.indexOf(","));
 					var div =ele.parents('div[class="radio-list"]');
@@ -1860,7 +1860,7 @@
 						div.parent().append(list);
 						list.data("data",data);
 					}
-					if(value.indexOf("other,")!=-1){
+					if(typeof(value)=="string" && value.indexOf("other,")!=-1){
 						itemsValue = value.substring(value.indexOf("other,")+6);
 						var div =ele.parents('div[class="checkbox-list"]');
 						var data = div.data("data");

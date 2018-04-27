@@ -103,7 +103,41 @@
             tools: [
 				
 				{	
-					text: "  初始化",
+					text: "  按学会分类初始化",
+					cls: "btn btn-primary",
+					icon: "fa fa-lightbulb-o",
+					handle: function (grid) {
+						bootbox.confirm("确定初始化，将会生成一套评分方案？",function(res){
+							if(res){
+								var paperId = $("#search_paperId").val();
+								var requestUrl = App.href + "/api/expert/paper/init";
+								$.ajax({
+									type: "POST",
+									dataType: "json",
+									data: {
+										paperId: paperId,
+										type:"type"
+									},
+									url: requestUrl,
+									success: function (data) {
+										if (data.code === 200) {
+											grid.reload();
+										} else {
+											bootbox.alert("错误："+data.message);
+										}
+									},
+									error: function (e) {
+										alert("请求异常。");
+									}
+								});
+							}
+							return;
+						})
+					
+					}
+				}
+				,{	
+					text: "  不按学会分类初始化",
 					cls: "btn btn-primary",
 					icon: "fa fa-lightbulb-o",
 					handle: function (grid) {
@@ -193,6 +227,7 @@
 					icon:"ace-icon fa fa-caret-down",
 					handle: function (index, data) {
 						var currentPaper = data.paperId;
+						var currentPaperExpertId = data.paperExpertId;
 						var modal = $.orangeModal({
                             id: "scorePaperViewF",
                             title: "抽取专家",
@@ -218,14 +253,14 @@
 							all+='<span class="label label-info  arrowed arrowed-right">'+allEx[i].realName+'</span>';
 							if(i%4==3) all+='</br>';
 						}
-						var checkeEx = data.expertNames==null?"":data.expertNames;
-						//var checkeEx = '中国数学学会,中国物理学会,中国化学学会,中国学会,理学会,中国化学会,中国学会,中国物理学会,中国化学学会,中国学会,理学会,中国化学会,中国学会,中国物理学会,中国化学学会,中国学会,理学会,中国化学会,中国学会';
+						var checkeEx = data.expertNames==null?"":data.expertNames;//已选专家名称
 						var tags='';
 						for(var i=0,sm=checkeEx.split(',');i<sm.length;i++){
 							tags+='<span class="label label-info  arrowed arrowed-right">'+sm[i]+'</span>';
 							if(i%4==2) tags+='</br>';
 						}
-
+						var height = detail_g._options.deptNames.split(',').length*14;
+						if(height<600) height=600;
 							var html = $('<div class="row col-sm-12"><p class="alert alert-info">'
 								+data.name
 								+'</p>'
@@ -253,7 +288,7 @@
 									+'</div>'
 								+'</div>'
 								+'<div class="row">'
-									+'<div class="form-group"id="mecharts" style="height:800px;">'
+									+'<div class="form-group"id="mecharts" style="height:'+height+'px;">'
 									+'</div>'
 								+'</div>');
 						modal.$body.append(html);
@@ -267,7 +302,8 @@
 								data:{
 									id:data.id,
 									expertIds:input,
-									expertNames:inputs
+									expertNames:inputs,
+									paperExpertId:currentPaperExpertId
 									},
 								success:function(res){
 									if(res.code==200){
@@ -293,12 +329,15 @@
 								var achart = echarts.init(document.getElementById('mecharts'));
 								achart.clear();
 								achart.setOption({ series: [
-										{
-											type: 'tree',
-											data: [atreedata],
-										   
-										}
-									]});
+															{
+																type: 'tree',
+																data: [atreedata],
+																top: '0%',
+																left: '8%',
+																bottom: '1%',
+																right: '8%'
+														   }
+											]});
 								},500);
 						}
 						html.find('button.btn-pink').bind("click",function(){

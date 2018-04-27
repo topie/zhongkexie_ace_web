@@ -33,19 +33,18 @@
                 $.each(this._options.data, function (i, idx) {
                     if (idx.items.length > 0) {
 						
-						var its=[];
-						var display = {
+						var forNext=[];
+                        $.each(idx.items, function (ii, item) {
+                            var display = {
                                 name: '',
                                 id: '',
                                 type: 'display',
                                 label: '',
                                 html: '<span>' + idx.parentIndexTitle + '</span>'
                             };
-						its.push(display);
-                        $.each(idx.items, function (ii, item) {
-                           if(item.showLevel<App.currentUser.userType){
-								return ;
-						   }
+							if(ii==0||ii==3||ii==4){
+								item.forNext = true;
+							}
                             var it = {};
                             it.name = item.id;
                             it.label = item.title;// + "(" + item.score + "分)";
@@ -88,14 +87,17 @@
                             if (item.value != undefined && item.value != '') {
                                 it.value = item.value;
                             }
-							its.push(it);
-								
-						});
-						 if(its.length<=1){
-							 alert("return");
-								return ;
-						   }
-						var tab = {};
+							if(item.forNext){
+								if(forNext.length==0){
+									forNext.push(display);
+								}
+								forNext.push(it);
+							}else{
+								if(forNext.length==0){
+									forNext.push(display);
+									forNext.push(it);
+								}
+								var tab = {};
 								tab['title'] = '第' + itemIndex + '题';
 								tab['width'] = '87px';
 								tab['content'] = {
@@ -112,11 +114,14 @@
 										isValidate: true,
 										labelInline: false,
 										buttonsAlign: "center",
-										items: its
+										items: forNext
 									}
 								};
 								tabs.push(tab);
 								itemIndex++;
+								forNext = [];
+							}
+						});
                     }
                 });
             }
@@ -149,13 +154,13 @@
                 }
             });
             this.$tab = tab;
-            /*this.$main.find('form').each(
+            this.$main.find('form').each(
                 function () {
                     $(this).find('input').on("change", function () {
                         that.showCheck();
                     });
                 }
-            );*/
+            );
         },
         getPanel: function (title, theme) {
             if (theme === undefined)
@@ -227,11 +232,11 @@
                 $.each(ans, function (i, an) {
                     that.loadValue(an.itemId, an.answerValue);
                 });
-                //this.$tab.go(ans.length - 1);
+                this.$tab.go(ans.length - 1);
             } else {
                 this.$tab.go(0);
             }
-            //that.showCheck();
+            that.showCheck();
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");

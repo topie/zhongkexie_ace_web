@@ -25,7 +25,7 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scorePaper/zkxcheckList",
+            url: App.href + "/api/core/scorePaper/zjcheckList",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -84,7 +84,26 @@
                             title: "查看-"+data.userName,
                             destroy: true
                         }).show();
-                        var js = JSON.parse(data.contentJson);
+                        var contentString = "";
+							$.ajax({
+								url:App.href + "/api/core/scorePaper/getPaper",
+								dataType: "json",
+								data: {
+									paperId: data.id
+								},
+								async:false,
+								success:function(res){
+									if(res.code==200){
+										contentString=res.message;
+									}else{
+										bootbox.alert("请求错误");
+									}
+								},
+								error:function(){
+									bootbox.alert("服务器内部错误");
+								}
+							});
+						var js = JSON.parse(contentString);
                         paper = modal.$body.orangePaperView(js);
                         $.ajax({
                             type: "POST",
@@ -119,7 +138,26 @@
                             title: "专家评价-"+coll.userName,
                             destroy: true
                         }).show();
-						var data = JSON.parse(coll.contentJson);
+							var contentString = "";
+							$.ajax({
+								url:App.href + "/api/core/scorePaper/getPaper",
+								dataType: "json",
+								data: {
+									paperId: coll.id
+								},
+								async:false,
+								success:function(res){
+									if(res.code==200){
+										contentString=res.message;
+									}else{
+										bootbox.alert("请求错误");
+									}
+								},
+								error:function(){
+									bootbox.alert("服务器内部错误");
+								}
+							});
+						var data = JSON.parse(contentString);
 						data.paperId=coll.id;
 						data.userId=coll.userId;
 						var paper = modal.$body.orangePaperViewScore(data);
@@ -328,7 +366,7 @@
                             }
                         });
                     }*/
-                }, {
+                }, /*{
                     text: "退回",
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {
@@ -360,7 +398,7 @@
 						})
                     	
                     }
-                }
+                }*//*
 				,{
                     text: "导出",
                     cls: " btn-primary btn-sm",
@@ -438,7 +476,7 @@
 										}
 									});
                                 }
-                            },*/{
+                            },*//*{
                                 type: 'button',
 								cls: "btn btn-primary",
                                 text: '开始导出',
@@ -487,7 +525,7 @@
 						  
 						
                     }
-                }
+                }*/
             ],
             tools: [
                 

@@ -312,7 +312,7 @@
                                     label: '所属领域',
                                     cls: 'input-xxlarge',
                                     items:[],
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYBQ"
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
                                 },{
 									type: 'tree',//类型
 									name: 'indexCollection',

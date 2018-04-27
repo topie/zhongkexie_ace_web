@@ -71,6 +71,9 @@
                     if (tab.width !== undefined) {
                         li.css("width", tab.width);
                     }
+					if(i>=that._options.page.size){
+						li.hide();
+					}
                     var pane = $('<div id="' + tId + '" class="tab-pane ' + (tab.active === true ? ' active ' : '') + '"><div role="content"></div></div>');
                     tabContent.append(pane);
                     if (!that._options.lazy) {

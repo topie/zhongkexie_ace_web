@@ -347,8 +347,22 @@
                                     ]
                                 },{
                                     type: 'text',
+                                    name: 'minValue',
+                                    id: 'minValue',
+									value:"0",
+                                    label: '零分值',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入零分值"
+                                    }
+                                },{
+                                    type: 'text',
                                     name: 'maxValue',
                                     id: 'maxValue',
+									value:"0",
                                     label: '满分值',
                                     cls: 'input-xxlarge',
                                     rule: {
@@ -402,18 +416,13 @@
                                         required: "请输入分值"
                                     }
                                 }, 
-                                {
+                                /*{
                                     type: 'select',
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
                                     cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入选项文本"
-                                    },
+                                    
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {
@@ -424,7 +433,7 @@
                                     cls: 'input-xxlarge',
                                     
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
-                                },
+                                },*/
                                 {
                                     type: 'number',
                                     name: 'sort',
@@ -437,12 +446,16 @@
                         var form = modal.$body.orangeForm(formOpts,function(){
 							var AddFrom = this.$form;
 							var max = AddFrom.find("#maxValue").parent().parent().parent();
+							var min = AddFrom.find("#minValue").parent().parent().parent();
+							min.hide();
 							max.hide();
 							AddFrom.find("#scoreType").bind("change",function(){
 								var selected = $(this).val();
 								if(selected==2){
+									min.show();
 									max.show();
 								}else{
+									min.hide();
 									max.hide();
 								}
 							});
@@ -452,7 +465,9 @@
 							if(scoreType == 2){
 								var AddFrom = form.$form;
 								var max = AddFrom.find("#maxValue").parent().parent().parent();
+								var min = AddFrom.find("#minValue").parent().parent().parent();
 								max.show();
+								min.show();
 							}
 						});
 						form.loadLocal({indexTitle:currentIndexTitle});
@@ -948,9 +963,23 @@
                                     ]
                                 },{
                                     type: 'text',
+                                    name: 'minValue',
+                                    id: 'minValue',
+									value:'0',
+                                    label: '零分值',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入零分值"
+                                    }
+                                },{
+                                    type: 'text',
                                     name: 'maxValue',
                                     id: 'maxValue',
                                     label: '满分值',
+									value:'0',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
@@ -1003,18 +1032,13 @@
                                         required: "请输入分值"
                                     }
                                 }, 
-                                {
+                                /* {
                                     type: 'select',
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
                                     cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入选项文本"
-                                    },
+                                    
                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {
@@ -1030,7 +1054,7 @@
                                         required: "请输入选项文本"
                                     },
                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
-                                },
+                                },*/
                                 {
                                     type: 'number',
                                     name: 'sort',
@@ -1043,13 +1067,17 @@
                        var form =  modal.$body.orangeForm(formOpts,function(){
 							var AddFrom = this.$form;
 							var max = AddFrom.find("#maxValue").parent().parent().parent();
+							var min = AddFrom.find("#minValue").parent().parent().parent();
 							max.hide();
+							min.hide();
 							AddFrom.find("#scoreType").bind("change",function(){
 								var selected = $(this).val();
 								if(selected==2){
 									max.show();
+									min.show();
 								}else{
 									max.hide();
+									min.show();
 								}
 							});
 						});

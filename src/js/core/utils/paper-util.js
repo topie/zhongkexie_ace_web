@@ -115,9 +115,17 @@
             this.$main = mainPanel;
             if (this._options.data !== undefined && this._options.data.length > 0) {
                 $.each(this._options.data, function (i, idx) {
-                    var r = that.getRow(idx.parentIndexTitle);
-                    mainPanel.find('div.panel-body:eq(0)').append(r);
-                    that.renderSubRow(that, r, idx.items);
+					var hasItem = false;
+					 $.each(idx.items, function (i, item) {
+						if(item.showLevel>=App.currentUser.userType){
+							hasItem = true ;
+						}
+					 });
+					 if(hasItem){
+						  var r = that.getRow(idx.parentIndexTitle);
+							mainPanel.find('div.panel-body:eq(0)').append(r);
+							that.renderSubRow(that, r, idx.items);
+					 }
                 });
             }
             this.$main.find("label.control-label").each(function (i, d) {
@@ -129,6 +137,10 @@
                 var its = [];
 				var hasList = false;
                 $.each(items, function (i, item) {
+					
+					if(item.showLevel<App.currentUser.userType){
+						return ;
+				   }
                     var it = {};
 					it.itemActions = that._options.itemActions;
                     it.name = item.id;
