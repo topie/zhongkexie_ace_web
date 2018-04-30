@@ -32,23 +32,18 @@
                 var itemIndex = 1;
                 $.each(this._options.data, function (i, idx) {
                     if (idx.items.length > 0) {
-						
-						var its=[];
-						var display = {
+                        $.each(idx.items, function (ii, item) {
+                            var display = {
                                 name: '',
                                 id: '',
                                 type: 'display',
                                 label: '',
                                 html: '<span>' + idx.parentIndexTitle + '</span>'
                             };
-						its.push(display);
-                        $.each(idx.items, function (ii, item) {
-                           if(item.showLevel<App.currentUser.userType){
-								return ;
-						   }
                             var it = {};
                             it.name = item.id;
                             it.label = item.title;// + "(" + item.score + "分)";
+							it.placeholder = item.placeholder==undefined?"":item.placeholder==undefined;
                             if (item.itemType == 0) {
                                 it.type = 'text';
                             } else if (item.itemType == 1) {
@@ -59,14 +54,78 @@
                                 it.type = 'list';
                                 it.span = 6;
                                 it.items = [
-                                    {
+                                    {	placeholder:it.placeholder,
                                         type: 'text',
                                         name: item.id
                                     }
                                 ]
+                            }else if (item.itemType == 7) {
+                                it.type = 'list';
+								it.row = item.row;
+								it.hideBtn = item.hideBtn;
+								try{
+									var customItems = JSON.parse(item.customItems);
+									it.span = 8;
+									$.each(customItems,function(index,cont){
+										if(index==0){
+											it.formInline = cont.formInline;
+											if(it.formInline){
+												if(cont.label){
+													it.span=12;
+												}
+												it.span = 8;
+											}
+										}
+										customItems[index]["name"]=item.id;
+									});
+									if(customItems.length==3){
+										it.span = 9;
+									}if(customItems.length==2){
+										it.span = 7;
+									}
+									it.items = customItems;
+								}catch(err){
+									alert("解析json错误："+it.label);
+								}
+                            }else if (item.itemType == 8) {
+                                it.type = 'radio_inputs';
+								it.row = item.row;
+								it.hideBtn = item.hideBtn;
+								$.each(item.items, function (i, op) {
+									if(op.title=='是'||op.title=='有'){
+										it.trigerValue=op.id;
+									}
+                                });
+								try{
+									var customItems = JSON.parse(item.customItems);
+									$.each(customItems,function(index,cont){
+										if(index==0){
+											it.formInline = cont.formInline;
+										}
+										customItems[index]["name"]=item.id;
+									});
+									it.customItems = customItems;
+								}catch(err){
+									alert("解析json错误："+it.label);
+								}
                             } else if (item.itemType == 4) {
                                 it.type = 'number';
                                 it.inline = true;
+                            }else if (item.itemType == 9) {
+                                it.type = 'number_input';
+								it.span=6;
+								try{
+									var customItems = JSON.parse(item.customItems);
+									$.each(customItems,function(index,cont){
+										if(index==0){
+											it.formInline = cont.formInline;
+										}
+										customItems[index]["name"]=item.id;
+									});
+									it.items = customItems;
+								}catch(err){
+									alert("解析json错误："+it.label);
+								}
                             } else if (item.itemType == 5) {
                                 it.type = 'radio_input';
                                 it.span = 6;
@@ -74,7 +133,7 @@
                                 it.type = 'checkbox_input';
                                 it.span = 6;
                             }
-                            if (item.itemType == 1 || item.itemType == 2 || item.itemType == 5 || item.itemType == 6) {
+                            if (item.itemType == 1 || item.itemType == 2 || item.itemType == 5 || item.itemType == 6|| item.itemType == 8) {
                                 it.items = [];
                                 it.inline = true;
                                 $.each(item.items, function (i, op) {
@@ -88,35 +147,29 @@
                             if (item.value != undefined && item.value != '') {
                                 it.value = item.value;
                             }
-							its.push(it);
-								
-						});
-						 if(its.length<=1){
-							 alert("return");
-								return ;
-						   }
-						var tab = {};
-								tab['title'] = '第' + itemIndex + '题';
-								tab['width'] = '87px';
-								tab['content'] = {
-									plugin: 'form',
-									options: {
-										method: "POST",
-										action: "",
-										ajaxSubmit: true,
-										rowEleNum: 1,
-										ajaxSuccess: function () {
-										},
-										showReset: false,
-										showSubmit: false,
-										isValidate: true,
-										labelInline: false,
-										buttonsAlign: "center",
-										items: its
-									}
-								};
-								tabs.push(tab);
-								itemIndex++;
+                            var tab = {};
+                            tab['title'] = '第' + itemIndex + '项';
+                            tab['width'] = '87px';
+                            tab['content'] = {
+                                plugin: 'form',
+                                options: {
+                                    method: "POST",
+                                    action: "",
+                                    ajaxSubmit: true,
+                                    rowEleNum: 1,
+                                    ajaxSuccess: function () {
+                                    },
+                                    showReset: false,
+                                    showSubmit: false,
+                                    isValidate: true,
+                                    labelInline: false,
+                                    buttonsAlign: "center",
+                                    items: [display, it]
+                                }
+                            };
+                            tabs.push(tab);
+                            itemIndex++;
+                        });
                     }
                 });
             }
@@ -149,13 +202,13 @@
                 }
             });
             this.$tab = tab;
-            /*this.$main.find('form').each(
+            this.$main.find('form').each(
                 function () {
                     $(this).find('input').on("change", function () {
                         that.showCheck();
                     });
                 }
-            );*/
+            );
         },
         getPanel: function (title, theme) {
             if (theme === undefined)
@@ -227,11 +280,11 @@
                 $.each(ans, function (i, an) {
                     that.loadValue(an.itemId, an.answerValue);
                 });
-                //this.$tab.go(ans.length - 1);
+                this.$tab.go(ans.length - 1);
             } else {
                 this.$tab.go(0);
             }
-            //that.showCheck();
+            that.showCheck();
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");

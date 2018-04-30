@@ -188,6 +188,10 @@
 					 if(data.type==4)return '填空[数字]';
 					 if(data.type==5)return '单选[可填空]';
 					 if(data.type==6)return '多选[可填空]';
+					 if(data.type==7)return '多填空[自定义]';
+					 if(data.type==8)return '单选[是否填空]';
+					 if(data.type==9)return '数字[列举]';
+					 if(data.type==10)return '文本框';
 					 return '未识别';
 					}
 				},{
@@ -317,6 +321,73 @@
                                         {
                                             text: '多选[可填空]',
                                             value: 6
+                                        },
+                                        {
+                                            text: '单选[是否填空]',
+                                            value: 8
+                                        },
+                                        {
+                                            text: '多填空[自定义]',
+                                            value: 7
+                                        },
+                                        {
+                                            text: '数字[列举]',
+                                            value: 9
+                                        },
+                                        {
+                                            text: '文本框',
+                                            value: 10
+                                        }
+                                    ]
+                                }, {
+                                    type: 'textarea',
+                                    name: 'items',
+                                    id: 'items',
+                                    label: '自定义填空',
+									placeholder:'[{type:text,placeholder:"请填写个数"}]',
+                                    cls: 'input-xxlarge'
+                                },{
+                                    type: 'number',
+                                    name: 'row',
+                                    id: 'row',
+                                    label: '生成行数',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入零分值"
+                                    }
+                                },{
+                                    type: 'radioGroup',
+                                    name: 'hideBtn',
+                                    id: 'hideBtn',
+                                    label: '隐藏添加按钮',
+                                    items:[{text:'隐藏',value:'true'},{text:'不隐藏',value:'false',checked:'true'}]
+                                }, {
+                                    type: 'select',
+                                    name: 'showLevel',
+                                    id: 'showLevel',
+                                    label: '展示等级',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '学会',
+                                            value: 7
+                                        },
+                                        {
+                                            text: '专家',
+                                            value: 4
+                                        },
+                                        {
+                                            text: '中国科协',
+                                            value: 1
                                         }
                                     ]
                                 }, {
@@ -345,63 +416,17 @@
                                             value: 3
                                         }
                                     ]
-                                },{
-                                    type: 'text',
-                                    name: 'minValue',
-                                    id: 'minValue',
-									value:"0",
-                                    label: '零分值',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入零分值"
-                                    }
-                                },{
-                                    type: 'text',
-                                    name: 'maxValue',
-                                    id: 'maxValue',
-									value:"0",
-                                    label: '满分值',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入满分值"
-                                    }
-                                }, {
-                                    type: 'select',
-                                    name: 'showLevel',
-                                    id: 'showLevel',
-                                    label: '展示等级',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入选项文本"
-                                    },
-                                    items: [
-                                        {
-                                            text: '学会',
-                                            value: 7
-                                        },
-                                        {
-                                            text: '专家',
-                                            value: 4
-                                        },
-                                        {
-                                            text: '中国科协',
-                                            value: 1
-                                        }
-                                    ]
                                 }, {
                                     type: 'textarea',
                                     name: 'optionLogic',
                                     id: 'optionLogic',
-                                    label: '填空逻辑',
+                                    label: '评分逻辑',
+                                    cls: 'input-xxlarge'
+                                },{
+                                    type: 'textarea',
+                                    name: 'optionLogicDesc',
+                                    id: 'optionLogicDesc',
+                                    label: '评分逻辑描述',
                                     cls: 'input-xxlarge'
                                 }, {
                                     type: 'number',
@@ -415,6 +440,12 @@
                                     message: {
                                         required: "请输入分值"
                                     }
+                                }, {
+                                    type: 'text',
+                                    name: 'placeholder',
+                                    id: 'placeholder',
+                                    label: '输入框提示',
+                                    cls: 'input-xxlarge'
                                 }, 
                                 /*{
                                     type: 'select',
@@ -445,30 +476,63 @@
                         };
                         var form = modal.$body.orangeForm(formOpts,function(){
 							var AddFrom = this.$form;
-							var max = AddFrom.find("#maxValue").parent().parent().parent();
-							var min = AddFrom.find("#minValue").parent().parent().parent();
-							min.hide();
-							max.hide();
+							var hideBtn = AddFrom.find('div[formele="radioGroup"]').parent().parent().parent();
+							var row = AddFrom.find("#row").parent().parent().parent();
+							var items = AddFrom.find("#items").parent().parent().parent();
+							hideBtn.hide();
+							row.hide();
+							items.hide();
+							AddFrom.find("#type").bind("change",function(){
+								var selected = $(this).val();
+								if(selected==3||selected==7||selected==8){
+									hideBtn.show();
+									row.show();
+									if(selected==7||selected==8){
+										items.show();
+									}
+								}else{
+									hideBtn.hide();
+									row.hide();
+									items.hide();
+								}
+								if(selected==9){items.show();}else{}
+							});
+							
+							var optionLogic = AddFrom.find("#optionLogic").parent().parent().parent();
+							optionLogic.hide();
 							AddFrom.find("#scoreType").bind("change",function(){
 								var selected = $(this).val();
 								if(selected==2){
-									min.show();
-									max.show();
+									optionLogic.show();
 								}else{
-									min.hide();
-									max.hide();
+									optionLogic.hide();
 								}
 							});
 						});
                         form.loadRemote(App.href + "/api/core/scoreItem/load/" + data.id,function(res){
-							var scoreType = res.scoreType;
-							if(scoreType == 2){
-								var AddFrom = form.$form;
-								var max = AddFrom.find("#maxValue").parent().parent().parent();
-								var min = AddFrom.find("#minValue").parent().parent().parent();
-								max.show();
-								min.show();
+							var AddFrom = form.$form;
+							var type = res.type;
+							if(type == 3||type == 7||type==8){
+								var hideBtn = AddFrom.find('div[formele="radioGroup"]').parent().parent().parent();
+								var row = AddFrom.find("#row").parent().parent().parent();
+								if(type==7||type==8){
+									var mitems = AddFrom.find("#items").parent().parent().parent();
+									mitems.show();
+								}
+								hideBtn.show();
+								row.show();
 							}
+							if(type==9){
+								var mitems = AddFrom.find("#items").parent().parent().parent();
+								mitems.show();
+							}else{}
+							var selected = res.scoreType;
+							var optionLogic = AddFrom.find("#optionLogic").parent().parent().parent();
+								if(selected==2){
+									optionLogic.show();
+								}else{
+									optionLogic.hide();
+								}
 						});
 						form.loadLocal({indexTitle:currentIndexTitle});
                         modal.show();
@@ -509,6 +573,7 @@
 						if(data.type==2)return true;
 						if(data.type==5)return true;
 						if(data.type==6)return true;
+						if(data.type==8)return true;
 						return false;
 					},
                     handle: function (index, data, grid) {
@@ -931,8 +996,69 @@
                                             value: 5
                                         },
                                         {
+                                            text: '单选[是否填空]',
+                                            value: 8
+                                        },
+                                        {
                                             text: '多选[可填空]',
                                             value: 6
+                                        },
+                                        {
+                                            text: '填空[自定义]',
+                                            value: 7
+                                        },
+                                        {
+                                            text: '数字[列举]',
+                                            value: 9
+                                        },
+                                        {
+                                            text: '文本框',
+                                            value: 10
+                                        }
+                                    ]
+                                },{
+                                    type: 'number',
+                                    name: 'row',
+                                    id: 'row',
+                                    label: '生成行数',
+									value:0,
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入零分值"
+                                    }
+                                },{
+                                    type: 'radio',
+                                    name: 'hideBtn',
+                                    id: 'hideBtn',
+                                    label: '隐藏添加按钮',
+                                    items:[{text:'隐藏',value:'true'},{text:'不隐藏',value:'false',checked:'true'}]
+                                }, {
+                                    type: 'select',
+                                    name: 'showLevel',
+                                    id: 'showLevel',
+                                    label: '展示等级',
+                                    cls: 'input-xxlarge',
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入选项文本"
+                                    },
+                                    items: [
+                                        {
+                                            text: '学会',
+                                            value: 7
+                                        },
+                                        {
+                                            text: '专家',
+                                            value: 4
+                                        },
+                                        {
+                                            text: '中国科协',
+                                            value: 1
                                         }
                                     ]
                                 }, {
@@ -961,63 +1087,17 @@
                                             value: 3
                                         }
                                     ]
-                                },{
-                                    type: 'text',
-                                    name: 'minValue',
-                                    id: 'minValue',
-									value:'0',
-                                    label: '零分值',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入零分值"
-                                    }
-                                },{
-                                    type: 'text',
-                                    name: 'maxValue',
-                                    id: 'maxValue',
-                                    label: '满分值',
-									value:'0',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入满分值"
-                                    }
-                                }, {
-                                    type: 'select',
-                                    name: 'showLevel',
-                                    id: 'showLevel',
-                                    label: '展示等级',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入选项文本"
-                                    },
-                                    items: [
-                                        {
-                                            text: '学会',
-                                            value: 7
-                                        },
-                                        {
-                                            text: '专家',
-                                            value: 4
-                                        },
-                                        {
-                                            text: '中国科协',
-                                            value: 1
-                                        }
-                                    ]
                                 }, {
                                     type: 'textarea',
                                     name: 'optionLogic',
                                     id: 'optionLogic',
                                     label: '填空逻辑',
+                                    cls: 'input-xxlarge'
+                                },{
+                                    type: 'textarea',
+                                    name: 'optionLogicDesc',
+                                    id: 'optionLogicDesc',
+                                    label: '填空逻辑描述',
                                     cls: 'input-xxlarge'
                                 }, {
                                     type: 'number',
@@ -1031,6 +1111,12 @@
                                     message: {
                                         required: "请输入分值"
                                     }
+                                }, {
+                                    type: 'text',
+                                    name: 'placeholder',
+                                    id: 'placeholder',
+                                    label: '输入框提示',
+                                    cls: 'input-xxlarge'
                                 }, 
                                 /* {
                                     type: 'select',
@@ -1066,18 +1152,36 @@
                         };
                        var form =  modal.$body.orangeForm(formOpts,function(){
 							var AddFrom = this.$form;
-							var max = AddFrom.find("#maxValue").parent().parent().parent();
-							var min = AddFrom.find("#minValue").parent().parent().parent();
-							max.hide();
-							min.hide();
+							var hideBtn = AddFrom.find('div[formele="radioGroup"]').parent().parent().parent();
+							var row = AddFrom.find("#row").parent().parent().parent();
+							var items = AddFrom.find("#items").parent().parent().parent();
+							hideBtn.hide();
+							row.hide();
+							items.hide();
+							AddFrom.find("#type").bind("change",function(){
+								var selected = $(this).val();
+								if(selected==3||selected==7||selected==8){
+									hideBtn.show();
+									row.show();
+									if(selected==7||selected==8){
+										items.show();
+									}
+								}else{
+									hideBtn.hide();
+									row.hide();
+									items.hide();
+								}
+								if(selected==9){items.show();}else{}
+							});
+							
+							var optionLogic = AddFrom.find("#optionLogic").parent().parent().parent();
+							optionLogic.hide();
 							AddFrom.find("#scoreType").bind("change",function(){
 								var selected = $(this).val();
 								if(selected==2){
-									max.show();
-									min.show();
+									optionLogic.show();
 								}else{
-									max.hide();
-									min.show();
+									optionLogic.hide();
 								}
 							});
 						});

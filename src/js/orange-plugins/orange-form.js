@@ -538,6 +538,26 @@
 				
 				return radioGroup;
 			},
+			'radio_inputs':function(data,form){
+				var radioGroup = form._formEles['radioGroup'](data, form);
+				var inputItems = data.customItems;
+				data.items=inputItems;
+				radioGroup.find("input[type='radio']").each(function(){
+					$(this).bind("click",function(){
+						if($(this).val()==data.trigerValue){
+							if(radioGroup.parent().find("div[role='list']").length>0){
+								return;
+							}
+							var list = form._formEles['list'](data,form);
+							radioGroup.parent().append(list);
+						}else{
+							radioGroup.parent().find("div[role='list']").remove();
+						}
+					})
+				})
+				
+				return radioGroup;
+			},
 			'checkbox_input':function(data,form){
 				if(data.items){
 					data.items.push({'text':'其他','name':data.name,'value':'other','type':'text'});
@@ -567,11 +587,13 @@
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
+				var formInline = (data.formInline ? "form-inline"
+                        : "");
                 var addBtn = $('<button class="btn btn-sm btn-info" type="button">添加</button>');
                 ele.children('[role=action]').append(addBtn);
                 addBtn.on("click", function () {
                     var itemWrapper = $('<div class="row">' +
-                        '<div role="s-ele" class="col-md-' + span + ' form-group input-group">' +
+                        '<div role="s-ele" class="col-md-' + span + ' form-group '+formInline+' input-group">' +
                         '</div>' +
                         '</div>');
                     if (data.items != undefined) {
@@ -581,7 +603,13 @@
 								item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
 								var iWrapper;
 								if (jd.label != undefined) {
-									iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
+									var labelSpan = 4;
+									var eleSpan = 8;
+									if(jd.labelSpan>0 && jd.labelSpan<12){
+										labelSpan = jd.labelSpan;
+										eleSpan = 12-jd.labelSpan;
+									}
+									iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 								} else {
 									iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 								}
@@ -606,6 +634,15 @@
                     ele.children('[role=ele]').empty();
                 });
                 ele.data("data", data);
+				if(!isNaN(data.row)){
+					for(var i=0;i<data.row;i++)
+						addBtn.trigger("click");
+				}
+				if(data.hideBtn){
+					addBtn.hide();
+					cleanBtn.hide();
+					ele.children('[role=ele]').find('button.btn-danger').hide();
+				}
                 return ele;
             },
             'display': function (data, form) {
@@ -654,7 +691,7 @@
                 return ele;
             },
 			'number': function (data, form) {
-                var textTmpl = '<input drole="main" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="只能填写数字 ${placeholder_}" >';
+                var textTmpl = '<input drole="main" role="number" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}[数字]" >';
                 var ele = $.tmpl(textTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
                     "name_": data.name,
@@ -671,9 +708,40 @@
                 });
 				ele.bind("keyup",function(){if(isNaN(this.value))this.value=''});
 				ele.blur(function(){if(isNaN(this.value))this.value=''});
-                if (data.value != undefined)
+                if (data.value != undefined){
+					data.value=parseInt(data.value);
 					if(isNaN(data.value))
 						ele.val(data.value);
+				}
+                return ele;
+            },
+			'number_input': function (data, form) {
+                var ele = form._formEles['number'](data, form);
+				ele.bind("keyup",function(){
+					var eleValue = $(this).val();
+					eleValue = parseInt(eleValue);
+					if(!isNaN(eleValue)){
+						if(ele.parent().find("div[role='list']").length>0){
+							ele.parent().find("div[role='list']").remove();
+						}
+						data.row = eleValue;
+						data.hideBtn=true;
+						if(data.items){
+							if( data.items.length==0){
+								data.items=[{name:name,type:'text'}];
+							}
+						}else{
+							data.items=[{name:name,type:'text'}];
+						}
+						var list = form._formEles['list'](data,form);
+						ele.parent().append(list);
+					}else{
+						ele.parent().find("div[role='list']").remove();
+					}
+				});
+                if (data.value != undefined)
+                    ele.val(data.value);
+				ele.data("data",data);
                 return ele;
             },
             'password': function (data, form) {
@@ -693,12 +761,13 @@
                 return ele;
             },
             'textarea': function (data, form) {
-                var textareaTmpl = '<textarea drole="main" id="${id_}" code="${code_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} rows="${rows_}"></textarea>';
+                var textareaTmpl = '<textarea drole="main" id="${id_}" code="${code_}" name="${name_}" placeholder="${placeholder_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} rows="${rows_}"></textarea>';
                 var ele = $.tmpl(textareaTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
                     "name_": data.name,
                     "code_": data.code === undefined ? false : data.code,
                     "rows_": (data.rows === undefined ? "3" : data.rows),
+                    "placeholder_": (data.placeholder === undefined ? "" : data.placeholder),
                     "cls_": data.cls === undefined ? "" : data.cls,
                     "readonly_": (data.readonly ? "readonly" : ""),
                     "disabled_": (data.disabled ? "disabled" : ""),
@@ -1546,58 +1615,178 @@
         _renderDivList: function (div, name, values) {
             var that = this;
             var data = $(div).data("data");
+			var hideBtn = data.bideBtn;
             var ele = $(div);
             var value_arr = isArray(values) ? values : values.split(',');
             var span = data.span === undefined ? 12 : data.span;
-            $.each(value_arr, function (i, id) {
-                var itemWrapper = $('<div class="row">' +
-                    '<div role="s-ele" class="col-lg-' + data.span + ' form-group input-group"></div>' +
-                    '</div>');
-                if (data.items != undefined) {
-					var thisItems = [];
-					$.each(data.items, function (j, jd) {
-							if(jd.type){
-								thisItems.push(jd);
-							}
-					});
-                    if (thisItems.length == 1) {
-                        var it = thisItems[0];
-                        var item = that._formEles[it.type](it, that);
-                        that._loadValue(it.name, id, item);
-                        var iWrapper;
-                        if (it.label != undefined) {
-                            iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + it.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
-                        } else {
-                            iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
-                        }
-                        iWrapper.find('[role=i-ele]').append(item);
-                        itemWrapper.find('[role=s-ele]').append(iWrapper);
-                    } else {
-                        $.each(thisItems, function (j, jd) {
-							if(jd.type){
-								var item = that._formEles[jd.type](jd, that);
-								that._loadValue(jd.name, id[jd.name], item);
-								var iWrapper;
-								if (jd.label != undefined) {
-									iWrapper = $('<div class="form-group"><label class="control-label col-md-2">' + jd.label + '</label><div role="i-ele" class="col-md-10"></div></div>');
-								} else {
-									iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+			if(!isNaN(data.row) && data.row>0){
+				var other_value_arr = [];
+				$.each(value_arr, function (i, v) {
+					var eless = $(div).find('[name="'+name+'"]');
+					if(eless.length<=i){
+						other_value_arr.push(v);
+						return;
+					}
+					var ele = $(eless[i]);
+					that._loadValue(name,v,ele);
+				});
+				value_arr = other_value_arr;
+				var thisItems = [];
+				if (data.items != undefined) {
+						$.each(data.items, function (j, jd) {
+								if(jd.type){
+									thisItems.push(jd);
 								}
-								iWrapper.find('[role=i-ele]').append(item);
-								itemWrapper.find('[role=s-ele]').append(iWrapper);
+					});
+				}
+				if(thisItems.length>1){
+					var itemsss=[];
+					for(var i=0;i<value_arr.length;i+=thisItems.length){
+						var currentItems=[];
+						for(var j=0;j<thisItems.length;j++){
+							currentItems.push(value_arr[j+i]);
+						}
+						itemsss.push(currentItems);
+					}
+					value_arr = itemsss;
+				}
+				$.each(value_arr, function (i, id) {
+					var itemWrapper = $('<div class="row">' +
+						'<div role="s-ele" class="col-lg-' + data.span + ' form-group input-group"></div>' +
+						'</div>');
+					if (data.items != undefined) {
+						if (thisItems.length == 1) {
+							var it = thisItems[0];
+							var item = that._formEles[it.type](it, that);
+							that._loadValue(it.name, id, item);
+							var iWrapper;
+							if (it.label != undefined) {
+								if(jd.labelSpan>0 && jd.labelSpan<12){
+									labelSpan = jd.labelSpan;
+									eleSpan = 12-jd.labelSpan;
+								}
+								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+							} else {
+								iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 							}
-                        });
-                    }
-                    itemWrapper.find('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
-                    var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
-                    itemWrapper.find('[role=s-action]').append(deleteBtn);
-                    deleteBtn.on("click", function () {
-                        itemWrapper.remove();
-                    });
-                    ele.find('[role=ele]').append(itemWrapper);
-                    that._uniform();
-                }
-            });
+							iWrapper.find('[role=i-ele]').append(item);
+							itemWrapper.find('[role=s-ele]').append(iWrapper);
+						} else {
+							$.each(thisItems, function (j, jd) {
+								if(jd.type){//radio checkbox选项的屏蔽掉
+									var item = that._formEles[jd.type](jd, that);
+									that._loadValue(jd.name, id[j], item);
+									var iWrapper;
+									if (jd.label != undefined) {
+										var labelSpan = 4;
+										var eleSpan = 8;
+										if(jd.labelSpan>0 && jd.labelSpan<12){
+											labelSpan = jd.labelSpan;
+											eleSpan = 12-jd.labelSpan;
+										}
+										iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+									} else {
+										iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+									}
+									iWrapper.find('[role=i-ele]').append(item);
+									itemWrapper.find('[role=s-ele]').append(iWrapper);
+								}
+							});
+						}
+						itemWrapper.find('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
+						if(hideBtn){
+							
+						}else{
+							var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
+							itemWrapper.find('[role=s-action]').append(deleteBtn);
+							deleteBtn.on("click", function () {
+								itemWrapper.remove();
+							});
+						}
+						ele.find('[role=ele]').append(itemWrapper);
+						that._uniform();
+					}
+				});
+			}else{
+				var thisItems = [];
+				if (data.items != undefined) {
+						$.each(data.items, function (j, jd) {
+								if(jd.type){
+									thisItems.push(jd);
+								}
+					});
+				}
+				if(thisItems.length>1){
+					var itemsss=[];
+					for(var i=0;i<value_arr.length;i+=thisItems.length){
+						var currentItems=[];
+						for(var j=0;j<thisItems.length;j++){
+							currentItems.push(value_arr[j+i]);
+						}
+						itemsss.push(currentItems);
+					}
+					value_arr = itemsss;
+				}
+				$.each(value_arr, function (i, id) {
+					var itemWrapper = $('<div class="row">' +
+						'<div role="s-ele" class="col-lg-' + data.span + ' form-group input-group"></div>' +
+						'</div>');
+					if (data.items != undefined) {
+						if (thisItems.length == 1) {
+							var it = thisItems[0];
+							var item = that._formEles[it.type](it, that);
+							that._loadValue(it.name, id, item);
+							var iWrapper;
+							if (jd.label != undefined) {
+								var labelSpan = 4;
+								var eleSpan = 8;
+								if(jd.labelSpan>0 && jd.labelSpan<12){
+									labelSpan = jd.labelSpan;
+									eleSpan = 12-jd.labelSpan;
+								}
+								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+							} else {
+								iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+							}
+							iWrapper.find('[role=i-ele]').append(item);
+							itemWrapper.find('[role=s-ele]').append(iWrapper);
+						} else {
+							$.each(thisItems, function (j, jd) {
+								if(jd.type){
+									var item = that._formEles[jd.type](jd, that);
+									that._loadValue(jd.name, id[j], item);
+									var iWrapper;
+									if (jd.label != undefined) {
+										var labelSpan = 4;
+										var eleSpan = 8;
+										if(jd.labelSpan>0 && jd.labelSpan<12){
+											labelSpan = jd.labelSpan;
+											eleSpan = 12-jd.labelSpan;
+										}
+										iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+									} else {
+										iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
+									}
+									iWrapper.find('[role=i-ele]').append(item);
+									itemWrapper.find('[role=s-ele]').append(iWrapper);
+								}
+							});
+						}
+						itemWrapper.find('[role=s-ele]').append($('<span role="s-action" style="vertical-align: top;" class="input-group-btn"></span>'));
+						if(hideBtn){
+							
+						}else{
+							var deleteBtn = $('<button class="btn btn-sm btn-danger" type="button"><i class="fa fa-times"></i></button>');
+							itemWrapper.find('[role=s-action]').append(deleteBtn);
+							deleteBtn.on("click", function () {
+								itemWrapper.remove();
+							});
+						}
+						ele.find('[role=ele]').append(itemWrapper);
+						that._uniform();
+					}
+				});
+			}
         },
         _renderMultipleFiles: function (table, fieldName, fileIds) {
             var elementData = $(table).data("data");
@@ -1776,7 +1965,8 @@
             }
         },
         _loadValue: function (name, value, element) {
-            var ele = element || this.$form.find("[name='" + name + "']");
+            var eles = element || this.$form.find("[name='" + name + "']");
+			var ele = $(eles[0]);
             if (ele.is('input[type="text"]')) {
                 if (ele.attr("data-type") == "tree-input") {
                     if ($.isArray(value)) {
@@ -1816,7 +2006,28 @@
                             "span.fileinput-filename ").text(
                             value.substring(value.lastIndexOf("/") + 1));
                     }
-                } else if (ele.is('table')) {
+                }else if(ele.attr("role") == "number"){
+					if((typeof value) =="string"){
+						if(value.indexOf(",")!=-1){
+							var values = value.split(",");
+							ele.val(values[0]);
+							itemsValue = value.substring(value.indexOf(",")+1);
+							var data = ele.data("data");
+							data.hideBtn=true;
+							if(data.items.length==0){
+								data.items=[{name:name,type:'text'}];
+							}
+							var list = this._formEles['list'](data,this);
+							ele.parent().append(list);
+							list.data("data",data);
+							this._renderDivList(list, name, itemsValue);
+						}else{
+							ele.val(value);
+						}
+					}else{
+						ele.val(value);
+					}
+				} else if (ele.is('table')) {
                     this._renderMultipleFiles(ele, name, value);
                 } else {
                     ele.val(value);
@@ -1830,15 +2041,17 @@
 					div.parent().append(list);
 					list.data("data",data);
 				}
-				if(typeof(value)=="string" && value.indexOf(",")!=-1){
-					itemsValue = value.substring(value.indexOf(",")+1);
-					value = value.substring(0,value.indexOf(","));
-					var div =ele.parents('div[class="radio-list"]');
-					var data = div.data("data");
-					var list = this._formEles['list'](data,this);
-					div.parent().append(list);
-					list.data("data",data);
-					this._renderDivList(list, name, itemsValue);
+				if((typeof value)=="string"){
+					if(value.indexOf(",")!=-1){
+						itemsValue = value.substring(value.indexOf(",")+1);
+						value = value.substring(0,value.indexOf(","));
+						var div =ele.parents('div[class="radio-list"]');
+						var data = div.data("data");
+						var list = this._formEles['list'](data,this);
+						div.parent().append(list);
+						list.data("data",data);
+						this._renderDivList(list, name, itemsValue);
+					}
 				}
                 this.$form.find(
                     "input[type='radio'][name='" + name + "'][value='"
@@ -1860,14 +2073,16 @@
 						div.parent().append(list);
 						list.data("data",data);
 					}
-					if(typeof(value)=="string" && value.indexOf("other,")!=-1){
-						itemsValue = value.substring(value.indexOf("other,")+6);
-						var div =ele.parents('div[class="checkbox-list"]');
-						var data = div.data("data");
-						var list = this._formEles['list'](data,this);
-						div.parent().append(list);
-						list.data("data",data);
-						this._renderDivList(list, name, itemsValue);
+					if((typeof value)=="string"){
+						if(value.indexOf("other,")!=-1){
+							itemsValue = value.substring(value.indexOf("other,")+6);
+							var div =ele.parents('div[class="checkbox-list"]');
+							var data = div.data("data");
+							var list = this._formEles['list'](data,this);
+							div.parent().append(list);
+							list.data("data",data);
+							this._renderDivList(list, name, itemsValue);
+						}
 					}
                 }
             } else if (ele.is('input[type="hidden"]')) {
