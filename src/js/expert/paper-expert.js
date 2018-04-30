@@ -107,7 +107,7 @@
 					cls: "btn btn-primary",
 					icon: "fa fa-lightbulb-o",
 					handle: function (grid) {
-						bootbox.confirm("确定初始化，将会生成一套评分方案？",function(res){
+						bootbox.confirm("确定初始化，将会重新生成一套评分方案，之前配置将会删除？",function(res){
 							if(res){
 								var paperId = $("#search_paperId").val();
 								var requestUrl = App.href + "/api/expert/paper/init";
@@ -141,7 +141,7 @@
 					cls: "btn btn-primary",
 					icon: "fa fa-lightbulb-o",
 					handle: function (grid) {
-						bootbox.confirm("确定初始化，将会生成一套评分方案？",function(res){
+						bootbox.confirm("确定初始化，将会重新生成一套评分方案，之前配置将会删除？",function(res){
 							if(res){
 								var paperId = $("#search_paperId").val();
 								var requestUrl = App.href + "/api/expert/paper/init";
@@ -303,7 +303,8 @@
 									id:data.id,
 									expertIds:input,
 									expertNames:inputs,
-									paperExpertId:currentPaperExpertId
+									paperExpertId:currentPaperExpertId,
+									paperId:currentPaper
 									},
 								success:function(res){
 									if(res.code==200){
@@ -399,8 +400,11 @@
 										{
 											type: 'tree',
 											data: [treedata],
-										   
-										}
+											top: '0%',
+											left: '8%',
+											bottom: '1%',
+											right: '8%'
+									   }
 									]});
 							
 							

@@ -33,6 +33,7 @@
                 $.each(this._options.data, function (i, idx) {
                     if (idx.items.length > 0) {
                         $.each(idx.items, function (ii, item) {
+							if(item.showLevel<=App.currentUser.level) return ;
                             var display = {
                                 name: '',
                                 id: '',

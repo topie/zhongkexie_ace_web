@@ -175,7 +175,71 @@
 						}
 						 else if (item.itemType == 6) {
 							it.type = 'checkbox_input';
-						}
+						}else if (item.itemType == 7) {
+							it.type = 'list';
+							it.row = item.row;
+							it.hideBtn = item.hideBtn;
+							try{
+								var customItems = JSON.parse(item.customItems);
+								it.span = 8;
+								$.each(customItems,function(index,cont){
+									if(index==0){
+										it.formInline = cont.formInline;
+										if(it.formInline){
+											if(cont.label){
+												it.span=12;
+											}
+											it.span = 8;
+										}
+									}
+									customItems[index]["name"]=item.id;
+								});
+								if(customItems.length==3){
+									it.span = 9;
+								}if(customItems.length==2){
+									it.span = 7;
+								}
+								it.items = customItems;
+							}catch(err){
+								alert("解析json错误："+it.label);
+							}
+						}else if (item.itemType == 8) {
+							it.type = 'radio_inputs';
+							it.row = item.row;
+							it.hideBtn = item.hideBtn;
+							$.each(item.items, function (i, op) {
+								if(op.title=='是'||op.title=='有'){
+									it.trigerValue=op.id;
+								}
+							});
+							try{
+								var customItems = JSON.parse(item.customItems);
+								$.each(customItems,function(index,cont){
+									if(index==0){
+										it.formInline = cont.formInline;
+									}
+									customItems[index]["name"]=item.id;
+								});
+								it.customItems = customItems;
+							}catch(err){
+								alert("解析json错误："+it.label);
+							}
+						}else if (item.itemType == 9) {
+							it.type = 'number_input';
+							it.span=6;
+							try{
+								var customItems = JSON.parse(item.customItems);
+								$.each(customItems,function(index,cont){
+									if(index==0){
+										it.formInline = cont.formInline;
+									}
+									customItems[index]["name"]=item.id;
+								});
+								it.items = customItems;
+							}catch(err){
+								alert("解析json错误："+it.label);
+							}
+						 }
 						it.label='(专家评分项)   '+it.label;
 					}else{
 						it.type="html";
@@ -190,7 +254,7 @@
 						};
 						it.handleParams=item;
 					}
-					if (item.itemType ==1 || item.itemType==2|| item.itemType==5|| item.itemType==6) {
+                    if (item.itemType ==1 || item.itemType==2|| item.itemType==5|| item.itemType==6|| item.itemType == 8) {
 						it.inline=true;
 						it.items = [];
 						$.each(item.items, function (i, op) {
