@@ -691,9 +691,10 @@
                 return ele;
             },
 			'number': function (data, form) {
-                var textTmpl = '<input drole="main" role="number" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}[数字]" >';
+                var textTmpl = '<input drole="main" role="${number_}" type="text" showicon=${showIcon_} id="${id_}" name="${name_}" class="form-control ${cls_}" ${readonly_} ${disabled_} ${attribute_} placeholder="${placeholder_}[数字]" >';
                 var ele = $.tmpl(textTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
+					"number_": data.type,
                     "name_": data.name,
                     "showIcon_": data.showIcon === undefined ? false
                         : data.showIcon,
@@ -728,10 +729,10 @@
 						data.hideBtn=true;
 						if(data.items){
 							if( data.items.length==0){
-								data.items=[{name:name,type:'text'}];
+								data.items=[{name:data.name,type:'text',label:"名称"}];
 							}
 						}else{
-							data.items=[{name:name,type:'text'}];
+							data.items=[{name:data.name,type:'text',label:"名称"}];
 						}
 						var list = form._formEles['list'](data,form);
 						ele.parent().append(list);
@@ -1613,6 +1614,7 @@
             }
         },
         _renderDivList: function (div, name, values) {
+			
             var that = this;
             var data = $(div).data("data");
 			var hideBtn = data.bideBtn;
@@ -1621,14 +1623,29 @@
             var span = data.span === undefined ? 12 : data.span;
 			if(!isNaN(data.row) && data.row>0){
 				var other_value_arr = [];
+				var radioIndex= 0;
 				$.each(value_arr, function (i, v) {
 					var eless = $(div).find('[name="'+name+'"]');
 					if(eless.length<=i){
 						other_value_arr.push(v);
 						return;
 					}
-					var ele = $(eless[i]);
-					that._loadValue(name,v,ele);
+					if(eless.is('input[type="radio"]')&&radioIndex==0){
+						$.each(eless, function (ei, v) {
+							if($(this).is('input[type="radio"]')){
+								radioIndex++;
+							}
+						});
+						var ele = $(eless[i]);
+						that._loadValue(name,v,ele);
+					}
+					if(radioIndex==0){
+						var ele = $(eless[i]);
+						that._loadValue(name,v,ele);
+					}else{
+						var ele = $(eless[radioIndex]);
+						that._loadValue(name,v,ele);
+					}
 				});
 				value_arr = other_value_arr;
 				var thisItems = [];
@@ -1661,9 +1678,11 @@
 							that._loadValue(it.name, id, item);
 							var iWrapper;
 							if (it.label != undefined) {
-								if(jd.labelSpan>0 && jd.labelSpan<12){
-									labelSpan = jd.labelSpan;
-									eleSpan = 12-jd.labelSpan;
+								var labelSpan = 4;
+								var eleSpan = 8;
+								if(it.labelSpan>0 && it.labelSpan<12){
+									labelSpan = it.labelSpan;
+									eleSpan = 12-it.labelSpan;
 								}
 								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 							} else {
@@ -1737,14 +1756,14 @@
 							var item = that._formEles[it.type](it, that);
 							that._loadValue(it.name, id, item);
 							var iWrapper;
-							if (jd.label != undefined) {
+							if (it.label != undefined) {
 								var labelSpan = 4;
 								var eleSpan = 8;
-								if(jd.labelSpan>0 && jd.labelSpan<12){
-									labelSpan = jd.labelSpan;
-									eleSpan = 12-jd.labelSpan;
+								if(it.labelSpan>0 && it.labelSpan<12){
+									labelSpan = it.labelSpan;
+									eleSpan = 12-it.labelSpan;
 								}
-								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 							} else {
 								iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 							}
@@ -2015,7 +2034,32 @@
 							var data = ele.data("data");
 							data.hideBtn=true;
 							if(data.items.length==0){
-								data.items=[{name:name,type:'text'}];
+								data.items=[{name:name,type:'text',label:"名称"}];
+							}
+							var list = this._formEles['list'](data,this);
+							ele.parent().append(list);
+							list.data("data",data);
+							this._renderDivList(list, name, itemsValue);
+						}else{
+							ele.val(value);
+						}
+					}else{
+						ele.val(value);
+					}
+				} else if(ele.attr("role") == "number_input"){
+					if((typeof value) =="string"){
+						if(value.indexOf(",")!=-1){
+							var values = value.split(",");
+							ele.val(values[0]);
+							itemsValue = value.substring(value.indexOf(",")+1);
+							var data = ele.data("data");
+							data.hideBtn=true;
+							if(data.items){
+								if(data.items.length==0){
+									data.items=[{name:name,type:'text',label:"名称"}];
+								}
+							}else{
+								data.items=[{name:name,type:'text',label:"名称"}];
 							}
 							var list = this._formEles['list'](data,this);
 							ele.parent().append(list);

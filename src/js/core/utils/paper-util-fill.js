@@ -29,22 +29,28 @@
             this.$main = mainPanel;
             var tabs = [];
             if (this._options.data !== undefined && this._options.data.length > 0) {
-                var itemIndex = 1;
+				
+					var itemIndex = 1;
                 $.each(this._options.data, function (i, idx) {
+					var formItems = [];
                     if (idx.items.length > 0) {
-                        $.each(idx.items, function (ii, item) {
-							if(item.showLevel<=App.currentUser.level) return ;
-                            var display = {
+						var display = {
                                 name: '',
                                 id: '',
                                 type: 'display',
                                 label: '',
                                 html: '<span>' + idx.parentIndexTitle + '</span>'
                             };
+						formItems.push(display);
+                        $.each(idx.items, function (ii, item) {
+							if(item.showLevel<App.currentUser.userType){
+								return ;
+							}
+                            
                             var it = {};
                             it.name = item.id;
                             it.label = item.title;// + "(" + item.score + "分)";
-							it.placeholder = item.placeholder==undefined?"":item.placeholder==undefined;
+							it.placeholder = item.placeholder==undefined?"":item.placeholder;
                             if (item.itemType == 0) {
                                 it.type = 'text';
                             } else if (item.itemType == 1) {
@@ -122,6 +128,7 @@
 											it.formInline = cont.formInline;
 										}
 										customItems[index]["name"]=item.id;
+
 									});
 									it.items = customItems;
 								}catch(err){
@@ -148,29 +155,34 @@
                             if (item.value != undefined && item.value != '') {
                                 it.value = item.value;
                             }
-                            var tab = {};
-                            tab['title'] = '第' + itemIndex + '项';
-                            tab['width'] = '87px';
-                            tab['content'] = {
-                                plugin: 'form',
-                                options: {
-                                    method: "POST",
-                                    action: "",
-                                    ajaxSubmit: true,
-                                    rowEleNum: 1,
-                                    ajaxSuccess: function () {
-                                    },
-                                    showReset: false,
-                                    showSubmit: false,
-                                    isValidate: true,
-                                    labelInline: false,
-                                    buttonsAlign: "center",
-                                    items: [display, it]
-                                }
-                            };
-                            tabs.push(tab);
-                            itemIndex++;
+							
+							formItems.push(it);
+                           
                         });
+						if(formItems.length>1){
+							var tab = {};
+							tab['title'] = '第' + itemIndex + '项';
+							tab['width'] = '87px';
+							tab['content'] = {
+								plugin: 'form',
+								options: {
+									method: "POST",
+									action: "",
+									ajaxSubmit: true,
+									rowEleNum: 1,
+									ajaxSuccess: function () {
+									},
+									showReset: false,
+									showSubmit: false,
+									isValidate: true,
+									labelInline: false,
+									buttonsAlign: "center",
+									items: formItems
+								}
+							};
+							tabs.push(tab);
+							itemIndex++;
+						}
                     }
                 });
             }
@@ -184,8 +196,8 @@
                 lazy: false,
                 tabs: tabs
             });
-            var prevBtn = $('<button type="button" class="btn btn btn-info">上一题</button>');
-            var nextBtn = $('<button type="button" class="btn btn btn-success">下一题</button>');
+            var prevBtn = $('<button type="button" class="btn btn btn-info">上一项</button>');
+            var nextBtn = $('<button type="button" class="btn btn btn-success">下一项</button>');
             mainPanel.find('div.panel-footer:eq(0)').append(prevBtn);
             mainPanel.find('div.panel-footer:eq(0)').append(nextBtn);
             prevBtn.on("click", function () {
@@ -203,13 +215,13 @@
                 }
             });
             this.$tab = tab;
-            this.$main.find('form').each(
+           /* this.$main.find('form').each(
                 function () {
                     $(this).find('input').on("change", function () {
                         that.showCheck();
                     });
                 }
-            );
+            );*/
         },
         getPanel: function (title, theme) {
             if (theme === undefined)
@@ -260,7 +272,7 @@
             return answers;
         },
         getValidation: function () {
-            this.showCheck();
+            //this.showCheck();
             var message = [];
             this.$main.find('li[role=tab]').find('a').each(function () {
                 var that = $(this);
@@ -285,12 +297,14 @@
             } else {
                 this.$tab.go(0);
             }
-            that.showCheck();
+           // that.showCheck();
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
-            var form = ele.parents('div[role=content]:eq(0)').data("plugin");
-            form.setValue(name, value);
+			if(ele.length>0){
+				var form = ele.parents('div[role=content]:eq(0)').data("plugin");
+				form.setValue(name, value);
+			}
         },
         showCheck: function () {
             var that = this;
