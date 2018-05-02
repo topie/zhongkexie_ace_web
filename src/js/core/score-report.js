@@ -60,7 +60,7 @@
                     title: "结束时间",
                     field: "end"
                 }, {
-                    title: "填报状态",
+                    title: "试卷状态",
                     field: "status",
                     format: function (num, data) {
                         if (data.status == 1) {

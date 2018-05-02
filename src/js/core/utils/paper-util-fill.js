@@ -98,6 +98,7 @@
                                 it.type = 'radio_inputs';
 								it.row = item.row;
 								it.hideBtn = item.hideBtn;
+								it.span = 6;
 								$.each(item.items, function (i, op) {
 									if(op.title=='是'||op.title=='有'){
 										it.trigerValue=op.id;
@@ -108,6 +109,7 @@
 									$.each(customItems,function(index,cont){
 										if(index==0){
 											it.formInline = cont.formInline;
+											if(cont.span){it.span = cont.span;}
 										}
 										customItems[index]["name"]=item.id;
 									});

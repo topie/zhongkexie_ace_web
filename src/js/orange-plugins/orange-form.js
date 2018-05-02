@@ -727,12 +727,15 @@
 						}
 						data.row = eleValue;
 						data.hideBtn=true;
+						data.span=6;
 						if(data.items){
 							if( data.items.length==0){
-								data.items=[{name:data.name,type:'text',label:"名称"}];
+								//data.items=[{name:data.name,type:'text',label:"名称"}];
+								data.items=[{name:name,type:'text',label:"名称"}];
 							}
 						}else{
-							data.items=[{name:data.name,type:'text',label:"名称"}];
+							//data.items=[{name:data.name,type:'text',label:"名称"}];
+							data.items=[{name:name,type:'text',label:"名称"}];
 						}
 						var list = form._formEles['list'](data,form);
 						ele.parent().append(list);
@@ -1617,7 +1620,7 @@
 			
             var that = this;
             var data = $(div).data("data");
-			var hideBtn = data.bideBtn;
+			var hideBtn = data.hideBtn;
             var ele = $(div);
             var value_arr = isArray(values) ? values : values.split(',');
             var span = data.span === undefined ? 12 : data.span;
@@ -1667,9 +1670,11 @@
 					}
 					value_arr = itemsss;
 				}
+				var formInline = (data.formInline ? "form-inline"
+                        : "");
 				$.each(value_arr, function (i, id) {
 					var itemWrapper = $('<div class="row">' +
-						'<div role="s-ele" class="col-lg-' + data.span + ' form-group input-group"></div>' +
+						'<div role="s-ele" class="col-lg-' + data.span + ' form-group '+formInline+' input-group"></div>' +
 						'</div>');
 					if (data.items != undefined) {
 						if (thisItems.length == 1) {
@@ -2054,6 +2059,7 @@
 							itemsValue = value.substring(value.indexOf(",")+1);
 							var data = ele.data("data");
 							data.hideBtn=true;
+							data.span=6;
 							if(data.items){
 								if(data.items.length==0){
 									data.items=[{name:name,type:'text',label:"名称"}];
