@@ -350,6 +350,7 @@
                                     type: 'number',
                                     name: 'row',
                                     id: 'row',
+									value:"0",
                                     label: '生成行数',
                                     cls: 'input-xxlarge',
                                     rule: {

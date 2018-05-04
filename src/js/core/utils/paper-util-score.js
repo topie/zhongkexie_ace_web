@@ -128,9 +128,9 @@
 					 }
                 });
             }
-            this.$main.find("label.control-label").each(function (i, d) {
+            /*this.$main.find("label.control-label").each(function (i, d) {
                 $(this).text((i + 1) + "." + $(this).text());
-            });
+            });*/
         },
         renderSubRow: function (that, row, items) {
             if (items != undefined && items.length > 0) {
@@ -144,10 +144,14 @@
                     var it = {};
 					it.itemActions = that._options.itemActions;
                     it.name = item.id;
+					it.hideBtn = true;
                     it.label = item.title;
                     it.score = item.score;
-					if(item.scoreType==3){
-						currentItems.push(item);
+					it.placeholder = item.placeholder === undefined ? ""
+                        : item.placeholder;
+						if(item.scoreType==3){
+							currentItems.push(item);
+						}
 						if(that._options.showSocre){
 							it.label = item.title+"（"+item.score+"分）";
 						}
@@ -178,7 +182,6 @@
 						}else if (item.itemType == 7) {
 							it.type = 'list';
 							it.row = item.row;
-							it.hideBtn = item.hideBtn;
 							try{
 								var customItems = JSON.parse(item.customItems);
 								it.span = 8;
@@ -187,7 +190,7 @@
 										it.formInline = cont.formInline;
 										if(it.formInline){
 											if(cont.label){
-												it.span=12;
+												it.span=8;
 											}
 											it.span = 8;
 										}
@@ -205,8 +208,8 @@
 							}
 						}else if (item.itemType == 8) {
 							it.type = 'radio_inputs';
+							it.span=8;
 							it.row = item.row;
-							it.hideBtn = item.hideBtn;
 							$.each(item.items, function (i, op) {
 								if(op.title=='是'||op.title=='有'){
 									it.trigerValue=op.id;
@@ -226,7 +229,7 @@
 							}
 						}else if (item.itemType == 9) {
 							it.type = 'number_input';
-							it.span=6;
+							it.span=8;
 							try{
 								var customItems = JSON.parse(item.customItems);
 								$.each(customItems,function(index,cont){
@@ -239,9 +242,16 @@
 							}catch(err){
 								alert("解析json错误："+it.label);
 							}
-						 }
+						 }else if (item.itemType == 10) {
+							it.type = 'textarea';
+						}
+
+					if(item.scoreType==3){
 						it.label='(专家评分项)   '+it.label;
 					}else{
+						it.label='(参考项)   '+it.label;
+					}
+					/*}else{
 						it.type="html";
 						if (item.itemType == 1) {
 							it.type = 'radioGroup';
@@ -253,7 +263,7 @@
 							return '';//data.title;
 						};
 						it.handleParams=item;
-					}
+					}*/
                     if (item.itemType ==1 || item.itemType==2|| item.itemType==5|| item.itemType==6|| item.itemType == 8) {
 						it.inline=true;
 						it.items = [];
@@ -282,7 +292,7 @@
 						var  subs = $('<div class="form-group">'
 							+'请对专家评分项进行评分：'
 							+'</div><div class="form-group">'
-							+'<input drole="main" type="text" showicon="false" name="itemId_'+currentItem.id+'" class="form-control " placeholder="  只能填写数字  ">'
+							+'<input drole="main" type="text" showicon="false" name="itemId_'+currentItem.id+'" class="form-control " placeholder=" [数字]  ">'
 							+'</div><div class="form-group">'
 							+'<button type="button" class="btn btn-info btn-sm" data-item="'+currentItem.id+'">评分</button>'
 							+'</div>');
@@ -357,10 +367,8 @@
                     buttonsAlign: "center",
                     items: its
                 });
-								
-				if (hasList) {
-					qi.find('div[role=qi]').find('[role="action"]').remove();
-				}
+				row.find('div.panel-body:eq(0)').data("plugin",form);
+				
             }
         },
         getPanel: function (title, theme) {
@@ -448,7 +456,40 @@
 			//label.after('<label class="anserScore" style="color:blue">(得分：'+value+')</label>');
 			var ele = this.$main.find("input[name='itemId_" + name + "']").val(value);;
 		},
-        loadAnswer: function (ans,callback) {
+		loadAnswer: function (ans,callback) {
+			 var that = this;
+			$.each(ans, function (i, an) {
+                that.loadValue(an.itemId, an.answerValue,an,callback);
+            });
+
+		},
+		loadValue: function (name, value,an,callback) {
+            var ele = this.$main.find("[name='" + name + "']");
+			if(ele.length>0){
+				var form = ele.parents('div.panel-body:eq(0)').data("plugin");
+				form.setValue(name, value);
+				var ht=value;
+				if (ele.is('input[type="radio"]')) {
+					if(callback){
+						ht = callback(an);
+					}
+					this.$main.find(
+						"input[type='radio'][name='" + name + "'][value='"
+						+ value + "']").parent().append("&nbsp;("+ ht+")");
+				}
+				if (ele.is('input[role="number"]')) {
+					if(ele.length==1){
+						if(callback){
+							ht = callback(an);
+						}
+						this.$main.find(
+							"input[role='number'][name='" + name + "'][value='"
+							+ value + "']").parent().append("&nbsp;("+ ht+")");
+					}
+				}
+			}
+        },
+        loadAnswers: function (ans,callback) {
             var that = this;
             $.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue,an,callback);
@@ -464,7 +505,7 @@
 				});
 			}
         },
-        loadValue: function (name, value,an,callback) {
+        loadValues: function (name, value,an,callback) {
             var ele = this.$main.find("[name='" + name + "']");
             if (ele.is('input[type="radio"]')) {
 				if(value==='other'){

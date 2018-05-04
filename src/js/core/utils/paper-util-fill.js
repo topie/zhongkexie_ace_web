@@ -78,7 +78,7 @@
 											it.formInline = cont.formInline;
 											if(it.formInline){
 												if(cont.label){
-													it.span=12;
+													it.span=8;
 												}
 												it.span = 8;
 											}
@@ -142,6 +142,8 @@
                             } else if (item.itemType == 6) {
                                 it.type = 'checkbox_input';
                                 it.span = 6;
+                            } else if (item.itemType == 10) {
+                                it.type = 'textarea';
                             }
                             if (item.itemType == 1 || item.itemType == 2 || item.itemType == 5 || item.itemType == 6|| item.itemType == 8) {
                                 it.items = [];
@@ -332,7 +334,7 @@
                     if (tmpAs[pss[0] + ''] === undefined) {
                         tmpAs[pss[0] + ''] = decodeURI(pss[1]);
                     } else {
-                        tmpAs[pss[0] + ''] = decodeURI(tmpAs[pss[0] + ''] + "," + pss[1]);
+                        tmpAs[pss[0] + ''] = tmpAs[pss[0] + ''] + "," +decodeURI( pss[1]);
                     }
                 }
             });

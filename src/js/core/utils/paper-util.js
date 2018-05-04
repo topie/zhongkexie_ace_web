@@ -128,9 +128,9 @@
 					 }
                 });
             }
-            this.$main.find("label.control-label").each(function (i, d) {
+            /*this.$main.find("label.control-label").each(function (i, d) {
                 $(this).text((i + 1) + "." + $(this).text());
-            });
+            });*/
         },
         renderSubRow: function (that, row, items) {
             if (items != undefined && items.length > 0) {
@@ -142,10 +142,13 @@
 						return ;
 				   }
                     var it = {};
+					it.hideBtn = true;
 					it.itemActions = that._options.itemActions;
                     it.name = item.id;
                     it.label = item.title;
                     it.score = item.score;
+					it.placeholder = item.placeholder === undefined ? ""
+                        : item.placeholder;
 					if(that._options.showSocre){
 						it.label = item.title+"（"+item.score+"分）";
 					}
@@ -157,7 +160,6 @@
                         it.type = 'checkboxGroup';
                     } else if (item.itemType == 3) {
                         it.type = 'list';
-						hasList = true;
 						it.span = 6;
 						it.items = [
 							{
@@ -176,7 +178,6 @@
                     }else if (item.itemType == 7) {
 						it.type = 'list';
 						it.row = item.row;
-						it.hideBtn = item.hideBtn;
 						try{
 							var customItems = JSON.parse(item.customItems);
 							it.span = 8;
@@ -204,7 +205,7 @@
 					}else if (item.itemType == 8) {
 						it.type = 'radio_inputs';
 						it.row = item.row;
-						it.hideBtn = item.hideBtn;
+						it.span=8;
 						$.each(item.items, function (i, op) {
 							if(op.title=='是'||op.title=='有'){
 								it.trigerValue=op.id;
@@ -224,7 +225,7 @@
 						}
 					}else if (item.itemType == 9) {
 						it.type = 'number_input';
-						it.span=6;
+						it.span=8;
 						try{
 							var customItems = JSON.parse(item.customItems);
 							$.each(customItems,function(index,cont){
@@ -237,6 +238,8 @@
 						}catch(err){
 							alert("解析json错误："+it.label);
 						}
+                     }else if (item.itemType == 10) {
+                          it.type = 'textarea';
                      }
                     if (item.itemType ==1 || item.itemType==2|| item.itemType==5|| item.itemType==6|| item.itemType == 8) {
 						it.inline=true;
@@ -273,9 +276,8 @@
                     buttonsAlign: "center",
                     items: its
                 });
-				if (hasList) {
-					qi.find('div[role=qi]').find('[role="action"]').remove();
-				}
+				row.find('div.panel-body:eq(0)').data("plugin",form);
+				
             }
         },
         getPanel: function (title, theme) {
@@ -359,10 +361,33 @@
         },
 		loadScore:function(name, value){
 			var ele = this.$main.find("[name='" + name + "']");
-			var label = ele.parents(".form-group").find(".control-label");
-			label.after('<label class="anserScore" style="color:blue">(得分：'+value+')</label>');
+			//var label = ele.parents(".row").find('[class="control-label "]');
+			var label = ele.parents(".row").find('[class="control-label "]');
+			var inx = 0;
+			$.each(label,function(index,el){
+				if($(this).next().is('.anserScore')){
+					inx=index+1;
+				}
+			})
+			var cl = $(label[inx]);
+			//if(ele.parents(".row").find(".anserScore").length>0 ) return;
+			cl.after('<label class="anserScore" style="color:blue">(得分：'+value+')</label>');
 		},
-        loadAnswer: function (ans) {
+		loadAnswer: function (ans) {
+			 var that = this;
+			$.each(ans, function (i, an) {
+                that.loadValue(an.itemId, an.answerValue);
+            });
+
+		},
+		loadValue: function (name, value) {
+            var ele = this.$main.find("[name='" + name + "']");
+			if(ele.length>0){
+				var form = ele.parents('div.panel-body:eq(0)').data("plugin");
+				form.setValue(name, value);
+			}
+        },
+        loadAnswers: function (ans) {
             var that = this;
             $.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue);
@@ -378,7 +403,7 @@
 				});
 			}
         },
-        loadValue: function (name, value) {
+        loadValues: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
             if (ele.is('input[type="radio"]')) {
 				if(value==='other'){
