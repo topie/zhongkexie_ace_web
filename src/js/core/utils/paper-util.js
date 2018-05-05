@@ -361,16 +361,7 @@
         },
 		loadScore:function(name, value){
 			var ele = this.$main.find("[name='" + name + "']");
-			//var label = ele.parents(".row").find('[class="control-label "]');
-			var label = ele.parents(".row").find('[class="control-label "]');
-			var inx = 0;
-			$.each(label,function(index,el){
-				if($(this).next().is('.anserScore')){
-					inx=index+1;
-				}
-			})
-			var cl = $(label[inx]);
-			//if(ele.parents(".row").find(".anserScore").length>0 ) return;
+			var cl = ele.closest('.row[data-row]').find('[class="control-label "]');
 			cl.after('<label class="anserScore" style="color:blue">(得分：'+value+')</label>');
 		},
 		loadAnswer: function (ans) {

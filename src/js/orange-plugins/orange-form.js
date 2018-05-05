@@ -542,19 +542,26 @@
 				var radioGroup = form._formEles['radioGroup'](data, form);
 				var inputItems = data.customItems;
 				data.items=inputItems;
-				radioGroup.find("input[type='radio']").each(function(){
-					$(this).bind("click",function(){
-						if($(this).val()==data.trigerValue){
-							if(radioGroup.parent().find("div[role='list']").length>0){
-								return;
+				var relate = true;
+				if(data.relate===false) relate =false;
+				if(relate){
+					radioGroup.find("input[type='radio']").each(function(){
+						$(this).bind("click",function(){
+							if($(this).val()==data.trigerValue){
+								if(radioGroup.parent().find("div[role='list']").length>0){
+									return;
+								}
+								var list = form._formEles['list'](data,form);
+								radioGroup.parent().append(list);
+							}else{
+								radioGroup.parent().find("div[role='list']").remove();
 							}
-							var list = form._formEles['list'](data,form);
-							radioGroup.parent().append(list);
-						}else{
-							radioGroup.parent().find("div[role='list']").remove();
-						}
+						})
 					})
-				})
+				}else{
+					var list = form._formEles['list'](data,form);
+					radioGroup.append(list);//.after().append(list);
+				}
 				
 				return radioGroup;
 			},
@@ -727,15 +734,19 @@
 						}
 						data.row = eleValue;
 						data.hideBtn=true;
-						data.span=6;
+						if(data.span){}else{data.span=12;}
 						if(data.items){
 							if( data.items.length==0){
-								//data.items=[{name:data.name,type:'text',label:"名称"}];
-								data.items=[{name:name,type:'text',label:"名称"}];
+								data.items=[{name:data.name,type:'text',label:"名称"}];
+								//data.items=[{name:name,type:'text',label:"名称"}];
+							}else{
+								$.each(data.items,function(i,c){
+									data.items[i].name=data.name;
+								});
 							}
 						}else{
-							//data.items=[{name:data.name,type:'text',label:"名称"}];
-							data.items=[{name:name,type:'text',label:"名称"}];
+							data.items=[{name:data.name,type:'text',label:"名称"}];
+							//data.items=[{name:name,type:'text',label:"名称"}];
 						}
 						var list = form._formEles['list'](data,form);
 						ele.parent().append(list);
@@ -1627,8 +1638,30 @@
 			if(!isNaN(data.row) && data.row>0){
 				var other_value_arr = [];
 				var radioIndex= 0;
+				var eless = $(div).find('[name="'+name+'"]');
+				var s = false;
+				$.each(data.items,function(i,c){
+					if(c.type=="number_input"){
+						s = true;
+						var length =1;
+						if(c.items)length = c.items.length;
+						var e = $($(div).find('[name="'+name+'"][role="number_input"]')[i]);
+						var number = value_arr[0];
+						var index = parseInt(number);
+						var cvalue = [];
+						$.each(value_arr,function(indx,cont){
+							if(indx<=number*length) cvalue.push(cont);
+						});
+						that._loadValue(name,cvalue.toString(),e);
+						values = values.substring(cvalue.toString().length+1);
+						value_arr = values.split(",");
+					}
+					//TODO 未实现
+				})
+				if(s) return ;
 				$.each(value_arr, function (i, v) {
 					var eless = $(div).find('[name="'+name+'"]');
+
 					if(eless.length<=i){
 						other_value_arr.push(v);
 						return;
@@ -2059,10 +2092,14 @@
 							itemsValue = value.substring(value.indexOf(",")+1);
 							var data = ele.data("data");
 							data.hideBtn=true;
-							data.span=6;
+							if(data.span){}else{data.span=12;}
 							if(data.items){
 								if(data.items.length==0){
 									data.items=[{name:name,type:'text',label:"名称"}];
+								}else{
+									$.each(data.items,function(i,c){
+										data.items[i].name=name;
+									})
 								}
 							}else{
 								data.items=[{name:name,type:'text',label:"名称"}];

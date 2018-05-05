@@ -3,23 +3,23 @@
  */
 
 (function ($, window, document, undefined) {
-    var PaperFill = function (element, options) {
+    var PaperFillScore = function (element, options) {
         this._options = options;
         this.$element = $(element);
         var id = element.id;
         if (id === undefined || id == '') {
-            id = "topie_paper_fill_" + new Date().getTime();
+            id = "topie_paper_fill_score" + new Date().getTime();
             this.$element.attr("id", id);
         }
         this._elementId = id;
         this.load();
         this.init();
     };
-    PaperFill.defaults = {
+    PaperFillScore.defaults = {
         title: '',
         data: []
     };
-    PaperFill.prototype = {
+    PaperFillScore.prototype = {
         load: function () {
         },
         init: function () {
@@ -98,7 +98,7 @@
                                 it.type = 'radio_inputs';
 								it.row = item.row;
 								it.hideBtn = item.hideBtn;
-								it.span = 8;
+								it.span = 6;
 								$.each(item.items, function (i, op) {
 									if(op.title=='是'||op.title=='有'){
 										it.trigerValue=op.id;
@@ -109,7 +109,6 @@
 									$.each(customItems,function(index,cont){
 										if(index==0){
 											it.formInline = cont.formInline;
-											if(cont.relate===false)it.relate = false;
 											if(cont.span){it.span = cont.span;}
 										}
 										customItems[index]["name"]=item.id;
@@ -355,21 +354,21 @@
      * jquery插件扩展 ===================================================
      */
 
-    var getPaperFill = function (options, extra) {
-        options = $.extend(true, {}, PaperFill.defaults, options);
+    var getPaperFillScore = function (options, extra) {
+        options = $.extend(true, {}, PaperFillScore.defaults, options);
         if (extra != undefined) {
             options = $.extend(true, {}, options, extra);
         }
         var eles = [];
         this.each(function () {
             var self = this;
-            var instance = new PaperFill(self, options);
+            var instance = new PaperFillScore(self, options);
             eles.push(instance);
         });
         return eles[0];
     };
 
     $.fn.extend({
-        'orangePaperFill': getPaperFill
+        'orangePaperFillScore': getPaperFillScore
     });
 })(jQuery, window, document);
