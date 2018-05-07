@@ -738,14 +738,20 @@
 						if(data.items){
 							if( data.items.length==0){
 								data.items=[{name:data.name,type:'text',label:"名称"}];
+								if(data.readonly)
+									data.items[0].readonly=data.readonly;
 								//data.items=[{name:name,type:'text',label:"名称"}];
 							}else{
 								$.each(data.items,function(i,c){
 									data.items[i].name=data.name;
+									if(data.readonly)
+										data.items[i].readonly=data.readonly;
 								});
 							}
 						}else{
 							data.items=[{name:data.name,type:'text',label:"名称"}];
+							if(data.readonly)
+								data.items[0].readonly=data.readonly;
 							//data.items=[{name:name,type:'text',label:"名称"}];
 						}
 						var list = form._formEles['list'](data,form);
@@ -784,7 +790,7 @@
                     "rows_": (data.rows === undefined ? "3" : data.rows),
                     "placeholder_": (data.placeholder === undefined ? "" : data.placeholder),
                     "cls_": data.cls === undefined ? "" : data.cls,
-                    "readonly_": (data.readonly ? "readonly" : ""),
+                    "readonly_": (data.readonly ? 'readonly' : ""),
                     "disabled_": (data.disabled ? "disabled" : ""),
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
@@ -792,13 +798,14 @@
                 return ele;
             },
             'select': function (data, form) {
-                var selectTmpl = '<select drole="main" id="${id_}" name="${name_}" ${attribute_} ${disabled_} class="form-control ${cls_}"></select>';
+                var selectTmpl = '<select drole="main" id="${id_}" name="${name_}" ${attribute_} ${disabled_} ${readonly_} class="form-control ${cls_}"></select>';
                 var optionTmpl = '<option value=${value_} ${selected}>${text_}</option>';
                 var ele = $.tmpl(selectTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
                     "name_": data.name,
                     "cls_": data.cls === undefined ? "" : data.cls,
                     "disabled_": (data.disabled ? "disabled" : ""),
+                    "readonly_": (data.readonly ? "disabled" : ""),
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
@@ -966,7 +973,7 @@
             'radioGroup': function (data, form) {
                 var inlineCls = "radio-inline";
                 var wrapperTmpl = '<div class="radio-list"></div>';
-                var radioTmpl = '<label class="radio ${inline_}"><input drole="main" name="${name_}" value="${value_}" type="radio" ${checked_} ${attribute_}>${text_}</label>';
+                var radioTmpl = '<label class="radio ${inline_}"><input drole="main" name="${name_}" value="${value_}" type="radio" ${checked_} ${disabled_} ${readonly_} ${attribute_}>${text_}</label>';
                 var ele = $.tmpl(wrapperTmpl, {
                     "id_": (data.id === undefined ? data.name : data.id),
                     "name_": data.name,
@@ -981,6 +988,10 @@
                             "value_": radio.value,
                             "text_": radio.text,
                             "checked_": (radio.checked ? "checked=checked" : ""),
+							"disabled_": (radio.disabled ? "disabled"
+                                                        : ""),
+							"readonly_": (radio.readonly ? "disabled"
+                                                        : ""),
                             "attribute_": (radio.attribute === undefined ? ""
                                 : radio.attribute)
                         });
@@ -2096,13 +2107,19 @@
 							if(data.items){
 								if(data.items.length==0){
 									data.items=[{name:name,type:'text',label:"名称"}];
+									if(data.readonly)
+											data.items[0].readonly=data.readonly;
 								}else{
 									$.each(data.items,function(i,c){
 										data.items[i].name=name;
+										if(data.readonly)
+											data.items[i].readonly=data.readonly;
 									})
 								}
 							}else{
 								data.items=[{name:name,type:'text',label:"名称"}];
+								if(data.readonly)
+											data.items[0].readonly=data.readonly;
 							}
 							var list = this._formEles['list'](data,this);
 							ele.parent().append(list);

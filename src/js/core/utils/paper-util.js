@@ -135,7 +135,6 @@
         renderSubRow: function (that, row, items) {
             if (items != undefined && items.length > 0) {
                 var its = [];
-				var hasList = false;
                 $.each(items, function (i, item) {
 					
 					if(item.showLevel<App.currentUser.userType){
@@ -147,6 +146,8 @@
                     it.name = item.id;
                     it.label = item.title;
                     it.score = item.score;
+					it.readonly=true;
+					it.disabled=true;
 					it.placeholder = item.placeholder === undefined ? ""
                         : item.placeholder;
 					if(that._options.showSocre){
@@ -164,7 +165,9 @@
 						it.items = [
 							{
 								type: 'text',
-								name: item.id
+								name: item.id,
+								readonly:true,
+								disabled:true
 							}
 						]
                     } else if (item.itemType == 4) {
@@ -192,6 +195,8 @@
 									}
 								}
 								customItems[index]["name"]=item.id;
+								customItems[index]["readonly"]=true;
+								customItems[index]["disabled"]=true;
 							});
 							if(customItems.length==3){
 								it.span = 9;
@@ -218,6 +223,8 @@
 									it.formInline = cont.formInline;
 								}
 								customItems[index]["name"]=item.id;
+								customItems[index]["readonly"]=true;
+								customItems[index]["disabled"]=true;
 							});
 							it.customItems = customItems;
 						}catch(err){
@@ -247,7 +254,8 @@
                         $.each(item.items, function (i, op) {
                             var option = {
                                 'text': op.title,
-                                'value': op.id
+                                'value': op.id,
+								'disabled':true
                             };
                             it.items.push(option);
                         });

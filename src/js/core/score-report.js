@@ -224,7 +224,42 @@
                                 });
                             },
                             prev: function (p) {
-                                p.$tab.prev();
+								 var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+										p.$tab.prev();
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            },
+                            go: function (p) {
+								 var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+										p.$tab.prev();
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
                             }
                         });
                         $.ajax({

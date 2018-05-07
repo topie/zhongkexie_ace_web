@@ -68,6 +68,7 @@
                         tab.title + '</a>' +
                         '</li>');
                     ul.append(li);
+					li.data("tab-data",tab.data);
                     if (tab.width !== undefined) {
                         li.css("width", tab.width);
                     }
@@ -122,6 +123,10 @@
                     that.$ul.find('li[role=tab]').show();
                     that.$ul.find('li[role=tab]:lt(' + first + ')').hide();
                     that.$ul.find('li[role=tab]:gt(' + final + ')').hide();
+					if((typeof that._options.callback) =="function"){
+						that._options.callback(current,current.data("tab-data"));
+					}
+				
                 });
                 this.$ul.find('li[role=prev]').find('a').on("click", function () {
                     var firstLi = that.$ul.find('li[role=tab]:visible').first();
@@ -189,6 +194,7 @@
             var li = this.$element.find('li[role=tab]:eq(' + i + ')');
             if (li.length > 0) {
                 li.find('a').trigger('click');
+				
             }
         },
         currentDiv: function () {
