@@ -44,7 +44,7 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "试卷名称",
+                    title: "评估项目",
                     field: "title"
                 },  {
                     title: "填报单位",
@@ -157,12 +157,34 @@
 									bootbox.alert("服务器内部错误");
 								}
 							});
+							var titles=[];
+							$.ajax({
+								url:App.href + "/api/core/scorePaper/zjcheckListName",
+								dataType: "json",
+								data: {
+									paperId: coll.id
+								},
+								async:false,
+								success:function(res){
+									if(res.code==200){
+										titles = res.data.data;
+									}else{
+										bootbox.alert("请求错误");
+									}
+								},
+								error:function(){
+									bootbox.alert("服务器内部错误");
+								}
+							});
+
+							
 						var data = JSON.parse(contentString);
 						data.paperId=coll.id;
 						data.userId=coll.userId;
+						data.tabTitles = titles;
 						//var paper = modal.$body.orangePaperViewScore(data);
 						var paper = modal.$body.orangePaperFillScore(data);
-						
+						paper.go();
 					}	
                         /*var paper = {};
                         var modal = $.orangeModal({
@@ -491,7 +513,7 @@
                 items: [
                     {
                         type: "select",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"

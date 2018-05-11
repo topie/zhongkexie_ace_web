@@ -14,7 +14,7 @@
                 '<div class="row">' +
                 '<div class="col-md-12" >' +
                // '<div class="panel panel-default" >' +
-               // '<div class="panel-heading">题库评价表管理</div>' +
+               // '<div class="panel-heading">题库评估项目管理</div>' +
                 '<div class="panel-body" id="grid"></div>' +
               //  '</div>' +
                 '</div>' +
@@ -49,7 +49,7 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "评价表名称",
+                    title: "评估项目",
                     field: "title",
                     sort: true
                 },{
@@ -85,7 +85,7 @@
                     },
                     sort: true
                 }, {
-                    title: "填报状态",
+                    title: "评估状态",
                     field: "status",
                     format: function (num, data) {
 						if (data.status == 0) {
@@ -108,7 +108,7 @@
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
-                            title: "查看评价表",
+                            title: "查看评估项目",
                             destroy: true
                         }).show();
                         var js = JSON.parse(data.contentJson);
@@ -165,13 +165,13 @@
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '评价表名称',
+                                    label: '评估项目名称',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入评价表名称"
+                                        required: "请输入评估项目名称"
                                     }
                                 }, {
                                     type: 'number',
@@ -183,7 +183,7 @@
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入评价表总分数"
+                                        required: "请输入评估项目总分数"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -327,7 +327,7 @@
                     text: "复制",
                     cls: "btn-warning btn-sm",
                     handle: function (index, data) {
-                    	var title = "复制“"+data.title+"”生成新评价表";
+                    	var title = "复制“"+data.title+"”生成新评估项目";
 						var paperId = data.id;
 						var modal = $.orangeModal({
                             id: "copy_modal",
@@ -363,25 +363,25 @@
                                     type: 'hidden',
                                     name: 'copyPaperId',
                                     id: 'copyPaperId',
-                                    label: '复制评价表ID',
+                                    label: '复制评估项目ID',
                                     cls: 'input-xxlarge',
 									value:paperId
                                 },{
                                     type: 'display',
-                                    label: '复制评价表',
+                                    label: '复制评估项目',
                                     cls: 'input-xxlarge',
 									html:data.title
                                 },{
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '新评价表名称',
+                                    label: '新评估项目名称',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入评价表名称"
+                                        required: "请输入评估项目名称"
                                     }
                                 }, {
                                     type: 'number',
@@ -393,7 +393,7 @@
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入评价表总分数"
+                                        required: "请输入评估项目总分数"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -684,13 +684,13 @@
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '评价表名称',
+                                    label: '评估项目名称',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入评价表名称"
+                                        required: "请输入评估项目名称"
                                     }
                                 }, {
                                     type: 'number',
@@ -702,7 +702,7 @@
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入评价表总分数"
+                                        required: "请输入评估项目总分数"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -771,9 +771,9 @@
                 items: [
                     {
                         type: "text",
-                        label: "评价表名称",
+                        label: "评估项目名称",
                         name: "title",
-                        placeholder: "输入要搜索的评价表名称"
+                        placeholder: "输入要搜索的评估项目名称"
                     }
                 ]
             }

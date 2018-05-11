@@ -48,7 +48,7 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "试卷名称",
+                    title: "评估项目",
                     field: "title",
                     sort: true
                 }, {
@@ -81,7 +81,7 @@
                     },
                     sort: true
                 }, {
-                    title: "填报状态",
+                    title: "评估状态",
                     field: "status",
                     format: function (num, data) {
 						if (data.status == 0) {
@@ -253,7 +253,9 @@
 									type: "POST",
 									dataType: "json",
 									data: {
-										spId: data.id
+										spId: data.id,
+										status:"1",
+										type:"message"
 									},
 									url: requestUrl,
 									success: function (data) {
@@ -326,13 +328,13 @@
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '试卷名称',
+                                    label: '评估项目',
                                     cls: 'input-large',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入试卷名称"
+                                        required: "请输入评估项目"
                                     }
                                 }, {
                                     type: 'datepicker',
@@ -383,9 +385,9 @@
                 items: [
                     {
                         type: "text",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "title",
-                        placeholder: "输入要搜索的试卷名称"
+                        placeholder: "输入要搜索的评估项目"
                     }
                 ]
             }

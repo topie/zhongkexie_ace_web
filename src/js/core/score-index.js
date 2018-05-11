@@ -91,7 +91,7 @@
 			success:function(data){
 				if(data.code==200){
 					if(data.data.length<=0){
-						bootbox.alert("没有评价表，请先添加评价表！");
+						bootbox.alert("没有评估项目，请先添加评估项目！");
 					}else{
 						for(var i=0;i<data.data.length;i++){
 							var item = data.data[i];
@@ -206,7 +206,7 @@
                             }, {
 								type:'hidden',
 								name:'paperId',
-								label: '评价表ID',
+								label: '评估项目ID',
 								value:currentPaper
 							}, {
                                 type: 'text',
@@ -341,7 +341,7 @@
 								},{
 									type:'hidden',
 									name:'paperId',
-									label: '评价表ID',
+									label: '评估项目ID',
 									value:currentPaper
 								}, {
                                     type: 'text',
@@ -545,7 +545,7 @@
                     },*/ {
 						type:'hidden',
 						name:'paperId',
-						label: '评价表ID',
+						label: '评估项目ID',
 						value:currentPaper
 					}, {
 						type:'hidden',

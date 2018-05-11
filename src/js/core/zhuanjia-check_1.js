@@ -44,7 +44,7 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "试卷名称",
+                    title: "评估项目",
                     field: "title"
                 },  {
                     title: "填报单位",
@@ -537,7 +537,7 @@
                 items: [
                     {
                         type: "select",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"

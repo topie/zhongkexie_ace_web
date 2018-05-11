@@ -40,7 +40,7 @@
             pageSelect: [2, 15, 30, 50],
             columns: [
                 {
-                    title: "试卷名称",
+                    title: "评估项目",
                     field: "title"
                 },  {
                     title: "填报单位",
@@ -73,7 +73,26 @@
                             title: "查看-"+data.userName,
                             destroy: true
                         }).show();
-                        var js = JSON.parse(data.contentJson);
+						 var contentString = "";
+						$.ajax({
+							url:App.href + "/api/core/scorePaper/getPaper",
+							dataType: "json",
+							data: {
+								paperId: data.id
+							},
+							async:false,
+							success:function(res){
+								if(res.code==200){
+									contentString=res.message;
+								}else{
+									bootbox.alert("请求错误");
+								}
+							},
+							error:function(){
+								bootbox.alert("服务器内部错误");
+							}
+						});
+						var js = JSON.parse(contentString);
 						js.showSocre=true;
                         paper = modal.$body.orangePaperView(js);
                         $.ajax({
@@ -294,7 +313,7 @@
                 items: [
                     {
                         type: "select",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"

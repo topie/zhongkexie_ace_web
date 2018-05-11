@@ -201,26 +201,34 @@
                 lazy: false,
                 tabs: tabs
             });
-            var prevBtn = $('<button type="button" class="btn btn btn-info">上一项</button>');
-            var nextBtn = $('<button type="button" class="btn btn btn-success">下一项</button>');
+            var prevBtn = $('<button type="button" class="btn btn-info">上一项</button>');
+            var nextBtn = $('<button type="button" class="btn btn-success">保存并下一项</button>');
             mainPanel.find('div.panel-footer:eq(0)').append(prevBtn);
+			if(that._options.submit){
+				var submBtn = $('<button type="button" class="btn btn-primary">保存</button>');
+				mainPanel.find('div.panel-footer:eq(0)').append(submBtn);
+				submBtn.on("click", function () {
+					that._options.submit(that,$(this));
+				});
+			}
             mainPanel.find('div.panel-footer:eq(0)').append(nextBtn);
             prevBtn.on("click", function () {
                 if (that._options.prev !== undefined) {
-                    that._options.prev(that);
+                    that._options.prev(that,$(this));
                 } else {
                     tab.prev();
                 }
             });
+			
             nextBtn.on("click", function () {
                 if (that._options.next !== undefined) {
-                    that._options.next(that);
+                    that._options.next(that,$(this));
                 } else {
                     tab.next();
                 }
             });
             this.$tab = tab;
-           /* this.$main.find('form').each(
+            /*this.$main.find('form').each(
                 function () {
                     $(this).find('input').on("change", function () {
                         that.showCheck();
@@ -277,7 +285,7 @@
             return answers;
         },
         getValidation: function () {
-            //this.showCheck();
+            this.showCheck();
             var message = [];
             this.$main.find('li[role=tab]').find('a').each(function () {
                 var that = $(this);
@@ -298,17 +306,21 @@
                 $.each(ans, function (i, an) {
                     that.loadValue(an.itemId, an.answerValue);
                 });
-                this.$tab.go(ans.length - 1);
+               // this.$tab.go(ans.length - 1);
             } else {
                 this.$tab.go(0);
             }
-           // that.showCheck();
+			this.$tab.go(0);
+            //var msg = that.getValidation();
+			//this.$tab.go(msg[0].index);
+
         },
         loadValue: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");
 			if(ele.length>0){
-				var form = ele.parents('div[role=content]:eq(0)').data("plugin");
-				form.setValue(name, value);
+				var form = ele.parents('div[role=content]:eq(0)');
+				var formPlug = form.data("plugin");
+				formPlug.setValue(name, value);
 			}
         },
         showCheck: function () {
@@ -316,11 +328,42 @@
             that.$main.find('a').find('i.fa-check').remove();
             that.$main.find('form').each(
                 function () {
-                    var id = $(this).parent().parent().attr("id");
-                    var ps = $(this).serialize().split('=');
+					var thatForm = $(this);
+                    var id = thatForm.parent().parent().attr("id");
+                    /*var ps = $(this).serialize().split('=');
                     if (ps.length > 0 && ps[1] !== '' && ps[1] != undefined) {//TODO 空字符串输入
-                        that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
-                    }
+						that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
+
+					}*/
+					/*var check = true;
+					$.each($(this).find('div[data-row]'),function(i,c){
+						
+					})*/
+					var nameMap = {};
+					$.each(thatForm.find('input[type="radio"]'),function(){
+						var name = $(this).attr("name");
+						nameMap[name]=name;
+					})
+					$.each(thatForm.find('input[type="checkbox"]'),function(){
+						var name = $(this).attr("name");
+						nameMap[name]=name;
+					})
+					var su = true;
+					$.each(nameMap,function(k,v){
+						var v = thatForm.find('input[name="'+k+'"]:checked').val();
+						//console.log(k+"  :  "+v);
+						if(v==null||v==''||v==undefined)su=false;
+					})
+					
+					/*$.each(thatForm.find('input[type="text"][role="number"]'),function(){
+						var name = $(this).attr("name");
+						nameMap[name]=name;
+					})*/
+					
+					if(su)
+						that.$main.find('a[href="#' + id + '"]').append('<i class="fa fa-check btn-success"></i>');
+                    
+					
                 }
             );
         },

@@ -49,7 +49,7 @@
                      sort: true,
                      width: "5%"
                  }, */{
-                    title: "试卷名称",
+                    title: "评估项目",
                     field: "title",
                     sort: true
                 }, {
@@ -60,7 +60,7 @@
                     title: "结束时间",
                     field: "end"
                 }, {
-                    title: "试卷状态",
+                    title: "评估状态",
                     field: "status",
                     format: function (num, data) {
                         if (data.status == 1) {
@@ -134,6 +134,8 @@
                     text: "填报",
                     cls: "btn-primary btn-sm",
                     visible: function (index, data) {
+						if(data.status==0)
+							return false;
                         if (data.approveStatus == 1)
                             return false;
 						if (data.approveStatus == 2)
@@ -223,7 +225,30 @@
                                     }
                                 });
                             },
-                            prev: function (p) {
+							/*submit: function (p,btn) {
+                                var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+										var che = $('<i class="ace-icon fa fa-check"></i>');
+                                       btn.prepend(che);
+									   setTimeout(function(){
+										che.remove();
+									   },2000);
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            },*/
+                            /*prev: function (p) {
 								 var das = {};
                                 var as = p.getCurrentTabAnswer();
                                 das['answers'] = as;
@@ -241,7 +266,7 @@
                                         alert("请求异常。");
                                     }
                                 });
-                            },
+                            },*/
                             go: function (p) {
 								 var das = {};
                                 var as = p.getCurrentTabAnswer();
@@ -322,6 +347,8 @@
                     text: "提交",
                     cls: "btn-primary btn-sm",
                     visible: function (index, data) {
+                       if(data.status==0)
+							return false;
                         if (data.approveStatus == 1)
                             return false;
 						if (data.approveStatus == 2)
@@ -363,9 +390,9 @@
                 items: [
                     {
                         type: "text",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "title",
-                        placeholder: "输入要搜索的试卷名称"
+                        placeholder: "输入要搜索的评估项目"
                     }
                 ]
             }

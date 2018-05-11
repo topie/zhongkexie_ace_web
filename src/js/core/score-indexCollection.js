@@ -357,7 +357,7 @@
                 items: [
                     {
                         type: "select",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"

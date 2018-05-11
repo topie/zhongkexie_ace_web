@@ -3,10 +3,10 @@
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/core/message/page": "messagePage"
+        "/api/core/download/page": "downloadPage"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
-    App.messagePage = {
+    App.downloadPage = {
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
@@ -33,7 +33,7 @@
 		var modal;
 
         var options = {
-            url: App.href + "/api/core/message/list?type=message",
+            url: App.href + "/api/core/message/list?type=download",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -52,7 +52,7 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "通知标题",
+                    title: "下载标题",
                     field: "title",
                     sort: true
                 }, {
@@ -89,7 +89,7 @@
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
                          modal = $.orangeModal({
-                            id: "messageForm",
+                            id: "downloadForm",
                             title: "编辑",
                             destroy: true
                         });
@@ -231,7 +231,7 @@
                                 },{
                                     type: 'hidden',
                                     name: 'type',
-									value:"message"
+									value:"download"
                                 },{
                                     type: 'hidden',
                                     name: 'status',
@@ -241,25 +241,25 @@
                                     type: 'text',
                                     name: 'title',
                                     id: 'title',
-                                    label: '通知标题',
+                                    label: '下载标题',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入通知标题"
+                                        required: "请输入下载标题"
                                     }
                                 }, {
                                     type: 'textarea',
                                     name: 'content',
                                     id: 'content',
-                                    label: '通知内容',
+                                    label: '下载内容描述',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入通知内容"
+                                        required: "请输入下载内容描述"
                                     }
                                 }, {
                                     type: 'files',

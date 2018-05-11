@@ -44,7 +44,7 @@
         }
     };
     var initEvents = function () {
-		//初始化选择评价表，
+		//初始化选择评估项目，
 		var currentPaper='';
 		var currentIndex='';
 		var currentIndexTitle='';
@@ -57,7 +57,7 @@
 			success:function(data){
 				if(data.code==200){
 					if(data.data.length<=0){
-						bootbox.alert("没有评价表，请先添加评价表！");
+						bootbox.alert("没有评估项目，请先添加评估项目！");
 					}else{
 						for(var i=0;i<data.data.length;i++){
 							var item = data.data[i];

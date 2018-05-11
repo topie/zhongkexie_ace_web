@@ -122,7 +122,7 @@
                         type: "text",
                         label: "名称",
                         name: "name",
-                        placeholder: "输入要搜索的试卷名称"
+                        placeholder: "输入要搜索的评估项目"
                     }
                 ]
             }

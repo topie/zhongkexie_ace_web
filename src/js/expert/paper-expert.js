@@ -177,7 +177,7 @@
                 items: [
                     {
                         type: "select",
-                        label: "试卷名称",
+                        label: "评估项目",
                         name: "paperId",
 						id:"search_paperId",
 						items:[],

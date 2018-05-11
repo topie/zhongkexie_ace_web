@@ -18,9 +18,10 @@
     PaperFillScore.defaults = {
         title: '',
         data: [],
-		tabTitles:[{"name":"物理","id":'4'},{"name":"化学","id":'4'},{"name":"生物","id":'5'},{"name":"自然","id":'12'},{"name":"地理","id":'5'}],
+		tabTitles:[{"userName":"示例","userId":'4'}],
 		paperId:1,
 		userId:1,
+		userIndex:0,
 		showSocre:true
     };
     PaperFillScore.prototype = {
@@ -38,12 +39,15 @@
                 $.each(this._options.tabTitles, function (i, idx) {
 							var tab = {};
 							var ind = itemIndex;
-							tab['title'] = idx.name;
+							tab['title'] = idx.userName;
 							tab['width'] = '87px';
 							tab['data'] = idx;
 							tab['content'] = {html:''};
 							tabs.push(tab);
 							itemIndex++;
+							if(idx.userId==that._options.userId){
+								that._options.userIndex = itemIndex-2;
+							}
                 });
             }
             tabs[0].active = true;
@@ -63,7 +67,7 @@
 						dataType: "json",
 						data: {
 							paperId: that._options.paperId,
-							userId:data.id
+							userId:data.userId
 						},
 						url: App.href + "/api/core/scorePaper/getAnswer",
 						success: function (res) {
@@ -102,7 +106,7 @@
 						}
 					});
 
-					that._options.userId=data.id;
+					that._options.userId=data.userId;
 				}
             });
 			mainPanel.find(".panel-body").append('<div class="paperPanel"></div>')
@@ -318,7 +322,6 @@
 						subs.on("click",'button[data-item="'+currentItem.id+'"]',function(){
 							var currentItem = $(this).data("info");
 							var value = $('input[name="itemId_'+currentItem.id+'"]').val();
-							value=2;
 							if(isNaN(value)||value==null||value==''){
 								bootbox.alert("请输入数字");
 								$('input[name="itemId_'+currentItem.id+'"]').val('');
@@ -521,6 +524,13 @@
                 }
             );
         },
+		go:function(index){
+			if(index==undefined){
+				index = this._options.userIndex;
+			}
+			
+			this.$tab.go(index);
+		},
         getCurrentTabAnswer: function () {
             var answers = [];
             var tmpAs = {};
