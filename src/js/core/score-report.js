@@ -102,7 +102,33 @@
                     var modal = $.orangeModal({
                         id: "scorePaperView",
                         title: "预览",
-                        destroy: true
+                        destroy: true,
+						buttons: [
+                                {
+                                    type: 'button',
+                                    text: '导出模板',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExport(data.title+"_导出");
+										
+                                    }
+                                }, {
+                                    type: 'button',
+                                    text: '导出数据',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExportValue(data.title+"_数据导出");
+                                        
+                                    }
+                                },{
+                                    type: 'button',
+                                    text: '关闭',
+                                    cls: "btn",
+                                    handle: function (m) {
+                                        modal.hide();    
+                                        
+                                    }
+                                }]
                     }).show();
                     var js = JSON.parse(data.contentJson);
                     paper = modal.$body.orangePaperView(js);
@@ -116,10 +142,7 @@
                         success: function (data) {
                             if (data.code === 200) {
                                 paper.loadAnswer(data.data);
-                                modal.$body.find('input').each(function () {
-                                    if ($(this).attr('name') != 'button')
-                                        $(this).attr("disabled", "true");
-                                });
+                               
                             } else {
                                 alert(data.message);
                             }
@@ -157,11 +180,11 @@
                                         var das = {};
                                         var msg = paper.getValidation();
                                         if (msg.length > 0) {
-                                            bootbox.alert(msg[0].text + "未填写");
+                                            bootbox.alert(msg[0].text + "未填写完整");
                                             paper.$tab.go(msg[0].index);
                                             return;
                                         }else{
-											 bootbox.alert('全部填写完成');
+											 bootbox.alert('选择项已全部填写完成，请自行检查其他项');
 										}
                                         
                                     }
@@ -171,12 +194,6 @@
                                     cls: "btn btn-primary",
                                     handle: function (m) {
                                         var das = {};
-                                        var msg = paper.getValidation();
-                                        if (msg.length > 0) {
-                                            bootbox.alert(msg[0].text + "未填写");
-                                            paper.$tab.go(msg[0].index);
-                                            return;
-                                        }
                                         var as = paper.getAnswer();
                                         das['answers'] = as;
                                         das['paperId'] = data.id;
@@ -187,12 +204,20 @@
                                             data: JSON.stringify(das),
                                             url: App.href + "/api/core/scorePaper/submit",
                                             success: function (data) {
-                                                modal.hide();
                                             },
                                             error: function (e) {
                                                 alert("请求异常。");
                                             }
                                         });
+										
+                                        var msg = paper.getValidation();
+                                        if (msg.length > 0) {
+                                            bootbox.alert(msg[0].text + "未填写完整");
+                                            paper.$tab.go(msg[0].index);
+                                            return;
+                                        }
+										bootbox.alert('选择项已全部填写完成，请自行检查其他项');
+                                        //modal.hide();
                                     }
                                 },{
                                     type: 'button',

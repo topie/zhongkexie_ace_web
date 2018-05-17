@@ -2240,6 +2240,7 @@
 					ele.select2().val(value.split(",")).trigger('change');
 				}else{
 					ele.val(value);
+					ele.attr("data-value",value);
 				}
             } else if (ele.is('textarea')) {
                 if (ele.attr("role") == "kindEditor") {
