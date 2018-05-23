@@ -233,7 +233,7 @@
                             title: "抽取专家",
                             destroy: true
                         }).show();
-						//var allEx = [{realName:'张'},{realName:'里斯'},{realName:'狗哥'},{realName:'沙拉酱'},{realName:'张卡卡'},{realName:'摸摸'},{realName:'嗯嗯'},{realName:'哈哈'}];
+						var allEx=[];//所有可选专家
 						$.ajax({
 							url:App.href+"/api/expert/info/list",
 							async:false,
@@ -249,32 +249,40 @@
 							}
 						});
 						var all='';
-						for(var i=0;i<allEx.length;i++){
-							all+='<span class="label label-info  arrowed arrowed-right">'+allEx[i].realName+'</span>';
+						for(var i=0;i<allEx.length;i++){//可选专家
+							all+='<span class="label label-info  arrowed arrowed-right all" data-id="'+allEx[i].id+'">'+allEx[i].realName+'</span>';
 							if(i%4==3) all+='</br>';
 						}
 						var checkeEx = data.expertNames==null?"":data.expertNames;//已选专家名称
 						var tags='';
-						for(var i=0,sm=checkeEx.split(',');i<sm.length;i++){
-							tags+='<span class="label label-info  arrowed arrowed-right">'+sm[i]+'</span>';
+						var checkID = data.expertIds==null?"":data.expertIds;
+						for(var i=0,sm=checkeEx.split(','),smi=checkID.split(',');i<sm.length;i++){
+							tags+='<span class="label label-info  arrowed arrowed-right che" data-id="'+smi[i]+'">'+sm[i]+'</span>';
 							if(i%4==2) tags+='</br>';
 						}
-						var height = detail_g._options.deptNames.split(',').length*14;
-						if(height<600) height=600;
+						var height = '';//detail_g._options.deptNames.split(',').length*14;
+						//var height = checkID.length*20;
+						//if(height<600) height=600;
+						
 							var html = $('<div class="row col-sm-12"><p class="alert alert-info">'
 								+data.name
 								+'</p>'
 								+'</div>'
-								+'<div class="row"><div class="col-sm-6"><div class="col-sm-12">符合条件的专家</div><div class="col-sm-12 thumbnail">'
+								+'<div class="row"><div class="col-sm-6">'
+								+'<div class="col-sm-12">'
+								+'<h3 class="header smaller lighter purple">符合条件的专家<small>(点击专家名进行手动选择)</small></h3>'
+								+'</div><div class="col-sm-12">'
 								+all
-								+'</div></div><div class="col-sm-6"><div class="col-sm-12">已抽取的专家</div>'
+								+'</div></div><div class="col-sm-6"><div class="col-sm-12">'
+								+'<h3 class="header smaller lighter purple">已选专家<small>(点击专家名手动取消)</small></h3></div>'
 								+'<input type="hidden" id="checkedIds" value="'
 								+ data.expertIds
 								+'"/><input type="hidden" id="checkedNames" value="'
 								+ data.expertNames
-								+'"/><div id="checkeColl" class="col-sm-12 thumbnail">'
+								+'"/><div id="checkeColl" class="col-sm-12">'
 								+tags
 								+'</div></div></div>'
+								+'<div class="space-24"></div>'
 								+'<div class="row">'
 									+'<div class="form-group">'
 									//+'<label class="col-sm-2 control-label no-padding-right" for="form-field-1-1">设置抽取个数</label>'
@@ -282,7 +290,11 @@
 										+'设置抽取个数:'
 											+'<div class="input-group">'
 												+'<input type="text" id="form-field-1-1" placeholder="抽取个数" class="form-control" value="1">'
-												+'<span class="input-group-btn"><button class="btn btn-sm btn-pink"><i class="ace-icon fa fa-share"></i>抽取</button><button class="btn btn-sm btn-info">应用该方案</button> </span>'
+												+'<span class="input-group-btn">'
+												+'<button class="btn btn-sm btn-pink"><i class="ace-icon fa fa-share"></i>抽取</button>'
+												+'<button class="btn btn-sm btn-warning"><i class="ace-icon fa fa-trash"></i>清空已抽取</button>'
+												+'<button class="btn btn-sm btn-info"><i class="ace-icon fa fa-floppy"></i>应用该方案</button>'
+												+'</span>'
 											+'</div>'
 										+'</div>'
 									+'</div>'
@@ -292,7 +304,48 @@
 									+'</div>'
 								+'</div>');
 						modal.$body.append(html);
+						html.find("span").each(function(){
+							var ele = $(this);
+							if(ele.is(".all")){
+								ele.bind("click",function(){
+									var id = $(this).attr("data-id");
+									var name=$(this).text();
+									var f = false;
+									for(var i=0;i<checkColl.length;i++){
+										if(checkColl[i].id==id){f=true;}
+									}
+									if(f){
+										bootbox.alert("该专家已在选中目录中！");
+									}else{
+										var span =$('<span class="label label-info  arrowed arrowed-right che" data-id="'+id+'">'+name+'</span>');
+										$("#checkeColl").append(span);
+										spanBindRemove(span);
+										checkColl.push({"name":name,id:id});
+										flashTree();
+									}
+								})
+							}
+							if(ele.is(".che")){
+								spanBindRemove($(this));
+							}
+						});
+						function spanBindRemove(span){
+							span.bind("click",function(){
+								var id = $(this).attr("data-id");
+								var name=$(this).text();
+								var index=9999;
+								for(var i=0;i<checkColl.length;i++){
+									if(checkColl[i].id==id){
+										index=i;
+										$(this).remove();
+									}
+								}
+								checkColl.splice(index,1);
+								flashTree();
+							})
+						}
 						//console.log(document.getElementById('mecharts'));
+						//保存
 						html.find('button.btn-info').bind("click",function(){
 							var input = $('#checkedIds').val();
 							var inputs = $('#checkedNames').val();
@@ -316,40 +369,41 @@
 								}
 							});
 						});
+						var	checkColl = [];
+
+						//编辑 如果已选择  初始化状态
 						if(data.expertNames){
 							setTimeout(function(){
-								var atreedata = {name:data.name,children:[]};
-								var xuehui = detail_g._options.deptNames.split(",");
+								/*var treedata = {name:data.name,children:[]};
 								for(var j=0,nas=data.expertNames.split(',');j<nas.length;j++){
-									atreedata.children[j]={name:nas[j],children:[]};
+									treedata.children[j]={name:nas[j],children:[]};
+									checkColl.push({name:nas[j]})
+								}*/
+								for(var j=0,nas=data.expertNames.split(','),nasi=data.expertIds.split(',');j<nas.length;j++){
+									checkColl.push({name:nas[j],id:nasi[j]});
 								}
-								for(var i=0;i<xuehui.length;i++){
-									var j = i%atreedata.children.length;
-									atreedata.children[j].children.push({name:xuehui[i]});
-								}
-								var achart = echarts.init(document.getElementById('mecharts'));
-								achart.clear();
-								achart.setOption({ series: [
-															{
-																type: 'tree',
-																data: [atreedata],
-																top: '0%',
-																left: '8%',
-																bottom: '1%',
-																right: '8%'
-														   }
-											]});
-								},500);
+								flashTree();
+
+							},1000);
 						}
+						html.find('button.btn-warning').bind("click",function(){
+							checkColl=[];
+							$("#checkeColl").html("");
+							flashTree();
+						});
 						html.find('button.btn-pink').bind("click",function(){
+							if((allEx.length-checkColl.length)==0){
+								bootbox.alert("已全部抽取");
+								return false;
+							}
 							var value = $("#form-field-1-1").val();
 							if(isNaN(value)||value==null||value==''){
 								bootbox.alert("请输入数字");
 								$("#form-field-1-1").val(1);
 								return false;
 							}
-							if(parseInt(value) > allEx.length){
-								bootbox.alert("请输入小于总个数："+allEx.length);
+							if(parseInt(value) > (allEx.length-checkColl.length)){
+								bootbox.alert("请输入小于总个数："+(allEx.length-checkColl.length));
 								$("#form-field-1-1").val(1);
 								return false;
 							}
@@ -359,56 +413,106 @@
 								return false;
 							}
 							//抽取
-							checkColl = [];
 							var length = allEx.length;
-							$("#checkeColl").html("");
+							//$("#checkeColl").html("");
 							for(var i=0;i<parseInt(value);i++){
 								var index = parseInt(Math.random()*length);
 								var f = true;
 								for(var j=0;j<checkColl.length;j++){
-									if(checkColl[j]===allEx[index]){
+									if(checkColl[j].id==allEx[index].id){
 										i--;
 										f = false;
 									}
 								}
 								if(f){
+									allEx[index].name=allEx[index].realName;
 									checkColl.push(allEx[index]);
-									$("#checkeColl").append('<span class="label label-info  arrowed arrowed-right">'+allEx[index].realName+'</span>');
+									var span =$('<span class="label label-info  arrowed arrowed-right che" data-id="'+allEx[index].id+'">'+allEx[index].realName+'</span>');
+									$("#checkeColl").append(span);
+									spanBindRemove(span);
 								}
 							}
-							var treedata = {};
-							treedata.name=data.name;
-							treedata.children=checkColl;
-							var xuehui = detail_g._options.deptNames.split(",");
-							var checkes = [];
-							var checkeNames = [];
-							for(var j=0;j<treedata.children.length;j++){
-								treedata.children[j].name=treedata.children[j].realName;
-								treedata.children[j].children=[];
-								checkes.push(treedata.children[j].id);
-								checkeNames.push(treedata.children[j].realName);
-							}
-							$('#checkedIds').val(checkes);
-							$('#checkedNames').val(checkeNames);
-							for(var i=0;i<xuehui.length;i++){
-								var j = i%treedata.children.length;
-								treedata.children[j].children.push({name:xuehui[i]});
-							}
-							var chart = echarts.init(document.getElementById('mecharts'));
-							chart.clear();
-							chart.setOption({ series: [
-										{
-											type: 'tree',
-											data: [treedata],
-											top: '0%',
-											left: '8%',
-											bottom: '1%',
-											right: '8%'
-									   }
-									]});
+							flashTree();
 							
 							
 						})
+						function flashTree(){
+							var treedata = {};
+							//treedata.name=data.name;
+							//treedata.children=checkColl;
+							var checkes = [];
+							var checkeNames = [];
+							for(var j=0;j<checkColl.length;j++){
+								//treedata.children[j].children=[];
+								//j!=0&&(treedata.children[j].collapsed = true);
+								checkes.push(treedata.children[j].id);
+								checkeNames.push(treedata.children[j].name);
+							}
+							$('#checkedIds').val(checkes);
+							$('#checkedNames').val(checkeNames);
+							//var xuehui = detail_g._options.deptNames.split(",");
+						/*//平均分配
+							for(var i=0;i<xuehui.length;i++){
+								var j = i%atreedata.children.length;
+								atreedata.children[j].children.push({name:xuehui[i]});
+							}*/
+							//全量分配
+							/*for(var j=0;j<treedata.children.length;j++)
+								for(var i=0;i<xuehui.length;i++){
+									//var j = i%atreedata.children.length;
+									treedata.children[j].children.push({name:xuehui[i]});
+								}
+							
+							var chart = echarts.init(document.getElementById('mecharts'));
+								chart.clear();
+								chart.setOption({ series: [
+											{
+												type: 'tree',
+												data: [treedata],
+												top: '0%',
+												left: '8%',
+												bottom: '1%',
+												right: '8%'
+										   }
+										]});*/
+							/*var sankeydata={nodes:[],links:[]};
+							sankeydata.nodes.push({name:data.name});
+							for(var j=0;j<checkColl.length;j++){
+								sankeydata.links.push({source:data.name,target:checkColl[j].name,value:1});
+								sankeydata.nodes.push({name:checkColl[j].name});
+								for(var i=0;i<xuehui.length;i++){
+									sankeydata.links.push({source:checkColl[j].name,target:xuehui[i],value:1});
+									sankeydata.nodes.push({name:xuehui[i]});
+								}
+							}
+
+							var myChart = echarts.init(document.getElementById('mecharts'));
+							 myChart.setOption(option = {
+									series: [
+										{
+											type: 'sankey',
+											layout:'none',
+											data: sankeydata.nodes,
+											links: sankeydata.links,
+											top: '0%',
+											left: '8%',
+											bottom: '1%',
+											right: '8%',
+											itemStyle: {
+												normal: {
+													borderWidth: 1,
+													borderColor: '#aaa'
+												}
+											},
+											lineStyle: {
+												normal: {
+													curveness: 0.5
+												}
+											}
+										}
+									]
+								});*/
+						}
 					}
 				}]
 		};		

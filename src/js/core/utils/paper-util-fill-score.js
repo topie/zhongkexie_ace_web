@@ -105,7 +105,25 @@
 							alert("请求异常。");
 						}
 					});
-
+					$.ajax({
+						type: "POST",
+						dataType: "json",
+						data: {
+							paperId: that._options.paperId,
+							userId:data.userId
+						},
+						url: App.href + "/api/core/scorePaper/getExperScore",
+						success: function (res) {
+							if (res.code === 200) {
+								that.loadScores(res.data);
+							} else {
+								alert(res.message);
+							}
+						},
+						error: function (e) {
+							alert("请求异常。");
+						}
+					});
 					that._options.userId=data.userId;
 				}
             });
@@ -175,7 +193,7 @@
                     it.label = item.title;
                     it.score = item.score;
 					it.readonly=true;
-					it.disabled=true;
+					//it.disabled=true;
 					it.placeholder = item.placeholder === undefined ? ""
                         : item.placeholder;
 						if(item.scoreType==3){
@@ -364,8 +382,8 @@
 					}
 					getFormBodyTmpl =  function(){
 						var body = $('<div style="margin-right: 0px;margin-left: 0px;" class="row"></div>');
-							body.append('<div class="col-md-8 formbody" style="border-right: dashed 2px #ca9d9d;"></div>');
-							var right = $('<div class="col-md-4"></div>');
+							body.append('<div class="col-md-9 formbody" style="border-right: dashed 2px #ca9d9d;"></div>');
+							var right = $('<div class="col-md-3"></div>');
 							for(var i=0;i<subss.length;i++)
 								right.append(subss[i]);
 							body.append(right);
@@ -471,6 +489,13 @@
             });
             return message;
         },
+		loadScores:function(list){
+			 var that = this;
+			$.each(list, function (i, an) {
+                that.loadScore(an.itemId, an.itemScore);
+				//that.loadScore(an.itemId, an.answerScore);
+            });
+		},
 		loadScore:function(name, value){
 			//var ele = this.$main.find("[name='" + name + "']");
 			//var label = ele.parents(".form-group").find(".control-label");
@@ -481,7 +506,7 @@
 			 var that = this;
 			$.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue,an,callback);
-				that.loadScore(an.itemId, an.answerScore);
+				//that.loadScore(an.itemId, an.answerScore);
             });
 
 		},

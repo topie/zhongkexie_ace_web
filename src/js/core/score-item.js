@@ -221,6 +221,7 @@
                             id: "edit_form",
                             name: "edit_form",
                             method: "POST",
+							replate2B:false,
                             action: App.href + "/api/core/scoreItem/update",
                             ajaxSubmit: true,
                             ajaxSuccess: function () {
@@ -457,15 +458,15 @@
                                     
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
-                                {
-                                    type: 'select',
+                                */{
+                                    type: 'textarea',
                                     name: 'relatedField',
                                     id: 'relatedField',
-                                    label: '相关领域',
-                                    cls: 'input-xxlarge',
+                                    label: '导出配置',
+                                    cls: 'input-xxlarge'
                                     
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
-                                },*/
+                                    //itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
+                                },
                                 {
                                     type: 'number',
                                     name: 'sort',
@@ -652,6 +653,7 @@
                             url: requestUrl,
                             contentType: "table",
                             contentTypeItems: "table,card,list",
+							replate2B:false,
                             pageNum: 1,//当前页码
                             pageSize: 15,//每页显示条数
                             idField: "id",//id域指定

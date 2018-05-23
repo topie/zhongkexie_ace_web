@@ -83,6 +83,7 @@
         method: "post",
         labelInline: true,
         rowEleNum: 1,
+		replate2B:true,
         ajaxSubmit: true,
         showSubmit: true,
         submitText: "保存",
@@ -1775,7 +1776,7 @@
 						that._uniform();
 					}
 				});
-			}else{
+			}else{//动态加载
 				var thisItems = [];
 				if (data.items != undefined) {
 						$.each(data.items, function (j, jd) {
@@ -1784,7 +1785,7 @@
 								}
 					});
 				}
-				if(thisItems.length>1){
+				if(thisItems.length>1){//一次渲染多行
 					var itemsss=[];
 					for(var i=0;i<value_arr.length;i+=thisItems.length){
 						var currentItems=[];
@@ -2033,8 +2034,14 @@
             }
         },
         _loadValue: function (name, value, element) {
-            var eles = element || this.$form.find("[name='" + name + "']");
-			var ele = $(eles[0]);
+			if(this.replate2B){
+				if(typeof value ==="string"){
+					value = value.replace(/%2B/g," ");
+					value = value.replace(/\+/g," ");
+				}
+			}
+            var ele = element || $(this.$form.find("[name='" + name + "']")[0]);
+		//	var ele = $(eles[0]);
             if (ele.is('input[type="text"]')) {
                 if (ele.attr("data-type") == "tree-input") {
                     if ($.isArray(value)) {
@@ -2252,7 +2259,18 @@
                     }
                 } else {
                     if (value != null) {
-                        ele.text(value);
+						var $thisform = this;
+						if(value=='')value=' ';
+						setTimeout(function(){//解决IE 下为加载到dom时set value  为灰色 保存时获取不到数据
+							var s = true;
+							$thisform.$form.find('textarea[name="'+ele.attr('name')+'"]').each(function(i){
+								if($(this).val()==''&&s){
+									$(this).val(value);
+									s =false;
+								}
+							});
+						},1000);
+                        //ele.text(value);
                     }
                 }
             } else if (ele.is('p')) {

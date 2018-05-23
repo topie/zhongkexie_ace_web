@@ -54,15 +54,15 @@
                     title: "登录名",
                     field: "loginName",
                     sort: true
-                }, {
+                },{
+					title:"相关领域",
+					field:"relatedField",
+					sort:true
+				}, {
                     title: "电话",
                     field: "telPhone",
                     sort: true
-                },{
-					title:"邮箱",
-					field:"email",
-					sort:true
-				}
+                }
             ],
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",
@@ -127,7 +127,7 @@
 									readonly:true,
                                     label: '登录名',
                                     cls: 'input-xxlarge'
-                                }, {
+                                }/*, {
                                     type: 'select',
                                     name: 'fieldType',
                                     id: 'fieldType',
@@ -140,7 +140,7 @@
                                         required: "请选择"
                                     },
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYFL"
-                                },
+                                }*/,
                                 {
                                     type: 'select',
                                     name: 'relatedField',
@@ -156,12 +156,12 @@
                                     }
                                 }, 
                                 {
-                                    type: 'select',
+                                    type: 'text',
                                     name: 'title',
                                     id: 'title',
                                     label: '相关职称',
-                                    cls: 'input-xxlarge',
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=XGZC"
+                                    cls: 'input-xxlarge'
+                                    //itemsUrl: App.href +"/api/core/dict/getItems?code=XGZC"
                                 }, {
                                     type: 'text',
                                     name: 'workUnits',
@@ -337,7 +337,7 @@
                                         required: "请输入确认密码密码",
                                         equalTo: "与密码不一致"
                                     }
-                                }, {
+                                }/*, {
                                     type: 'select',
                                     name: 'fieldType',
                                     id: 'fieldType',
@@ -350,7 +350,7 @@
                                         required: "请选择"
                                     },
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZYFL"
-                                },
+                                }*/,
                                 {
                                     type: 'select',
                                     name: 'relatedField',
@@ -366,12 +366,12 @@
                                     }
                                 },
                                 {
-                                    type: 'select',
+                                    type: 'text',
                                     name: 'title',
                                     id: 'title',
                                     label: '相关职称',
-                                    cls: 'input-xxlarge',
-                                    itemsUrl: App.href +"/api/core/dict/getItems?code=XGZC"
+                                    cls: 'input-xxlarge'//,
+                                    //itemsUrl: App.href +"/api/core/dict/getItems?code=XGZC"
                                 }, {
                                     type: 'text',
                                     name: 'workUnits',
@@ -409,17 +409,41 @@
                        var form =  modal.$body.orangeForm(formOpts);
                     }
                 }
+				, {
+                    text: " 导出",
+                    cls: "btn btn-primary",
+                    icon: "fa fa-download",
+                    handle: function (grid) {
+						var param = grid.$searchForm == undefined ? "" : grid.$searchForm
+                        .serialize();
+						App.download(App.href+"/api/expert/info/export?"+param);
+					}
+				}
             ],
             search: {
-                rowEleNum: 2,
+                rowEleNum: 4,
                 //搜索栏元素
                 items: [
                     {
                         type: "text",
                         label: "姓名",
                         name: "realName",
-                        placeholder: ""
-                    }
+                        placeholder: "姓名"
+                    },{
+                        type: "text",
+                        label: "登录名",
+                        name: "loginName",
+                        placeholder: "登录名"
+                    }, {
+							type: 'select',
+							name: 'relatedField',
+							id: 'relatedField',
+							label: '专业领域',
+							cls: 'input-xxlarge',
+							items:[{text:'全部',value:''}],
+							itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY",
+						   
+						}
                 ]
             }
         };

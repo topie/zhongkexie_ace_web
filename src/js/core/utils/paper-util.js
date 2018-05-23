@@ -377,6 +377,9 @@
 			$.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue);
             });
+			/*that.$main.find("textarea").each(function(ind,cont){
+				$(cont).width("540");
+			});*/
 
 		},
 		loadValue: function (name, value) {

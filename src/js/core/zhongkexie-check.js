@@ -46,8 +46,8 @@
                     title: "填报单位",
                     field: "userName"
                 },  {
-                    title: "总得分(评级表得分+主观分)",
-                    field: "score",
+                    title: "总得分",
+                    field: "score"/*,
 					format:function(index,data){
 						//if(data.subjectiveScore==0)
 						//	return data.score;
@@ -55,7 +55,7 @@
 							return data.score+data.subjectiveScore+"("+data.score+"+"+data.subjectiveScore+")";
 						return data.score+data.subjectiveScore+"("+data.score+data.subjectiveScore+")";
 
-					}
+					}*/
                 }
                 
                 
@@ -121,7 +121,7 @@
                             }
                         });
                     }
-                },{
+                }/*,{
                     text: "主观分",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
@@ -170,7 +170,7 @@
 										}
 									});
                     }
-                }, {
+                }*/, {
                     text: "退回",
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {
@@ -233,7 +233,91 @@
 									}
 								});
 					}
-				}/*,
+				},{
+                    text: "导出详细得分",
+                    cls: " btn-primary btn",
+                    icon: "fa fa-download",
+                    handle: function (grid) {
+                        var modal = $.orangeModal({
+                            id: "export_excle",
+                            title: "导出",
+                            destroy: true
+                        }).show();
+						var form ;
+						var currentPaper = $("select[name='paperId']").val();
+						//var currentU = griddata.userName;
+                        var formOpts = {
+                            id: "add_form",
+                            name: "add_form",
+                            ajaxSubmit: true,
+                            showSubmit: false,
+                            rowEleNum: 2,
+                            ajaxSuccess: function () {
+                                modal.hide();
+                            },
+                            showReset: true,//是否显示重置按钮
+                            resetText: "重置",//重置按钮文本
+                            isValidate: true,//开启验证
+                            buttons: [{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '开始导出',
+                                handle: function () {
+									var data = form.getFormSerialize()+"&paperId="+currentPaper;
+									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data,modal.$body)
+                                }
+                            },{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal.hide();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+								{
+									type: 'tree',//类型
+									name: 'orgIds',
+									id: 'orgIds',//id
+									label: '机构',//左边label
+									url: App.href + "/api/core/dept/tree",
+									expandAll: true,
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false
+								},
+								{
+									type: 'tree',//类型
+									name: 'indexIds',
+									id: 'indexIds',//id
+									label: '指标',//左边label
+									url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
+									expandAll: true,
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false
+								}
+									
+                                
+                            ]
+                        };
+                         form = modal.$body.orangeForm(formOpts);
+						  
+						
+                    }
+                },{
+                    text: "导出总得分",
+                    cls: " btn-primary btn",
+                    icon: "fa fa-cloud-download",
+                    handle: function (grid) {
+                        
+						var currentPaper = $("select[name='paperId']").val();
+						App.download(App.href+"/api/core/scorePaper/exportPaperScore?paperId="+currentPaper);
+						
+                    }
+                }/*,
 				{	
 					text: "  配置虚假条数",
 					cls: "btn btn-primary",

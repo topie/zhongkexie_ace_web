@@ -17,7 +17,7 @@
     window.App = {
         token_key: "zhongkexie_token",
 		//href:"http://192.168.43.130:81",
-        href: "http://127.0.0.1:81",//测试环境
+        href: "http://webreport:81",//测试环境
         requestMapping: {}
     };
 
@@ -25,11 +25,21 @@
      * 下载文件
      * @param href
      */
-    App.download = function (href) {
+    App.download = function (href,ele) {
+		ele = ele?ele:$("body");
+		ele.block(
+                    {
+                        message: "后台生成中请稍等...",
+                        css: {
+                            backgroundColor: '#ddd',
+                            color: '#000'
+                        }
+                    });
         var xhr = new XMLHttpRequest();
         xhr.open('GET', href, true);
         xhr.responseType = 'arraybuffer';
         xhr.onload = function () {
+				ele.unblock();
             if (this.status === 200) {
                 var filename = "";
                 var disposition = xhr.getResponseHeader('Content-Disposition');

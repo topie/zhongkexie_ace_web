@@ -54,19 +54,11 @@
                 }, {
                     title: "开始时间",
                     field: "begin",
-                    sort: true,
-					format:function(i,n){
-						var beg = new Date(n.begin);
-						return beg.format("yyyy-MM-dd hh:mm:ss");
-					}
+                    sort: true
                 }, {
                     title: "结束时间",
                     field: "end",
-                    sort: true,
-					format:function(i,n){
-						var beg = new Date(n.end);
-						return beg.format("yyyy-MM-dd hh:mm:ss");
-					}
+                    sort: true
                 }, {
                     title: "评估状态",
                     field: "status",
