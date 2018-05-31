@@ -186,7 +186,7 @@
             });
             this.$element.append(alertDiv);
             alertDiv.delay(seconds * 1000).fadeOut();
-            bootbox.alert(alertText);
+            //bootbox.alert(alertText);
         },
         _setVariable: function (element, options) {
             this.$element = $(element);
@@ -222,7 +222,9 @@
             this._buttonsAlign = options.buttonsAlign;
             this._ajaxSubmit = options.ajaxSubmit;
             this._ajaxSuccess = options.ajaxSuccess;
+			this._ajaxContentType = options.ajaxContentType;
             this._beforeSubmit = options.beforeSubmit;
+            this._beforeSubmitFormatData = options.beforeSubmitFormatData;
             this._beforeSend = options.beforeSend;
             this._showSubmit = options.showSubmit;
             this._submitText = options.submitText;
@@ -355,8 +357,9 @@
         _buildModuleWrapper: function (wrapper, item) {
             var that = this;
             var ele = this._formEles[item.type](item, this);
+			var labelClass = item.labelClass === undefined ? "" : (" "+item.labelClass);
             var label = $.tmpl(Form.statics.labelTmpl, {
-                "cls_": that._labelInline ? "col-md-3" : "",
+                "cls_": ((that._labelInline ? "col-md-3" : "")+labelClass),
                 "label_": item.label === undefined ? "" : item.label
             });
             wrapper.find(".form-group").append(label);
@@ -608,7 +611,7 @@
                         $.each(data.items, function (j, jd) {
 							if(jd.type){
 								var item = form._formEles[jd.type](jd, form);
-								item.bind("keyup",function(){this.value = this.value.replace(/[,]/g,'');});
+								item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 								var iWrapper;
 								if (jd.label != undefined) {
 									var labelSpan = 4;
@@ -617,7 +620,8 @@
 										labelSpan = jd.labelSpan;
 										eleSpan = 12-jd.labelSpan;
 									}
-									iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+									var labelClass = jd.labelClass === undefined ? "" : (" "+jd.labelClass);
+									iWrapper = $('<div class="form-group '+labelClass+'_parent"><label class="control-label col-md-'+labelSpan+' '+labelClass+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 								} else {
 									iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 								}
@@ -719,7 +723,7 @@
 				ele.blur(function(){if(isNaN(this.value))this.value=''});
                 if (data.value != undefined){
 					data.value=parseInt(data.value);
-					if(isNaN(data.value))
+					if(!isNaN(data.value))
 						ele.val(data.value);
 				}
                 return ele;
@@ -1367,7 +1371,7 @@
                     async: {
                         enable: true,
                         url: data.url,
-                        type: "POST",
+                        type: (data.mtype === undefined ? "POST" : data.mtype),
                         data: (data.data === undefined ? {} : data.data),
                         autoParam: data.autoParam
                     },
@@ -1640,12 +1644,14 @@
             }
         },
         _renderDivList: function (div, name, values) {
-			
             var that = this;
             var data = $(div).data("data");
 			var hideBtn = data.hideBtn;
             var ele = $(div);
-            var value_arr = isArray(values) ? values : values.split(',');
+			var value_arr = [];
+			if(values){
+				value_arr = isArray(values) ? values : values.split(',');
+			}
             var span = data.span === undefined ? 12 : data.span;
 			if(!isNaN(data.row) && data.row>0){
 				var other_value_arr = [];
@@ -1689,9 +1695,12 @@
 					}
 					if(radioIndex==0){
 						var ele = $(eless[i]);
+						ele.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+								
 						that._loadValue(name,v,ele);
 					}else{
 						var ele = $(eless[radioIndex]);
+						ele.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 						that._loadValue(name,v,ele);
 					}
 				});
@@ -1725,6 +1734,7 @@
 						if (thisItems.length == 1) {
 							var it = thisItems[0];
 							var item = that._formEles[it.type](it, that);
+							item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 							that._loadValue(it.name, id, item);
 							var iWrapper;
 							if (it.label != undefined) {
@@ -1734,7 +1744,8 @@
 									labelSpan = it.labelSpan;
 									eleSpan = 12-it.labelSpan;
 								}
-								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+								var labelClass = it.labelClass === undefined ? "" : (" "+it.labelClass);
+								iWrapper = $('<div class="form-group '+labelClass+'_parent"><label class="control-label col-md-'+labelSpan+labelClass+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 							} else {
 								iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 							}
@@ -1744,6 +1755,7 @@
 							$.each(thisItems, function (j, jd) {
 								if(jd.type){//radio checkbox选项的屏蔽掉
 									var item = that._formEles[jd.type](jd, that);
+									item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 									that._loadValue(jd.name, id[j], item);
 									var iWrapper;
 									if (jd.label != undefined) {
@@ -1753,7 +1765,8 @@
 											labelSpan = jd.labelSpan;
 											eleSpan = 12-jd.labelSpan;
 										}
-										iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+										var labelClass = jd.labelClass === undefined ? "" : (" "+jd.labelClass);
+										iWrapper = $('<div class="form-group '+labelClass+'_parent"><label class="control-label col-md-'+labelSpan+labelClass+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 									} else {
 										iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 									}
@@ -1804,6 +1817,7 @@
 						if (thisItems.length == 1) {
 							var it = thisItems[0];
 							var item = that._formEles[it.type](it, that);
+							item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 							that._loadValue(it.name, id, item);
 							var iWrapper;
 							if (it.label != undefined) {
@@ -1813,7 +1827,8 @@
 									labelSpan = it.labelSpan;
 									eleSpan = 12-it.labelSpan;
 								}
-								iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+								var labelClass = it.labelClass === undefined ? "" : (" "+it.labelClass);
+								iWrapper = $('<div class="form-group '+labelClass+'_parent"><label class="control-label col-md-'+labelSpan+labelClass+'">' + it.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 							} else {
 								iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 							}
@@ -1823,6 +1838,7 @@
 							$.each(thisItems, function (j, jd) {
 								if(jd.type){
 									var item = that._formEles[jd.type](jd, that);
+									item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 									that._loadValue(jd.name, id[j], item);
 									var iWrapper;
 									if (jd.label != undefined) {
@@ -1832,7 +1848,8 @@
 											labelSpan = jd.labelSpan;
 											eleSpan = 12-jd.labelSpan;
 										}
-										iWrapper = $('<div class="form-group"><label class="control-label col-md-'+labelSpan+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
+										var labelClass = jd.labelClass === undefined ? "" : (" "+jd.labelClass);
+										iWrapper = $('<div class="form-group '+labelClass+'_parent"><label class="control-label col-md-'+labelSpan+labelClass+'">' + jd.label + '</label><div role="i-ele" class="col-md-'+eleSpan+'"></div></div>');
 									} else {
 										iWrapper = $('<div class="form-group"><div role="i-ele" class="col-md-12"></div></div>');
 									}
@@ -1984,8 +2001,9 @@
         },
         _submitForm: function () {
             var that = this;
+			var result = true;
             if (this._beforeSubmit !== undefined) {
-                var result = that._beforeSubmit();
+                result = that._beforeSubmit();
             }
             if (result == false) {
                 return;
@@ -1996,16 +2014,25 @@
                 }
             );
             if (this._ajaxSubmit) {
+				var data = $('#' + that._formId).serialize();
+				if (that._beforeSubmitFormatData !== undefined) {
+					data = that._beforeSubmitFormatData(data);
+				}
+				var ajaxContentType = 'application/x-www-form-urlencoded';
+				if (that._ajaxContentType !== undefined) {
+					ajaxContentType = that._ajaxContentType;
+				}
                 $.ajax({
                     type: that._method,
                     url: that._action,
-                    data: $('#' + that._formId).serialize(),
+                    data: data,
                     beforeSend: function (request) {
                         request.setRequestHeader("X-Auth-Token", App.token);
                         if (that._beforeSend != undefined)
                             that._beforeSend(request);
                     },
                     dataType: "json",
+					contentType:ajaxContentType,
                     success: function (data) {
                         if (data.code === 200) {
                             if (that._ajaxSuccess !== undefined) {
@@ -2034,10 +2061,13 @@
             }
         },
         _loadValue: function (name, value, element) {
-			if(this.replate2B){
+			if(this._options.replate2B){
 				if(typeof value ==="string"){
 					value = value.replace(/%2B/g," ");
 					value = value.replace(/\+/g," ");
+					value = value.replace(/%2F/g,"/");
+					value = value.replace(/%20/g,"/");
+					
 				}
 			}
             var ele = element || $(this.$form.find("[name='" + name + "']")[0]);

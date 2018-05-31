@@ -49,6 +49,15 @@
                 },  {
                     title: "填报单位",
                     field: "userName",
+					format:function(index,data){
+						if(data.checkStatus==0){
+							return '<span style="color:#ccc;" title="已退回">'+data.userName+'(已退回)</span>';						
+						}
+						if(data.checkStatus==1){
+							return '<span style="color:#aaa;" title="审核中">'+data.userName+'(审核中)</span>';				
+						}
+						return data.userName;
+					}
                 }
                 /*, {
                     title: "填报审核状态",
@@ -131,6 +140,10 @@
                     }
                 },{
                     text: "专家评价",
+					visible:function(index,data){
+					      if(data.checkStatus==2)return true;
+						  return false;
+					},
                     cls: "btn-primary btn-sm",
                     handle: function (index, coll) {
 						var modal = $.orangeModal({
@@ -176,12 +189,17 @@
 									bootbox.alert("服务器内部错误");
 								}
 							});
-
+						var commitTitles = [];
+						$.each(titles,function(i,conn){
+							if(conn.checkStatus==2){
+								commitTitles.push(conn);
+							}
+						})
 							
 						var data = JSON.parse(contentString);
 						data.paperId=coll.id;
 						data.userId=coll.userId;
-						data.tabTitles = titles;
+						data.tabTitles = commitTitles;
 						//var paper = modal.$body.orangePaperViewScore(data);
 						var paper = modal.$body.orangePaperFillScore(data);
 						paper.go();
@@ -523,24 +541,24 @@
         };
         grid = window.App.content.find("#grid").orangeGrid(options);
 		Date.prototype.format = function(format)
-{
- var o = {
- "M+" : this.getMonth()+1, //month
- "d+" : this.getDate(),    //day
- "h+" : this.getHours(),   //hour
- "m+" : this.getMinutes(), //minute
- "s+" : this.getSeconds(), //second
- "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
- "S" : this.getMilliseconds() //millisecond
- }
- if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
- (this.getFullYear()+"").substr(4 - RegExp.$1.length));
- for(var k in o)if(new RegExp("("+ k +")").test(format))
- format = format.replace(RegExp.$1,
- RegExp.$1.length==1 ? o[k] :
- ("00"+ o[k]).substr((""+ o[k]).length));
- return format;
-}
+				{
+				 var o = {
+				 "M+" : this.getMonth()+1, //month
+				 "d+" : this.getDate(),    //day
+				 "h+" : this.getHours(),   //hour
+				 "m+" : this.getMinutes(), //minute
+				 "s+" : this.getSeconds(), //second
+				 "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+				 "S" : this.getMilliseconds() //millisecond
+				 }
+				 if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+				 (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+				 for(var k in o)if(new RegExp("("+ k +")").test(format))
+				 format = format.replace(RegExp.$1,
+				 RegExp.$1.length==1 ? o[k] :
+				 ("00"+ o[k]).substr((""+ o[k]).length));
+				 return format;
+				}
 
     };
 })(jQuery, window, document);

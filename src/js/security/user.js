@@ -57,6 +57,16 @@
             }, {
                 title: "昵称",
                 field: "displayName"
+            },{
+                title: "用户类型",
+                field: "userType",
+				format:function(index,data){
+					if(data.userType==1)return "科协";
+					if(data.userType==2)return "部门";
+					if(data.userType==4)return "专家";
+					if(data.userType==7)return "学会";
+					return "未定义";
+				}
             }, {
                 title: "邮箱",
                 field: "email"
@@ -245,6 +255,14 @@
                     }
                 }, {
                     text: "删除",
+					visible:function(index,data){
+						if(data.userType==4)//专家
+							return false;
+						if(data.userType==2)//部门
+							return false;
+						return true;
+
+					},
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {
                         bootbox.confirm("确定该操作?", function (result) {
@@ -567,7 +585,8 @@
                 }
             ],
             search: {
-                rowEleNum: 2,
+                rowEleNum: 4,
+				hide:false,
                 //搜索栏元素
                 items: [{
                     type: "text",
@@ -579,6 +598,13 @@
                     label: "昵称",
                     name: "displayName",
                     placeholder: "输入要搜索的昵称"
+                }, {
+                    type: "select",
+                    label: "用户类型",
+                    name: "userType",
+                    placeholder: "输入要搜索",
+					items:[{text:'请选择',value:""}],
+					itemsUrl:App.href+"/api/core/dict/getItems?code=YHLX"
                 }]
             }
         };

@@ -449,16 +449,19 @@
                                     label: '输入框提示',
                                     cls: 'input-xxlarge'
                                 }, 
-                                /*{
+                                {
                                     type: 'select',
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
                                     cls: 'input-xxlarge',
-                                    
+                                    items:[ {
+                                            text: '',
+                                            value: ''
+                                        }],
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
-                                */{
+                                {
                                     type: 'textarea',
                                     name: 'relatedField',
                                     id: 'relatedField',
@@ -1019,21 +1022,28 @@
                                             value: 10
                                         }
                                     ]
+                                }, {
+                                    type: 'textarea',
+                                    name: 'items',
+                                    id: 'items',
+                                    label: '自定义填空',
+									placeholder:'[{type:text,placeholder:"请填写个数"}]',
+                                    cls: 'input-xxlarge'
                                 },{
                                     type: 'number',
                                     name: 'row',
                                     id: 'row',
+									value:"0",
                                     label: '生成行数',
-									value:0,
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
                                     },
                                     message: {
-                                        required: "请输入零分值"
+                                        required: "请输入行数"
                                     }
                                 },{
-                                    type: 'radio',
+                                    type: 'radioGroup',
                                     name: 'hideBtn',
                                     id: 'hideBtn',
                                     label: '隐藏添加按钮',
@@ -1094,19 +1104,20 @@
                                     type: 'textarea',
                                     name: 'optionLogic',
                                     id: 'optionLogic',
-                                    label: '填空逻辑',
+                                    label: '评分逻辑',
                                     cls: 'input-xxlarge'
                                 },{
                                     type: 'textarea',
                                     name: 'optionLogicDesc',
                                     id: 'optionLogicDesc',
-                                    label: '填空逻辑描述',
+                                    label: '评分逻辑描述',
                                     cls: 'input-xxlarge'
                                 }, {
                                     type: 'number',
                                     name: 'score',
                                     id: 'score',
                                     label: '题目分值',
+                                    value: '0',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
@@ -1121,29 +1132,27 @@
                                     label: '输入框提示',
                                     cls: 'input-xxlarge'
                                 }, 
-                                /* {
+                                {
                                     type: 'select',
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
                                     cls: 'input-xxlarge',
-                                    
-                                   itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
+                                    items:[ {
+                                            text: '',
+                                            value: ''
+                                        }],
+                                    itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {
-                                    type: 'select',
+                                    type: 'textarea',
                                     name: 'relatedField',
                                     id: 'relatedField',
-                                    label: '相关领域',
-                                    cls: 'input-xxlarge',
-                                    rule: {
-                                        required: true
-                                    },
-                                    message: {
-                                        required: "请输入选项文本"
-                                    },
-                                   itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
-                                },*/
+                                    label: '导出配置',
+                                    cls: 'input-xxlarge'
+                                    
+                                    //itemsUrl: App.href +"/api/core/dict/getItems?code=ZYLY"
+                                },
                                 {
                                     type: 'number',
                                     name: 'sort',

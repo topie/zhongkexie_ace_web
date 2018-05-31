@@ -445,8 +445,8 @@
 							for(var j=0;j<checkColl.length;j++){
 								//treedata.children[j].children=[];
 								//j!=0&&(treedata.children[j].collapsed = true);
-								checkes.push(treedata.children[j].id);
-								checkeNames.push(treedata.children[j].name);
+								checkes.push(checkColl[j].id);
+								checkeNames.push(checkColl[j].name);
 							}
 							$('#checkedIds').val(checkes);
 							$('#checkedNames').val(checkeNames);

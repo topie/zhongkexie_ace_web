@@ -11,6 +11,12 @@
             window.App.content.empty();
             window.App.title(title);
             var content = $('<div class="panel-body" >' +
+				'<div class="row col-md-12">'+
+				'<div class="form-actions" style="border-top: 0px;padding: 0px 0px 0px;background: none;">'+
+				'<button type="button" class="btn btn-sm btn-primary" >根据权重重新计算题目分数</button>&nbsp;'+
+				'<button type="button" class="btn btn-sm btn-warning" >重新计算用户填报答案分数</button>'+
+				//'&nbsp;<button type="button" class="btn btn-sm btn-primary" title="搜索"><i class="fa fa-search"><i></i></i> 搜索</button>'+
+				'&nbsp;</div></div>'+
                 '<div class="row">' +
                 '<div class="col-md-5" >' +
                 '<div class="panel panel-default" >' +
@@ -90,6 +96,70 @@
 				tree.expandAll(true);
 				that.html("折叠");
 			}
+		});
+		$(".form-actions .btn.btn-sm.btn-primary").bind("click",function(){
+			bootbox.confirm("确定根据权重重新计算题目分数？",function(res){
+				if(res){
+					var ele =$("#main-body");
+					ele.block(
+                    {
+                        message: "后台计算中请稍等...",
+                        css: {
+                            backgroundColor: '#ddd',
+                            color: '#000'
+                        }
+                    });
+					$.ajax({
+						url:App.href+"/api/core/scorePaper/updateWightScore",
+						type:"POST",
+						data:{paperId:currentPaper},
+						success:function(data){
+							ele.unblock();
+							if(data.code==200){
+								bootbox.alert("操作完成");
+							}else{
+								bootbox.alert(data.message);
+							}
+						},
+						error:function(){
+							ele.unblock();
+							alert("请求错误!");
+						}
+					});
+				}
+			})
+		});
+		$(".form-actions .btn.btn-sm.btn-warning").bind("click",function(){
+			bootbox.confirm("确定重新计算用户填报数据的分数？",function(res){
+				if(res){
+					var ele =$("#main-body");
+					ele.block(
+                    {
+                        message: "计算时间较长请耐心等待...",
+                        css: {
+                            backgroundColor: '#ddd',
+                            color: '#000'
+                        }
+                    });
+					$.ajax({
+						url:App.href+"/api/core/scorePaper/updateWightUserScore",
+						type:"POST",
+						data:{paperId:currentPaper},
+						success:function(data){
+							ele.unblock();
+							if(data.code==200){
+								bootbox.alert("操作完成");
+							}else{
+								bootbox.alert(data.message);
+							}
+						},
+						error:function(){
+							ele.unblock();
+							alert("请求错误!");
+						}
+					});
+				}
+			})
 		});
 		
 		$.ajax({

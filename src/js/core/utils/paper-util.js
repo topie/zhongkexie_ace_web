@@ -103,7 +103,8 @@
         title: '',
         data: [],
 		itemActions:[],
-		showSocre:false
+		showSocre:false,
+		showType:false
     };
     PaperView.prototype = {
         load: function () {
@@ -151,7 +152,16 @@
 					it.placeholder = item.placeholder === undefined ? ""
                         : item.placeholder;
 					if(that._options.showSocre){
-						it.label = item.title+"（"+item.score+"分）";
+						it.label = it.label+"（"+item.score+"分）";
+					}
+					if(that._options.showType){
+						if(item.scoreType==3){
+							it.label=it.label+'(专家评分项)';
+						}else if(item.scoreType==2){
+							it.label=it.label+'(线性打分项)';
+						}else if(item.scoreType==1){
+							it.label=it.label+'(统计项)';
+						}
 					}
                     if (item.itemType == 0) {
                         it.type = 'text';
@@ -404,6 +414,11 @@
 					}
 				});
 			}
+			
+			$.each(that.$element.find('input[type="text"]'),function(){
+				console.log($(this).val());
+				$(this).attr("title",$(this).val());
+			});
         },
         loadValues: function (name, value) {
             var ele = this.$main.find("[name='" + name + "']");

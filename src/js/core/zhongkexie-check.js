@@ -44,7 +44,16 @@
                     field: "title"
                 },  {
                     title: "填报单位",
-                    field: "userName"
+                    field: "userName",
+					format:function(index,data){
+						if(data.checkStatus==0){
+							return '<span style="color:#ccc;" title="已退回">'+data.userName+'(已退回)</span>';						
+						}
+						if(data.checkStatus==1){
+							return '<span style="color:#aaa;" title="审核中">'+data.userName+'(审核中)</span>';				
+						}
+						return data.userName;
+					}
                 },  {
                     title: "总得分",
                     field: "score"/*,
@@ -71,7 +80,33 @@
                         var modal = $.orangeModal({
                             id: "scorePaperView",
                             title: "查看-"+data.userName,
-                            destroy: true
+                            destroy: true,
+							buttons: [
+                                {
+                                    type: 'button',
+                                    text: '导出模板',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExport(data.title+"_导出");
+										
+                                    }
+                                }, {
+                                    type: 'button',
+                                    text: '导出数据',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExportValue(data.title+"_数据导出");
+                                        
+                                    }
+                                },{
+                                    type: 'button',
+                                    text: '关闭',
+                                    cls: "btn",
+                                    handle: function (m) {
+                                        modal.hide();    
+                                        
+                                    }
+                                }]
                         }).show();
 						 var contentString = "";
 						$.ajax({
@@ -94,6 +129,7 @@
 						});
 						var js = JSON.parse(contentString);
 						js.showSocre=true;
+						js.showType=true;
                         paper = modal.$body.orangePaperView(js);
                         $.ajax({
                             type: "POST",
@@ -106,11 +142,19 @@
                             success: function (data) {
                                 if (data.code === 200) {
                                     paper.loadAnswer(data.data);
-									modal.$body.find('input').each(function(){
-										if($(this).attr('name')!='button')
-											$(this).attr("disabled","true");
-									});
-									paper.loadReals(data.data,"虚假");
+									/*modal.$body.find('input[type="text"]').each(function(){
+										var $this = $(this);
+										$this.parent().append('<span style="background-color:#ccc;height:'+$this.parent().height()+'px">'+$this.val()+'</span>');
+										$this.remove();
+										   /*console.log($this.val()+"==="+$this.get(0).offsetWidth);
+										   var text_length = $this.val().length;//获取当前文本框的长度
+										   var current_width = parseInt(text_length) *16;//该16是改变前的宽度除以当前字符串的长度,算出每个字符的长度
+											
+										   if($this.parent().width()<current_width)
+											 $this.css("width",current_width+"px");
+									});*/
+									//paper.loadReals(data.data,"虚假");
+									
 									paper.loadScores(data.data);
                                 } else {
                                     alert(data.message);
@@ -234,7 +278,7 @@
 								});
 					}
 				},{
-                    text: "导出详细得分",
+                    text: "导出详细情况",
                     cls: " btn-primary btn",
                     icon: "fa fa-download",
                     handle: function (grid) {
@@ -260,10 +304,62 @@
                             isValidate: true,//开启验证
                             buttons: [{
                                 type: 'button',
-								cls: "btn btn-primary",
-                                text: '开始导出',
+                                text: '选中已提交的学会',
                                 handle: function () {
-									var data = form.getFormSerialize()+"&paperId="+currentPaper;
+                                   $.ajax({
+										url:App.href + "/api/core/scorePaper/zjcheckListName",
+										dataType: "json",
+										data: {
+											paperId: currentPaper
+										},
+										async:false,
+										success:function(res){
+												var ss = '';
+											if(res.code==200){
+												titles = res.data.data;
+												 var treeObj = $.fn.zTree.getZTreeObj("tree_orgIds");
+												 $.each(titles,function(){
+													var name = this["userName"].trim();
+													var nodes = treeObj.getNodesByParam("name", name, null);
+													if(nodes.length>0)
+														treeObj.checkNode(nodes[0], true, true);
+													else 
+														ss+=" "+name;
+												 })
+												if(ss!=''){
+												 form._alert(ss+"  未选中，请手动选中","danger",500);
+												 }
+											}else{
+												bootbox.alert("请求错误");
+											}
+										},
+										error:function(){
+											bootbox.alert("服务器内部错误");
+										}
+									});
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '只导出分数',
+                                handle: function () {
+									var data = form.getFormSerialize()+"&paperId="+currentPaper+"&type=score";
+									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data,modal.$body)
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '只导统计数据',
+                                handle: function () {
+									var data = form.getFormSerialize()+"&paperId="+currentPaper+"&type=value";
+									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data,modal.$body)
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '分数和统计项导出',
+                                handle: function () {
+									var data = form.getFormSerialize()+"&paperId="+currentPaper+"";
 									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data,modal.$body)
                                 }
                             },{
@@ -281,7 +377,9 @@
 									id: 'orgIds',//id
 									label: '机构',//左边label
 									url: App.href + "/api/core/dept/tree",
-									expandAll: true,
+									//url:App.href + "/api/core/scorePaper/zjcheckListName?paperId="+currentPaper,
+									//expandAll: true,
+									//mtype:"GET",
 									autoParam: ["id", "name", "pId"],
 									chkStyle: "checkbox",
 									chkboxType:{"Y": "ps", "N": "s"},
@@ -293,11 +391,17 @@
 									id: 'indexIds',//id
 									label: '指标',//左边label
 									url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
-									expandAll: true,
+									//expandAll: true,
 									autoParam: ["id", "name", "pId"],
 									chkStyle: "checkbox",
 									chkboxType:{"Y": "ps", "N": "s"},
-									expandAll:false
+									expandAll:false,
+									rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择需要导出的指标"
+                                    }
 								}
 									
                                 

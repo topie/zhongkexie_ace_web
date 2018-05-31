@@ -62,6 +62,14 @@
 				callback:function(li,data){
 					that.$main.find(".paperPanel").html("");
 					that.$main.find(".paperPanel").append(that.renderSubTab(that._options.data));
+					var dept = "专家评价-"+data.userName;
+					$("#scorePaperViewtitle").html(dept);
+					that.$main.find("label.expert-score").each(function(ele){
+						$(this).html($(this).html().replace(/专家评分项/g, '<font style="background-color:#FF6600;border-radius:8px;">$&</font>'));
+					});
+					that.$main.find("label.normal-score").each(function(ele){
+						$(this).html($(this).html().replace(/参考项/g, '<font style="background-color:#ccc;border-radius:8px;">$&</font>'));
+					});
 					$.ajax({
 						type: "POST",
 						dataType: "json",
@@ -126,6 +134,7 @@
 					});
 					that._options.userId=data.userId;
 				}
+				
             });
 			mainPanel.find(".panel-body").append('<div class="paperPanel"></div>')
             var prevBtn = $('<button type="button" class="btn btn btn-info">上一项</button>');
@@ -232,7 +241,7 @@
 						it.row = item.row;
 						try{
 							var customItems = JSON.parse(item.customItems);
-							it.span = 8;
+							it.span = 11;
 							$.each(customItems,function(index,cont){
 								if(index==0){
 									it.formInline = cont.formInline;
@@ -247,11 +256,6 @@
 								customItems[index]["readonly"]=true;
 								customItems[index]["disabled"]=true;
 							});
-							if(customItems.length==3){
-								it.span = 9;
-							}if(customItems.length==2){
-								it.span = 7;
-							}
 							it.items = customItems;
 						}catch(err){
 							alert("解析json错误："+it.label);
@@ -318,8 +322,10 @@
 
 					if(item.scoreType==3){
 						it.label='(专家评分项)   '+it.label;
+						it.labelClass = 'expert-score';
 					}else{
 						it.label='(参考项)   '+it.label;
+						it.labelClass = 'normal-score';
 					}
 					
                     its.push(it);
