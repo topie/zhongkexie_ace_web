@@ -57,6 +57,10 @@
                     field: "loginName",
                     sort: true
                 }, {
+					title: "部门分类",
+                    field: "deptType",
+                    sort: true
+                }, {
                     title: "部门联系人",
                     field: "linkMan",
                     sort: true

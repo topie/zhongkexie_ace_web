@@ -131,6 +131,42 @@
 						js.showSocre=true;
 						js.showType=true;
                         paper = modal.$body.orangePaperView(js);
+						//添加详细打分情况start
+						paper.$element.find(".zhuanjiapingfen").each(function(index,label){
+							var $label = $(label);
+							var itemId = $label.data("label-data");
+							$.ajax({
+									type: "get",
+									dataType: "json",
+									data: {
+										itemId: itemId,
+										userId:data.userId
+									},
+									url: App.href + "/api/expert/paper/getScoreInfo",
+									success: function (res) {
+										if (res.code === 200) {
+											var html='<div><table>';
+											$.each(res.data,function(i,c){
+												html+="<tr><td style='padding-right: 20px;'>"+c.display_name+"</td><td>"+c.item_score+'</td></tr>';
+												
+											});	
+											html+="</table></div>";
+											if(res.data.length==0) html='暂无专家打分';
+											var info = $('<i class="ace-icon fa fa-info-circle" style="color:#6fb3e0;font-size: 18px;" title="打分情况" data-content="'+html+'"></i>');
+												info.popover({html:true});
+												$label.append(info);
+										}
+										else{
+											bootbox.alert(res.msg);
+										}
+									},
+									error:function(){
+										alert("请求错误");
+									}
+								})
+							
+						});
+						//详细end
                         $.ajax({
                             type: "POST",
                             dataType: "json",

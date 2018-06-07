@@ -201,6 +201,7 @@
 					 if(data.scoreType==1)return '统计项';
 					 if(data.scoreType==2)return '线性打分项';
 					 if(data.scoreType==3)return '专家打分项';
+					 if(data.scoreType==4)return '其他打分项';
 					 return '未识别';
 					}
 				}
@@ -379,19 +380,8 @@
                                         required: "请输入选项文本"
                                     },
                                     items: [
-                                        {
-                                            text: '学会',
-                                            value: 7
-                                        },
-                                        {
-                                            text: '专家',
-                                            value: 4
-                                        },
-                                        {
-                                            text: '中国科协',
-                                            value: 1
-                                        }
-                                    ]
+                                    ],
+									itemsUrl:App.href +"/api/core/dict/getItems?code=YHLX"
                                 }, {
                                     type: 'select',
                                     name: 'scoreType',
@@ -416,6 +406,10 @@
                                         {
                                             text: '专家评分项',
                                             value: 3
+                                        },
+                                        {
+                                            text: '其他评分项',
+                                            value: 4
                                         }
                                     ]
                                 }, {
@@ -450,15 +444,12 @@
                                     cls: 'input-xxlarge'
                                 }, 
                                 {
-                                    type: 'select',
+                                    type: 'select2',
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
                                     cls: 'input-xxlarge',
-                                    items:[ {
-                                            text: '',
-                                            value: ''
-                                        }],
+                                    items:[],
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {
@@ -1061,19 +1052,8 @@
                                         required: "请输入选项文本"
                                     },
                                     items: [
-                                        {
-                                            text: '学会',
-                                            value: 7
-                                        },
-                                        {
-                                            text: '专家',
-                                            value: 4
-                                        },
-                                        {
-                                            text: '中国科协',
-                                            value: 1
-                                        }
-                                    ]
+                                    ],
+									itemsUrl:App.href +"/api/core/dict/getItems?code=YHLX"
                                 }, {
                                     type: 'select',
                                     name: 'scoreType',
@@ -1098,6 +1078,10 @@
                                         {
                                             text: '专家评分项',
                                             value: 3
+                                        },
+                                        {
+                                            text: '其他评分项',
+                                            value: 4
                                         }
                                     ]
                                 }, {
@@ -1133,15 +1117,12 @@
                                     cls: 'input-xxlarge'
                                 }, 
                                 {
-                                    type: 'select',
+                                    type: 'select2',
                                     name: 'responsibleDepartment',
                                     id: 'responsibleDepartment',
                                     label: '责任部门',
                                     cls: 'input-xxlarge',
-                                    items:[ {
-                                            text: '',
-                                            value: ''
-                                        }],
+                                    items:[],
                                     itemsUrl: App.href +"/api/core/dict/getItems?code=ZZBM"
                                 },
                                 {

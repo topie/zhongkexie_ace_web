@@ -197,6 +197,9 @@
 				
             }
         },
+        currentLi: function () {
+            return this.$element.find('li.active');
+        },
         currentDiv: function () {
             var li = this.$element.find('li.active');
             var id = li.find('a').attr("href").substring(1);

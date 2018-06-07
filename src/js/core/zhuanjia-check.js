@@ -58,6 +58,16 @@
 						}
 						return data.userName;
 					}
+                },
+				{
+                    title: "评价状态",
+                    field: "userName",
+					format:function(index,data){
+						if(data.approveStatus==1){
+							return '<span style="color:#aaa;" title="已完成评价">已完成评价</span>';				
+						}
+						return '待评价';
+					}
                 }
                 /*, {
                     title: "填报审核状态",
@@ -142,6 +152,7 @@
                     text: "专家评价",
 					visible:function(index,data){
 					      if(data.checkStatus==2)return true;
+						  if(data.checkStatus==1)return true;
 						  return false;
 					},
                     cls: "btn-primary btn-sm",
@@ -149,7 +160,18 @@
 						var modal = $.orangeModal({
                             id: "scorePaperView",
                             title: "专家评价-"+coll.userName,
-                            destroy: true
+                            destroy: true,
+							buttons: [
+								{
+									type: 'button',
+									text: '关闭',
+									cls: "btn btn-default",
+									handle: function (m) {
+										grid.reload();
+										m.hide();
+									}
+								}
+							]
                         }).show();
 							var contentString = "";
 							$.ajax({
@@ -191,7 +213,7 @@
 							});
 						var commitTitles = [];
 						$.each(titles,function(i,conn){
-							if(conn.checkStatus==2){
+							if(conn.checkStatus==2||conn.checkStatus==1){
 								commitTitles.push(conn);
 							}
 						})
@@ -200,6 +222,32 @@
 						data.paperId=coll.id;
 						data.userId=coll.userId;
 						data.tabTitles = commitTitles;
+						data.finish=function(paper,btn){
+							var currentItem = paper.$tab.currentLi().data("tab-data");
+							var json = {paperId:coll.id,userId:currentItem.userId,status:1};
+							$.ajax({
+								url:App.href + "/api/expert/paper/zjFinish",
+								dataType: "json",
+								data: json,
+								async:false,
+								success:function(res){
+									if(res.code==200){
+										var che = $('<i class="ace-icon fa fa-check"></i>');
+										if(paper.$tab.currentLi().find('.fa-check').length==0){
+											paper.$tab.currentLi().find("a").prepend('<i class="ace-icon fa fa-check"></i>');
+										}
+                                       btn.prepend(che);
+									   setTimeout(function(){che.remove();},3000);
+									}else{
+										bootbox.alert("请求错误");
+									}
+								},
+								error:function(){
+									bootbox.alert("服务器内部错误");
+								}
+							})
+							
+						}
 						//var paper = modal.$body.orangePaperViewScore(data);
 						var paper = modal.$body.orangePaperFillScore(data);
 						paper.go();
@@ -360,7 +408,38 @@
                             }
                         });
                     }*/
-                }, /*{
+                },{
+                    textHandle: function(index,data){
+						if(data.approveStatus==1)return '标记为未评价';
+						return '标记为已评价';
+					},
+                    cls: "btn-info btn-sm",
+                    clsHandle: function(index,data){
+						if(data.approveStatus==1)return "btn-warning btn-sm";
+						return "btn-info btn-sm";
+					},
+                    handle: function (index, coll) {
+						var sta =1;
+						if(coll.approveStatus==1) sta = 0;
+						var json = {paperId:coll.id,userId:coll.userId,status:sta};
+						$.ajax({
+							url:App.href + "/api/expert/paper/zjFinish",
+							dataType: "json",
+							data: json,
+							async:false,
+							success:function(res){
+								if(res.code==200){
+									grid.reload();
+								}else{
+									bootbox.alert("请求错误");
+								}
+							},
+							error:function(){
+								bootbox.alert("服务器内部错误");
+							}
+						})
+					}
+				}/*{
                     text: "退回",
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {

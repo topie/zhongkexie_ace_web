@@ -40,6 +40,9 @@
 							var tab = {};
 							var ind = itemIndex;
 							tab['title'] = idx.userName;
+							if(idx.approveStatus==1){
+								tab['title'] = '<i class="ace-icon fa fa-check"></i>'+idx.userName;
+							}
 							tab['width'] = '87px';
 							tab['data'] = idx;
 							tab['content'] = {html:''};
@@ -139,18 +142,30 @@
 			mainPanel.find(".panel-body").append('<div class="paperPanel"></div>')
             var prevBtn = $('<button type="button" class="btn btn btn-info">上一项</button>');
             var nextBtn = $('<button type="button" class="btn btn btn-success">下一项</button>');
+            var finishBtn = $('<button type="button" class="btn btn btn-success commit">完成该学会评分</button>');
             mainPanel.find('div.panel-footer:eq(0)').append(prevBtn);
             mainPanel.find('div.panel-footer:eq(0)').append(nextBtn);
+            mainPanel.find('div.panel-footer:eq(0)').append(finishBtn);
             prevBtn.on("click", function () {
+				var $this = $(this);
                 if (that._options.prev !== undefined) {
-                    that._options.prev(that);
+                    that._options.prev(that,$this);
                 } else {
                     tab.prev();
                 }
             });
             nextBtn.on("click", function () {
+				var $this = $(this);
                 if (that._options.next !== undefined) {
-                    that._options.next(that);
+                    that._options.next(that,$this);
+                } else {
+                    tab.next();
+                }
+            });
+			finishBtn.on("click", function () {
+				var $this = $(this);
+                if (that._options.finish !== undefined) {
+                    that._options.finish(that,$this);
                 } else {
                     tab.next();
                 }

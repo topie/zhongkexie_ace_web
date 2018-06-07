@@ -362,6 +362,9 @@
                 "cls_": ((that._labelInline ? "col-md-3" : "")+labelClass),
                 "label_": item.label === undefined ? "" : item.label
             });
+			if(item.labelData !== undefined){
+				label.data("label-data",item.labelData);
+			}
             wrapper.find(".form-group").append(label);
 			if(item.itemActions!==undefined && item.itemActions.length>0){
 				$.each(item.itemActions, function (i, button) {
@@ -2274,7 +2277,8 @@
                 }
             } else if (ele.is('select')) {
 				if(ele.is('.select2')){
-					ele.select2().val(value.split(",")).trigger('change');
+					if(typeof value == "string")
+					 ele.select2().val(value.split(",")).trigger('change');
 				}else{
 					ele.val(value);
 					ele.attr("data-value",value);

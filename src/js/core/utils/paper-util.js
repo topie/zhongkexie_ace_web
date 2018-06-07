@@ -147,6 +147,7 @@
                     it.name = item.id;
                     it.label = item.title;
                     it.score = item.score;
+					it.labelData=item.id;
 					it.readonly=true;
 					it.disabled=true;
 					it.placeholder = item.placeholder === undefined ? ""
@@ -156,11 +157,14 @@
 					}
 					if(that._options.showType){
 						if(item.scoreType==3){
-							it.label=it.label+'(专家评分项)';
+							it.label='(专家评分项)'+it.label;
+							it.labelClass="zhuanjiapingfen Cscore";
 						}else if(item.scoreType==2){
-							it.label=it.label+'(线性打分项)';
+							it.label='(线性打分项)'+it.label;
+							it.labelClass="xianxingpingfen Cscore";
 						}else if(item.scoreType==1){
-							it.label=it.label+'(统计项)';
+							it.label='(统计项)'+it.label;
+							it.labelClass="tongjixiang Cscore";
 						}
 					}
                     if (item.itemType == 0) {
@@ -379,7 +383,7 @@
         },
 		loadScore:function(name, value){
 			var ele = this.$main.find("[name='" + name + "']");
-			var cl = ele.closest('.row[data-row]').find('[class="control-label "]');
+			var cl = ele.closest('.row[data-row]').find(".Cscore");
 			cl.after('<label class="anserScore" style="color:blue">(得分：'+value+')</label>');
 		},
 		loadAnswer: function (ans) {
