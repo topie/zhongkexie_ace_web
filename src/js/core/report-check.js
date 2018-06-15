@@ -106,6 +106,7 @@
                             destroy: true
                         }).show();
                         var js = JSON.parse(data.contentJson);
+						js.showIndex=true;
                         paper = modal.$body.orangePaperView(js);
                         $.ajax({
                             type: "POST",

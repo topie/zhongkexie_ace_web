@@ -104,6 +104,7 @@
         data: [],
 		itemActions:[],
 		showSocre:false,
+		showIndex:false,
 		showType:false
     };
     PaperView.prototype = {
@@ -115,6 +116,7 @@
             that.$element.append(mainPanel);
             this.$main = mainPanel;
             if (this._options.data !== undefined && this._options.data.length > 0) {
+				var index = 1;
                 $.each(this._options.data, function (i, idx) {
 					var hasItem = false;
 					 $.each(idx.items, function (i, item) {
@@ -123,7 +125,8 @@
 						}
 					 });
 					 if(hasItem){
-						  var r = that.getRow(idx.parentIndexTitle);
+						 var title = (that._options.showIndex?'[第'+index++ +'项]  ':'')+idx.parentIndexTitle;
+						  var r = that.getRow(title);
 							mainPanel.find('div.panel-body:eq(0)').append(r);
 							that.renderSubRow(that, r, idx.items);
 					 }
