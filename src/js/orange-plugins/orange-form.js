@@ -90,6 +90,10 @@
         resetText: "重置",
         showReset: true,
         isValidate: true,
+        uploadFile: false,//每个ele 上传附件
+		showUploadBtn:true,
+		filedownzip:false,
+        uploadFileName: "itemFile",//每个ele 上传附件
         viewMode: false,
         buttons: []
     };
@@ -101,7 +105,7 @@
         rowTmpl: '<div data-row=${row_} class="row"></div>',
         eleTmpl: '<div class="col-md-${span_}"><div class="form-group"></div></div>',
         sectionTmpl: '<div class="col-md-12"><h3 class="form-section">${title_}</h3><hr></div>',
-        labelTmpl: '<label class="control-label ${cls_}">${label_}</label>',
+        labelTmpl: '<label class="control-label ${cls_}" title="${title_}">${label_}</label>',
         blockSpanTmpl: '<span class="help-block">${help_}</span>',
         buttonTmpl: '<button type="${type_}" class="btn ${cls_}" ${attribute_}>${text_}</button>',
         alertTmpl: '<div class="alert alert-${type_} alert-dismissable" role="alert">'
@@ -360,10 +364,41 @@
 			var labelClass = item.labelClass === undefined ? "" : (" "+item.labelClass);
             var label = $.tmpl(Form.statics.labelTmpl, {
                 "cls_": ((that._labelInline ? "col-md-3" : "")+labelClass),
-                "label_": item.label === undefined ? "" : item.label
+                "label_": item.label === undefined ? "" : item.label,
+				"title_":item.labelTitle===undefined?"":item.labelTitle
             });
+			if(item.info!==undefined&&item.info!==''){
+				var infoImpl = '<i class="ace-icon fa fa-lightbulb-o" data-trigger="hover" data-placement="top" style="color:#6fb3e0;font-size: 18px;margin-left: 3px;margin-right: 2px;" title="" data-content="${info_}" data-original-title="${infoTitle_}"></i>';
+				var info = $.tmpl(infoImpl, {
+					"info_":item.info===undefined?"":item.info,
+					"infoTitle_":item.infoTitle===undefined?"":item.infoTitle,
+				});
+				label.append(info);
+				info.popover({html:true});
+			}
 			if(item.labelData !== undefined){
 				label.data("label-data",item.labelData);
+			}
+			if(that._options.uploadFile){
+				if(item.label!= undefined && item.label!=''){
+					var $upbtn = $('<span id="label_upload_file_'+item.name
+						+'" role="label_upload_file"><span style="color:red;"></span><input role="labelFile-input" name="'+that._options.uploadFileName
+					+item.name+'" type="hidden"><a href="javascript:void(0);" style="display:none;">删除</a><a href="javascript:void(0);">上传证明材料</a></span>');
+					label.append($upbtn);
+					if(that._options.showUploadBtn){
+						var $upa=$upbtn.find('a:eq(1)');
+						var $input=$upbtn.find('input');
+						$upa.bind("click",function(){
+							//alert($input.attr('name'));
+							if(that._options.uploadFun==undefined){
+								alert("上传未实现_uploadFun");
+							}
+							that._options.uploadFun($input,that);
+						});
+					}else{
+						$upbtn.find('a:eq(1)').remove();
+					}
+				}
 			}
             wrapper.find(".form-group").append(label);
 			if(item.itemActions!==undefined && item.itemActions.length>0){
@@ -832,16 +867,23 @@
 					if(data.methodType){
 						methodType = data.methodType;
 					}
+					var param = ["value",'text'];
+					if(data.autoParam!== undefined){
+						param = data.autoParam;
+					}
                     $.ajax({
                         type: methodType,
                         dataType: "json",
                         async: data.async ? true : false,
                         url: data.itemsUrl,
                         success: function (options) {
+							for(var i=2;i<param.length;i++){
+								options = options[param[i]];
+							}
                             $.each(options, function (i, option) {
                                 var opt = $.tmpl(optionTmpl, {
-                                    "value_": option.value,
-                                    "text_": option.text,
+                                    "value_": option[param[0]],
+                                    "text_": option[param[1]],
                                     "selected": (option.selected ? "selected"
                                         : "")
                                 });
@@ -1536,7 +1578,7 @@
         _initMultiFileUpload: function () {
             var template = '<tr class="template-upload fade in">'
                 + '<td style="width: 20%; border-bottom: 1px solid #ddd;border-left: 1px solid #ddd;">'
-                + '<span class="preview"><img alt="${alt_}" style="width: 32px;height: 32px;"></span>'
+                + '<span class="preview"><img alt="${alt_}" src="/img/file.png" style="width: 32px;height: 32px;"></span>'
                 + '</td>'
                 + '<td style="width: 50%;vertical-align: middle;border-bottom: 1px solid #ddd;">'
                 + '<p class="name">${fileName_}</p>'
@@ -1881,7 +1923,7 @@
             var elementData = $(table).data("data");
             var template = '<tr class="template-upload fade in">'
                 + '<td style="width: 20%;">'
-                + '<span class="preview"><img alt="${alt_}" width="32" height="32"></span>'
+                + '<span class="preview"><img src="/img/file.png" alt="${alt_}" width="32" height="32"></span>'
                 + '</td>'
                 + '<td style="width: 50%;vertical-align: middle;border-bottom: 1px solid #ddd;">'
                 + '<p class="name">${fileName_}</p>'
@@ -2070,6 +2112,7 @@
 					value = value.replace(/\+/g," ");
 					value = value.replace(/%2F/g,"/");
 					value = value.replace(/%20/g,"/");
+					value = value.replace(/%2C/g,"，");
 					
 				}
 			}
@@ -2271,6 +2314,75 @@
                         ele.parent().parent().parent().find(
                             "span.fileinput-filename ").text(
                             value.substring(value.lastIndexOf("/") + 1));
+                    } else if (ele.attr("role") == "labelFile-input") {
+						var that = this;
+                        ele.val(value);
+						ele.prev().html("");
+						var $down = $("<span> ↓材料资料↓</span>");
+						$down.bind("click",function(){
+							if(!that._options.filedownzip){
+								if(typeof that._options.filedownFun =="function"){
+									that._options.filedownFun(value);
+									return;
+								}
+								var modalDwon = $.orangeModal({
+												id: "scorm",
+												title: "材料下载",
+													//height: "480",
+													width: "550",
+												destroy: true
+											});
+								modalDwon.show();
+								var table = $('<table class="table table-striped clearfix"></tabel>');
+								modalDwon.$body.append(table);
+								var fileIds = value;
+								if ($.trim(fileIds) == "")
+									return;
+								var ids = fileIds.split("_");
+								var template = '<tr class="template-upload fade in">'
+									+ '<td style="width: 20%;">'
+									+ '<span class="preview"><img src="/img/file.png" alt="${alt_}" width="32" height="32"></span>'
+									+ '</td>'
+									+ '<td style="width: 50%;vertical-align: middle;border-bottom: 1px solid #ddd;">'
+									+ '<p class="name">${fileName_}</p>'
+									+ '<p class="size">${fileSize_} KB</p>'
+									+ '</td>'
+									+ '<td style="width: 30%;vertical-align: middle;">'
+									+ '    <button type="button" class="btn btn-info btn-sm cancel">下载</button>        '
+									+ '</td>'
+									+ '</tr>';
+								var fileInfoUrl = App.href + "/api/common/attachment";
+								var dataParam = "attachmentId";
+								for (var i in ids) {
+									var dataParamValue = {};
+									dataParamValue[dataParam] = ids[i];
+									$.ajax({
+										type: "POST",
+										data: dataParamValue,
+										dataType: "json",
+										url: fileInfoUrl,
+										success: function (data) {
+											if (data.code == 200) {
+												var file = $.tmpl(template, {
+													"alt_": data.data.attachmentSuffix,
+													"fileName_": data.data.attachmentName,
+													"fileSize_": (data.data.attachmentSize / 1000)
+														.toFixed(2),
+													"fileIds_": data.data.attachmentId
+												});
+												file.appendTo(table);
+												file.find("button.btn.btn-info.cancel").bind("click", function () {
+														App.download(App.href+"/api/common/download?id="+ids[i]+"&itemId="+name.replace("itemFile",""),modalDwon.$body);
+												});
+											}
+										}
+									});
+								}
+							}else{
+								App.download(App.href+"/api/common/downloadzip?id="+value);
+							}
+						})
+						ele.parent().find("span").append($down);
                     } else {
                         ele.val(value);
                     }

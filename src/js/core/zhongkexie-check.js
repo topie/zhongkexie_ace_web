@@ -531,7 +531,7 @@
 				}*/
             ],
             search: {
-                rowEleNum: 2,
+                rowEleNum: 3,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -541,6 +541,40 @@
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
+                    }
+					,{
+                        type: "select",
+                        label: "学会分类",
+                        name: "type",
+						items:[
+								{
+								text:'全部',
+								value:''
+								},
+								{
+									text: '理科',
+									value: '理科'
+								},
+								{
+									text: '工科',
+									value: '工科'
+								},
+								{
+									text: '农科',
+									value: '农科'
+								},
+								{
+									text: '医科',
+									value: '医科'
+								},
+								{
+									text: '交叉学科',
+									value: '交叉学科'
+								},
+								{
+									text: '其他',
+									value: '其他'
+								}]
                     }
                 ]
             }

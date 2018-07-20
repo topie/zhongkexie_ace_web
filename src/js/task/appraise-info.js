@@ -22,7 +22,7 @@
 					'<div class="col-md-12" >' +
 					   // '<div class="panel panel-default" >' +
 					  //  '<div class="panel-heading"></div>' +
-							'<div id="grid"></div>' +
+							'<div id="grid"><div class="appform"></div></div>' +
 					   // '</div>' +
 					'</div>' +
                 '</div>' +
@@ -74,7 +74,7 @@
 			reRendPaper();
 		});
 		function reRendPaper(){
-			$("#grid").html('');
+			$(".appform").html('');
 			$.ajax({url:App.href+"/api/score/appraise/userItems",
 				data:{paperId:currentPaper},
 				type:"GET",
@@ -92,7 +92,7 @@
 
 		function renderForm(items,values){
 			if(items.length==0){
-				$("#grid").html('<h3>您没有可操作的任务</h3>');
+				$(".appform").html('<h3>您没有可操作的任务</h3>');
 
 				return;
 			}
@@ -274,7 +274,7 @@
                         };
 
 		
-			var form = $("#grid").orangeForm(formOpts);
+			var form = $(".appform").orangeForm(formOpts);
 			form.loadLocal(value);
 		}
     }

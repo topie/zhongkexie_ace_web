@@ -875,7 +875,56 @@
                             ]*/
                         });
                     }
-                }],
+                },
+				{
+                    text: "添加说明",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        var modal2 = $.orangeModal({
+                            id: "scoreItemForm",
+                            title: "添加或修改指标说明",
+                            destroy: true
+                        });
+                        var formOpts2 = {
+                            id: "edit_form",
+                            name: "edit_form",
+                            method: "POST",
+                            action: App.href + "/api/core/scoreItem/update",
+                            ajaxSubmit: true,
+                            ajaxSuccess: function () {
+                                modal2.hide();
+								grid.reload();
+                            },
+                            submitText: "保存",
+                            showReset: true,
+                            resetText: "重置",
+                            isValidate: true,
+                            buttons: [{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal2.hide();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+                                {
+                                    type: 'hidden',
+                                    name: 'id',
+                                    id: 'id'
+                                },{
+                                    type: 'textarea',
+                                    name: 'info',
+									label: '指标说明',
+                                    id: 'info'
+                                }
+                            ]
+                        };
+                        var form2 = modal2.$body.orangeForm(formOpts2);
+						form2.loadLocal(data);
+						modal2.show();
+					}
+				}],
             tools: [
                 {
                     text: " 添 加",

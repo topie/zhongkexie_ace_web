@@ -214,6 +214,7 @@
 								customItems[index]["name"]=item.id;
 								customItems[index]["readonly"]=true;
 								customItems[index]["disabled"]=true;
+								customItems[index]["rows"]=8;
 							});
 							if(customItems.length==3){
 								it.span = 9;
@@ -242,6 +243,7 @@
 								customItems[index]["name"]=item.id;
 								customItems[index]["readonly"]=true;
 								customItems[index]["disabled"]=true;
+								customItems[index]["rows"]=8;
 							});
 							it.customItems = customItems;
 						}catch(err){
@@ -264,6 +266,7 @@
 						}
                      }else if (item.itemType == 10) {
                           it.type = 'textarea';
+						  it.rows=8;
                      }
                     if (item.itemType ==1 || item.itemType==2|| item.itemType==5|| item.itemType==6|| item.itemType == 8) {
 						it.inline=true;
@@ -296,6 +299,8 @@
                     },
                     showReset: false,
                     showSubmit: false,
+					uploadFile:true,
+					showUploadBtn:false,
 					labelInline:false,
                     isValidate: true,
                     buttonsAlign: "center",
@@ -393,6 +398,7 @@
 			 var that = this;
 			$.each(ans, function (i, an) {
                 that.loadValue(an.itemId, an.answerValue);
+                that.loadValue("itemFile"+an.itemId, an.answerFile);
             });
 			/*that.$main.find("textarea").each(function(ind,cont){
 				$(cont).width("540");

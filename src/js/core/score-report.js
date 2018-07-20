@@ -30,7 +30,7 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scorePaper/reportList",
+            url: App.href + "/api/core/scorePaper/reportList?status=1",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码

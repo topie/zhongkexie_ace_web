@@ -123,9 +123,9 @@
 						 if (data.approveStatus == 1) {//审核中
                             return false;
                         }
-						if (data.approveStatus == 2) {//审核通过
+						/*if (data.approveStatus == 2) {//审核通过
                             return false;
-                        }
+                        }*/
                         return true;
 					},
                     handle: function (index, data) {
@@ -585,7 +585,8 @@
 							}
 						});
                     }
-                }/*, {
+                }
+                /*, {
                     text: "做题",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
@@ -643,6 +644,7 @@
                         });
                     }
                 }*/
+
             ],
             tools: [
                 {

@@ -372,7 +372,7 @@
                      {
                         type: "text",
                         label: "部门名称",
-                        name: "name",
+                        name: "deptName",
                         placeholder: "输入要搜索的部门名称"
                     }, {
                                     type: 'select',

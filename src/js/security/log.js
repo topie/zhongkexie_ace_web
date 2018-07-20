@@ -1,20 +1,18 @@
 /**
- * Created by chenguojun on 2017/2/10.
+ * 日志管理.
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/core/message/page": "messagePage"
+        "/api/sys/log/page": "logPage"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
-    App.messagePage = {
+    App.logPage = {
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
             var content = $('<div class="panel-body" >' +
                 '<div class="row">' +
                 '<div class="col-md-12" >' +
-               // '<div class="panel panel-default" >' +
-               // '<div class="panel-heading">题库试卷管理</div>' +
                 '<div class="panel-body" id="grid"></div>' +
               //  '</div>' +
                 '</div>' +
@@ -33,12 +31,12 @@
 		var modal;
 
         var options = {
-            url: App.href + "/api/core/message/list?type=message",
+            url: App.href + "/api/sys/log/list",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
             pageSize: 15,//每页显示条数
-            idField: "mId",//id域指定
+            idField: "id",//id域指定
             headField: "title",
             showCheck: true,//是否显示checkbox
             checkboxWidth: "3%",
@@ -52,149 +50,124 @@
                     sort: true,
                     width: "5%"
                 },*/ {
-                    title: "通知标题",
+                    title: "操作结果",
                     field: "title",
                     sort: true
                 }, {
-                    title: "发布时间",
-                    field: "createTime",
+                    title: "操作用户",
+                    field: "cuser",
                     sort: true
                 }, {
-                    title: "状态",
-                    field: "status",
+                    title: "类型",
+                    field: "ctype",
                     sort: true,
 					format:function(index,data){
-						if(data.status=='0'){
-							return '新增';	
+						if(data.ctype=='0'){
+							return '登录';	
 						}
-						if(data.status=='1'){
-							return '发布';	
+						if(data.ctype=='1'){
+							return '操作';	
 						}
-						if(data.status=='2'){
-							return '撤回';	
-						}
-						return '新建';
+						return '--';
 					}
+                }, {
+                    title: "操作时间",
+                    field: "cdate",
+                    sort: true
                 }
             ],
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "20%",
-            actionColumns: [
-                {
-                    text: "编辑",
-					visible:function (index, data){
-						if(data.status==1)return false;
-						return true;
-					},
-                    cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
-                         modal = $.orangeModal({
-                            id: "messageForm",
-                            title: "编辑",
-                            destroy: true
-                        });
-						 formOpts.action = App.href + "/api/core/message/update";
-                        
-                        var form = modal.$body.orangeForm(formOpts);
-                        form.loadRemote(App.href + "/api/core/message/load/" + data.mId);
-                        modal.show();
-                    }
-                },{
-					textHandle:function (index, data){
-						if(data.status=="0")return "发布";
-						if(data.status=="1")return "取消发布";
-						if(data.status=="2")return "再次发布";
-						return "发布";
-					},
-                    cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
-						var sta = "1";
-						if(data.status==0)sta="1";
-						if(data.status==1)sta="2";
-                         bootbox.confirm("确定该操作?", function (result) {
-                            if (result) {
-                                var requestUrl = App.href + "/api/core/message/update";
-                                $.ajax({
-                                    type: "POST",
-                                    dataType: "json",
-                                    data: {
-                                        mId: data.mId,
-										status:sta
-                                    },
-                                    url: requestUrl,
-                                    success: function (data) {
-                                        if (data.code === 200) {
-                                            grid.reload();
-                                        } else {
-                                            alert(data.message);
-                                        }
-                                    },
-                                    error: function (e) {
-                                        alert("请求异常。");
-                                    }
-                                });
+            actionColumns: [{
+                text: "查看",
+                cls: "btn-primary btn-sm",
+                handle: function (index, data) {
+                    var modal = $.orangeModal({
+                        id: "roleForm",
+                        title: "查看",
+                        destroy: true
+                    });
+                    var formOpts = {
+                        id: "index_form",//表单id
+                        name: "index_form",//表单名
+                        method: "POST",//表单method
+                        action: "#",//表单action
+                        ajaxSubmit: true,//是否使用ajax提交表单
+                        ajaxSuccess: function () {
+                            modal.hide();
+                            grid.reload();
+                        },
+						showSubmit:false,
+                       // submitText: "保存",//保存按钮的文本
+                        showReset: false,//是否显示重置按钮
+                        //resetText: "重置",//重置按钮文本
+                        //isValidate: true,//开启验证
+                        buttons: [{
+                            type: 'button',
+                            text: '关闭',
+                            handle: function () {
+                                modal.hide();
                             }
-                        });
-                    }
-                }, {
-                    text: "删除",
-					visible:function (index, data){
-						if(data.status==1)return false;
-						return true;
-					},
-                    cls: "btn-danger btn-sm",
-                    handle: function (index, data) {
-                        bootbox.confirm("确定该操作?", function (result) {
-                            if (result) {
-                                var requestUrl = App.href + "/api/core/message/delete";
-                                $.ajax({
-                                    type: "GET",
-                                    dataType: "json",
-                                    data: {
-                                        id: data.id
-                                    },
-                                    url: requestUrl,
-                                    success: function (data) {
-                                        if (data.code === 200) {
-                                            grid.reload();
-                                        } else {
-                                            alert(data.message);
-                                        }
-                                    },
-                                    error: function (e) {
-                                        alert("请求异常。");
-                                    }
-                                });
-                            }
-                        });
-                    }
+                        }],
+                        buttonsAlign: "center",
+                        items: [{
+                            type: 'hidden',
+                            name: 'id',
+                            id: 'id'
+                        }, {
+                            type: 'display',//类型
+                            name: 'title',//name
+                            id: 'roleName',//id
+                            label: '操作结果',//左边label
+                            cls: 'input-large'
+                        }, {
+                            type: 'display',//类型
+                            name: 'cuser',//name
+                            id: 'cuser',//id
+                            label: '操作用户',//左边label
+                            cls: 'input-large'
+                        }, {
+                            type: 'display',//类型
+                            name: 'cdate',
+                            id: 'cdate',//id
+                            label: '操作时间',//左边label
+                        }, {
+                            type: 'display',//类型
+                            name: 'ip',
+                            id: 'ip',//id
+                            label: '操作IP',//左边label
+                        }, {
+                            type: 'display',//类型
+                            name: 'content',
+                            id: 'content',//id
+                            label: '操作内容',//左边label
+                        }]
+                    };
+                    var form = modal.$body.orangeForm(formOpts);
+                    form.loadLocal(data);
+                    modal.show();
                 }
-            ],
-            tools: [
-                {
-                    text: " 添 加",
-                    cls: "btn btn-primary",
-                    icon: "fa fa-plus",
-                    handle: function (grid) {
-                         modal = $.orangeModal({
-                            id: "add_modal",
-                            title: "添加",
-                            destroy: true
-                        }).show();
-                        formOpts.action =  App.href + "/api/core/message/insert";
-                        modal.$body.orangeForm(formOpts);
-                    }
-                }
-            ],
+            }],
             search: {
-                rowEleNum: 2,
+                rowEleNum: 4,
                 //搜索栏元素
                 items: [
                     {
                         type: "text",
-                        label: "标题",
+                        label: "操作结果",
                         name: "title",
-                        placeholder: "输入要搜索的标题名称"
+                        placeholder: "操作结果"
+                    },
+						{
+                        type: "select",
+                        label: "类型",
+                        name: "ctype",
+						items:[{text:'全部',value:''},{text:'操作',value:"1"},{text:'登录',value:"0"}]
+                    },
+						{
+                        type: "text",
+                        label: "操作用户",
+                        name: "cuser"
                     }
                 ]
             }

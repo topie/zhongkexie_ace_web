@@ -29,7 +29,7 @@
 		ele = ele?ele:$("body");
 		ele.block(
                     {
-                        message: "后台生成中请稍等...",
+                        message: "下载中请稍等...",
                         css: {
                             backgroundColor: '#ddd',
                             color: '#000'

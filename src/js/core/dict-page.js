@@ -253,19 +253,7 @@
 					   form.loadLocal({dictId:currentDictId,indexTitle:currentDictIdTitle});
                     }
                 }
-            ],
-            search: {
-                rowEleNum: 2,
-                //搜索栏元素
-                items: [
-                    {
-                        type: "text",
-                        label: "题目名称",
-                        name: "title",
-                        placeholder: "输入要搜索的题目名称"
-                    }
-                ]
-            }
+            ]
         };
 		var dictFormItems = [{
                                     type: 'hidden',

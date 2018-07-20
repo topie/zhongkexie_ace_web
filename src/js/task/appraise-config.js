@@ -91,11 +91,13 @@
                                     name: 'id',
                                     id: 'id'
                                 }, {
-                                    type: 'text',
+                                    type: 'select',
                                     name: 'userId',
                                     id: 'userId',
                                     label: '部门用户',
                                     cls: 'input-xxlarge',
+									itemsUrl:App.href + "/api/sys/user/pageList?userType=2",
+									autoParam:["id","dispalyName"],
                                     rule: {
                                         required: true
                                     },
@@ -122,7 +124,7 @@
                        var form =  modal.$body.orangeForm(formOpts);
 					   form.loadLocal(data);
                     }
-				}, {
+				}/*, {
                     text: "启用",
                     cls: " btn-sm",
                     handle: function (index, data) {
@@ -134,7 +136,7 @@
                     handle: function (index, data) {
                        
                     }
-                }, {
+                }*/, {
                     text: "删除",
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {
@@ -170,7 +172,7 @@
                     cls: "btn btn-primary",
                     icon: "fa fa-plus",
                     handle: function (grid) {
-						
+					   var pid = $("#paperId_select").val();
                         var modal = $.orangeModal({
                             id: "add_modal",
                             title: "添加",
@@ -204,19 +206,21 @@
                                     name: 'id',
                                     id: 'id'
                                 }, {
-                                    type: 'text',
+                                    type: 'select',
                                     name: 'userId',
                                     id: 'userId',
                                     label: '部门用户',
                                     cls: 'input-xxlarge',
+									itemsUrl:App.href + "/api/sys/user/pageList?userType=2",
+									items:[],
+									autoParam:["id","displayName","data","data"],
                                     rule: {
                                         required: true
                                     },
                                     message: {
                                         required: "请输入"
                                     }
-                                },
-                                {
+                                },{
                                     type: 'text',
                                     name: 'itemId',
                                     id: 'itemId',
@@ -229,6 +233,22 @@
                                         required: "请输入"
                                     }
                                 },
+                               /* {
+                                    type: 'select',
+                                    name: 'itemId',
+                                    id: 'itemId',
+                                    label: '指标',
+                                    cls: 'input-xxlarge',
+									itemsUrl:App.href + "/api/core/scoreItem/list?scoreType=4&pageSize=100&paperId="+pid,
+									items:[],
+									autoParam:["id","title","data","data"],
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入"
+                                    }
+                                },*/
                                 {
                                     type: 'hidden',
                                     name: 'paperId',
@@ -238,7 +258,6 @@
                             ]
                         };
                        var form =  modal.$body.orangeForm(formOpts);
-					   var pid = $("#paperId_select").val();
 					   form.loadLocal({paperId:pid});
                     }
 				}
@@ -260,6 +279,7 @@
             }
         };
         grid = window.App.content.find("#grid").orangeGrid(options);
+		var currentPaperId=0;
 		
     }
 })(jQuery, window, document);

@@ -49,7 +49,11 @@
                             
                             var it = {};
                             it.name = item.id;
-                            it.label = item.title;// + "(" + item.score + "分)";
+                            //it.label = item.id+"__"+item.title;// + "(" + item.score + "分)";
+							it.label = item.title;// + "(" + item.score + "分)";
+							//it.labelTitle="";
+							it.info=item.info;
+							it.infoTitle="指标说明";
 							it.placeholder = item.placeholder==undefined?"":item.placeholder;
                             if (item.itemType == 0) {
                                 it.type = 'text';
@@ -175,6 +179,69 @@
 									action: "",
 									ajaxSubmit: true,
 									rowEleNum: 1,
+									uploadFile: true,
+									uploadFun:function($input,formPlug){
+										 var modalUp = $.orangeModal({
+												id: "scoreItemForm",
+												title: "上传证明材料",
+												destroy: true
+											});
+											var formOpts = {
+												id: "edit_form",
+												name: "edit_form",
+												method: "POST",
+												action: App.href + "/api/core/112",
+												showSubmit:false,
+												showReset:false,
+												ajaxSubmit: true,
+												ajaxSuccess: function () {
+												},
+												isValidate: true,
+												buttons: [{
+													type: 'button',
+													text: '保存',
+													handle: function () {
+														var ins = modalUp.$body.find('input[name="uploadfiles"]');
+														var value =[];
+														$.each(ins,function(){
+															value.push($(this).val());
+														});
+														var v  = value.join("_");
+														formPlug.setValue($input.attr("name"),v);
+														modalUp.hide();
+													}
+												},{
+													type: 'button',
+													text: '关闭',
+													handle: function () {
+														modalUp.hide();
+													}
+												}],
+												buttonsAlign: "center",
+												items: [
+													{
+														type: 'hidden',
+														name: 'id',
+														id: 'id'
+													},
+														{
+														type: 'display',
+														name: 'id',
+														id: 'id',
+														html:'可上传图片，文档，视频等证明材料'
+													},{
+														type: 'files',
+														name: 'uploadfiles',
+														label: '材料',
+														id: 'uploadfiles',
+														allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.rm,.rmvb,.avi,.wmv,.flv"
+													}
+												]
+											};
+											var formUp = modalUp.$body.orangeForm(formOpts);
+											formUp.loadLocal({uploadfiles:$input.val().split("_")});
+											modalUp.show();
+									},
 									ajaxSuccess: function () {
 									},
 									showReset: false,
@@ -278,10 +345,20 @@
                 }
             );
             $.each(tmpAs, function (i, d) {
-                var answer = {};
-                answer['itemId'] = i;
-                answer['itemValue'] = d;
-                answers.push(answer);
+				var isFile = isNaN(i);//"itemFile"+itemId
+				if(!isFile){
+					if (d != '') {
+						var answer = {};
+						answer['itemId'] = i;
+						answer['itemValue'] = d;
+						$.each(tmpAs, function (ii, dd) {
+							if (ii=== 'itemFile'+i) {//"itemFile"+itemId
+								answer['itemFile'] = dd;
+							}
+						});
+						answers.push(answer);
+					}
+				}
             });
             return answers;
         },
@@ -306,6 +383,7 @@
             if (ans.length > 0) {
                 $.each(ans, function (i, an) {
                     that.loadValue(an.itemId, an.answerValue);
+                    that.loadValue("itemFile"+an.itemId, an.answerFile);
                 });
                // this.$tab.go(ans.length - 1);
             } else {
@@ -384,13 +462,22 @@
                 }
             });
             $.each(tmpAs, function (i, d) {
-                if (d != '') {
-                    var answer = {};
-                    answer['itemId'] = i;
-                    answer['itemValue'] = d;
-                    answers.push(answer);
-                }
+				var isFile = isNaN(i);//"itemFile"+itemId
+				if(!isFile){
+					if (d != '') {
+						var answer = {};
+						answer['itemId'] = i;
+						answer['itemValue'] = d;
+						$.each(tmpAs, function (ii, dd) {
+							if (ii=== 'itemFile'+i) {//"itemFile"+itemId
+								answer['itemFile'] = dd;
+							}
+						});
+						answers.push(answer);
+					}
+				}
             });
+					console.log(answers);
             return answers;
         }
     };

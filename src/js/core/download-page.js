@@ -151,7 +151,7 @@
                                     type: "GET",
                                     dataType: "json",
                                     data: {
-                                        mId: data.mId
+                                        id: data.id
                                     },
                                     url: requestUrl,
                                     success: function (data) {
@@ -192,9 +192,9 @@
                 items: [
                     {
                         type: "text",
-                        label: "试卷名称",
+                        label: "标题",
                         name: "title",
-                        placeholder: "输入要搜索的试卷名称"
+                        placeholder: "输入要搜索的标题名称"
                     }
                 ]
             }

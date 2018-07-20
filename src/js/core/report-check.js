@@ -29,7 +29,7 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scorePaper/reportCheck",
+            url: App.href + "/api/core/scorePaper/reportCheck?status=1",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -96,7 +96,7 @@
             actionColumnWidth: "20%",
             actionColumns: [
 				{
-                    text: "预览",
+                    text: "查看",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
                         var paper = {};
@@ -122,6 +122,185 @@
 										if($(this).attr('name')!='button')
 											$(this).attr("disabled","true");
 									});
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                },
+                {
+                    text: "修改",
+                    cls: "btn-primary btn-sm",
+                    visible: function (index, data) {
+						if(data.status==0)
+							return false;
+                        if (data.approveStatus == 1)
+                            return false;
+						if (data.approveStatus == 2)
+                            return false;
+                        return true;
+                    },
+                    handle: function (index, data) {
+                        var paper = {};
+                        var modal = $.orangeModal({
+                            id: "scorePaperView",
+                            title: "填报",
+                            destroy: true,
+                            buttons: [
+                                {
+                                    type: 'button',
+                                    text: '检查',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        var das = {};
+                                        var msg = paper.getValidation();
+                                        if (msg.length > 0) {
+                                            bootbox.alert(msg[0].text + "未填写完整");
+                                            paper.$tab.go(msg[0].index);
+                                            return;
+                                        }else{
+											 bootbox.alert('选择项已全部填写完成，请自行检查其他项');
+										}
+                                        
+                                    }
+                                },{
+                                    type: 'button',
+                                    text: '检查并保存',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        var das = {};
+                                        var as = paper.getAnswer();
+                                        das['answers'] = as;
+                                        das['paperId'] = data.id;
+                                        $.ajax({
+                                            type: "POST",
+                                            dataType: "json",
+                                            contentType: "application/json",
+                                            data: JSON.stringify(das),
+                                            url: App.href + "/api/core/scorePaper/submit",
+                                            success: function (data) {
+                                            },
+                                            error: function (e) {
+                                                alert("请求异常。");
+                                            }
+                                        });
+										
+                                        var msg = paper.getValidation();
+                                        if (msg.length > 0) {
+                                            bootbox.alert(msg[0].text + "未填写完整");
+                                            paper.$tab.go(msg[0].index);
+                                            return;
+                                        }
+										bootbox.alert('选择项已全部填写完成，请自行检查其他项');
+                                        //modal.hide();
+                                    }
+                                },{
+                                    type: 'button',
+                                    text: '关闭',
+                                    cls: "btn",
+                                    handle: function (m) {
+                                       modal.hide();    
+                                    }
+                                }
+                            ]
+                        }).show();
+                        var js = JSON.parse(data.contentJson);
+                        paper = modal.$body.orangePaperFill(js, {
+                            next: function (p) {
+                                var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+                                        p.$tab.next();
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            },
+							/*submit: function (p,btn) {
+                                var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+										var che = $('<i class="ace-icon fa fa-check"></i>');
+                                       btn.prepend(che);
+									   setTimeout(function(){
+										che.remove();
+									   },2000);
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            },*/
+                            /*prev: function (p) {
+								 var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+										p.$tab.prev();
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            },*/
+                            go: function (p) {
+								 var das = {};
+                                var as = p.getCurrentTabAnswer();
+                                das['answers'] = as;
+                                das['paperId'] = data.id;
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(das),
+                                    url: App.href + "/api/core/scorePaper/submit",
+                                    success: function (data) {
+										p.$tab.prev();
+                                    },
+                                    error: function (e) {
+                                        alert("请求异常。");
+                                    }
+                                });
+                            }
+                        });
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id
+                            },
+                            url: App.href + "/api/core/scorePaper/getAnswer",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    paper.loadAnswer(data.data);
                                 } else {
                                     alert(data.message);
                                 }
