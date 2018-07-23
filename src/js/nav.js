@@ -11,7 +11,17 @@
         "showTaskInfo": showTaskInfo
     };
     App.menusMapping = {};
-
+		String.prototype.endWith = function(str){
+			 if(str==null || str=="" || this.length == 0 ||str.length > this.length){	
+			   return false;
+			 }
+			 if(this.substring(this.length - str.length)==str){
+				 return true;
+			 }else{
+				 return false;
+			 }
+			 return true;
+		};
     function toggleMenu() {
         var toggle = $.cookie('spring-menu-toggle');
         if (toggle === undefined) {
@@ -26,7 +36,7 @@
 	function showUserInfo(title) {
         var modal = $.orangeModal({
             id: "userForm",
-            title: "用户信息",
+            title: "修改信息",
             destroy: true,
             buttons: [
                 {
@@ -46,7 +56,11 @@
             modal.hide();
 			window.location.href = '../login.html';
         };
-        var form = modal.$body.orangeForm(App.menu.userOption);
+		var uoption = App.menu.userOptionNoLinkMan;
+		if(App.currentUser.loginName.endWith("001")){
+			uoption = App.menu.userOption;
+		}
+        var form = modal.$body.orangeForm(uoption);
         form.loadRemote(App.href + "/api/index/loadCurrentUser");
     }
 	function showTaskInfo() {
@@ -169,7 +183,7 @@
                         App.currentUser = userInfo;
                         $("#spring_login_user_name").text(userInfo.displayName);
 						if(userInfo.lastPasswordReset==null ||userInfo.lastPasswordReset === undefined){
-							App.menu.showUserInfo("初次登录请修改密码！");
+							App.menu.showUserInfo("初次登录请修改密码，并完善信息！");
 						}
                         $.each(menus, function (i, m) {
                             App.menusMapping[m.action] = m.functionName;
@@ -360,11 +374,114 @@
             }
         );
     };
-App.menu.userOption = {
+App.menu.userOptionNoLinkMan = {
         id: "current_user_form",//表单id
         name: "current_user_form",//表单名
         method: "POST",//表单method
         action: App.href + "/api/index/updateUser",
+        ajaxSubmit: true,//是否使用ajax提交表单
+		ajaxSuccess:function(data){
+			bootbox.alert("修改成功");
+            window.location.href = App.href + "/index.html?u=/api/index";
+		},
+
+        submitText: "提交",//保存按钮的文本
+        showReset: true,//是否显示重置按钮
+        resetText: "重置",//重置按钮文本
+        isValidate: true,//开启验证
+        buttonsAlign: "center",
+        items: [
+            {
+                type: 'hidden',
+                name: 'id',
+                id: 'id'
+            }, {
+                type: 'display',//类型
+                name: 'displayName',//name
+                id: 'displayName',//id
+                label: '学会名称',//左边label
+                cls: 'input-large'
+            }, {
+                type: 'password',//类型
+                name: 'password',//name
+                id: 'password',//id
+                label: '旧密码',//左边label
+                cls: 'input-xxlarge',
+                rule: {
+                    required: true
+                },
+                message: {
+                    required: "请输入旧密码"
+                }
+            }, {
+                type: 'password',//类型
+                name: 'newPassword',//name
+                id: 'newPassword',//id
+                label: '新密码',//左边label
+                cls: 'input-xxlarge',
+                rule: {
+                    minlength: 6,
+                    maxlength: 64
+                },
+                message: {
+                    minlength: "至少{0}位",
+                    maxlength: "做多{0}位"
+                }
+            }, {
+                type: 'password',//类型
+                name: 'newPassword2',//name
+                id: 'newPassword2',//id
+                label: '确认新密码',//左边label
+                cls: 'input-xxlarge',
+                rule: {
+                    minlength: 6,
+                    maxlength: 64,
+					equalTo:"#newPassword"
+                },
+                message: {
+                    minlength: "至少{0}位",
+                    maxlength: "做多{0}位",
+					equalTo:"两次输入密码不一致"
+                }
+            }, {
+                type: 'text',//类型
+                name: 'contactPhone',//name
+                id: 'contactPhone',//id
+                label: '手机号',
+                cls: 'input-xxlarge',
+                rule: {
+                    required: true
+                },
+                message: {
+                    required: "请输入手机号"
+                }
+            }, {
+                type: 'text',//类型
+                name: 'email',//name
+                id: 'email',//id
+                label: '邮箱',
+                cls: 'input-xxlarge',
+                rule: {
+                    email: true,
+					required: true
+                },
+                message: {
+                    email: "请输入正确的邮箱",
+					required: "请输入邮箱"
+                }
+            }
+        ]
+    };
+
+	App.menu.userOption = {
+        id: "current_user_form",//表单id
+        name: "current_user_form",//表单名
+        method: "POST",//表单method
+        action: App.href + "/api/index/updateUser",
+		ajaxSuccess:function(data){
+			bootbox.alert("修改成功");
+            window.location.href = App.href + "/index.html?u=/api/index";
+		},
         ajaxSubmit: true,//是否使用ajax提交表单
         submitText: "提交",//保存按钮的文本
         showReset: true,//是否显示重置按钮
@@ -380,20 +497,26 @@ App.menu.userOption = {
                 type: 'display',//类型
                 name: 'displayName',//name
                 id: 'displayName',//id
-                label: '昵称',//左边label
-                cls: 'input-large',
+                label: '学会名称',//左边label
+                cls: 'input-large'
+            }, {
+                type: 'text',//类型
+                name: 'linkMan',//name
+                id: 'linkMan',//id
+                label: '学会负责人姓名',//左边label
+                cls: 'input-xxlarge',
                 rule: {
                     required: true
                 },
                 message: {
-                    required: "请输入昵称"
+                    required: "请输入学会负责人姓名"
                 }
             }, {
                 type: 'password',//类型
                 name: 'password',//name
                 id: 'password',//id
                 label: '旧密码',//左边label
-                cls: 'input-medium',
+                cls: 'input-xxlarge',
                 rule: {
                     required: true
                 },
@@ -405,7 +528,7 @@ App.menu.userOption = {
                 name: 'newPassword',//name
                 id: 'newPassword',//id
                 label: '新密码',//左边label
-                cls: 'input-medium',
+                cls: 'input-xxlarge',
                 rule: {
                     minlength: 6,
                     maxlength: 64
@@ -415,10 +538,27 @@ App.menu.userOption = {
                     maxlength: "做多{0}位"
                 }
             }, {
+                type: 'password',//类型
+                name: 'newPassword2',//name
+                id: 'newPassword2',//id
+                label: '确认新密码',//左边label
+                cls: 'input-xxlarge',
+                rule: {
+                    minlength: 6,
+                    maxlength: 64,
+					equalTo:"#newPassword"
+                },
+                message: {
+                    minlength: "至少{0}位",
+                    maxlength: "做多{0}位",
+					equalTo:"两次输入密码不一致"
+                }
+            }, {
                 type: 'text',//类型
                 name: 'contactPhone',//name
                 id: 'contactPhone',//id
-                label: '手机',
+                label: '手机号',
+                cls: 'input-xxlarge',
                 rule: {
                     required: true
                 },
@@ -430,6 +570,7 @@ App.menu.userOption = {
                 name: 'email',//name
                 id: 'email',//id
                 label: '邮箱',
+                cls: 'input-xxlarge',
                 rule: {
                     email: true,
 					required: true

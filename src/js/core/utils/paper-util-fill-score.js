@@ -239,8 +239,7 @@
 							{
 								type: 'text',
 								name: item.id,
-								readonly:true,
-								disabled:true
+								readonly:true
 							}
 						]
                     } else if (item.itemType == 4) {
@@ -269,7 +268,14 @@
 								}
 								customItems[index]["name"]=item.id;
 								customItems[index]["readonly"]=true;
-								customItems[index]["disabled"]=true;
+								if(!(customItems[index]["type"]=='text'||customItems[index]["type"]=='number'||customItems[index]["type"]=='number_input'||customItems[index]["type"]=='textarea')){
+									customItems[index]["disabled"]=true;
+								}
+								if(customItems[index]["type"]=='select'||customItems[index]["type"]=='radioGroup'||customItems[index]["type"]=='checkbox'){
+									 $.each(customItems[index].items, function (i, op) {
+											op['disabled']=true;
+									});
+								}
 								customItems[index]["rows"]=8;
 							});
 							it.items = customItems;
@@ -280,6 +286,7 @@
 						it.type = 'radio_inputs';
 						it.row = item.row;
 						it.span=8;
+						it.disabled=true;
 						$.each(item.items, function (i, op) {
 							if(op.title=='是'||op.title=='有'){
 								it.trigerValue=op.id;
@@ -293,7 +300,14 @@
 								}
 								customItems[index]["name"]=item.id;
 								customItems[index]["readonly"]=true;
-								customItems[index]["disabled"]=true;
+								if(!(customItems[index]["type"]=='text'||customItems[index]["type"]=='number'||customItems[index]["type"]=='textarea'||customItems[index]["type"]=='number_input')){
+									customItems[index]["disabled"]=true;
+								}
+								if(customItems[index]["type"]=='select'||customItems[index]["type"]=='radioGroup'||customItems[index]["type"]=='checkbox'){
+									 $.each(customItems[index].items, function (i, op) {
+											op['disabled']=true;
+									});
+								}
 							});
 							it.customItems = customItems;
 						}catch(err){

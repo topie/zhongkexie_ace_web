@@ -51,6 +51,7 @@
                             it.name = item.id;
                             //it.label = item.id+"__"+item.title;// + "(" + item.score + "分)";
 							it.label = item.title;// + "(" + item.score + "分)";
+							it.uploadFile=item.hideUploadFile;
 							//it.labelTitle="";
 							it.info=item.info;
 							it.infoTitle="指标说明";
@@ -232,7 +233,7 @@
 													},{
 														type: 'files',
 														name: 'uploadfiles',
-														label: '材料',
+														label: '',
 														id: 'uploadfiles',
 														allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.rm,.rmvb,.avi,.wmv,.flv"
 													}
@@ -477,7 +478,6 @@
 					}
 				}
             });
-					console.log(answers);
             return answers;
         }
     };

@@ -381,22 +381,25 @@
 			}
 			if(that._options.uploadFile){
 				if(item.label!= undefined && item.label!=''){
-					var $upbtn = $('<span id="label_upload_file_'+item.name
-						+'" role="label_upload_file"><span style="color:red;"></span><input role="labelFile-input" name="'+that._options.uploadFileName
-					+item.name+'" type="hidden"><a href="javascript:void(0);" style="display:none;">删除</a><a href="javascript:void(0);">上传证明材料</a></span>');
-					label.append($upbtn);
-					if(that._options.showUploadBtn){
-						var $upa=$upbtn.find('a:eq(1)');
-						var $input=$upbtn.find('input');
-						$upa.bind("click",function(){
-							//alert($input.attr('name'));
-							if(that._options.uploadFun==undefined){
-								alert("上传未实现_uploadFun");
-							}
-							that._options.uploadFun($input,that);
-						});
-					}else{
-						$upbtn.find('a:eq(1)').remove();
+					var showUpload = item.uploadFile===undefined?true:item.uploadFile;
+					if(showUpload){
+						var $upbtn = $('<span id="label_upload_file_'+item.name
+							+'" role="label_upload_file"><span style="color:red;"></span><input role="labelFile-input" name="'+that._options.uploadFileName
+						+item.name+'" type="hidden"><a href="javascript:void(0);" style="display:none;">删除</a><a href="javascript:void(0);">上传证明材料</a></span>');
+						label.append($upbtn);
+						if(that._options.showUploadBtn){
+							var $upa=$upbtn.find('a:eq(1)');
+							var $input=$upbtn.find('input');
+							$upa.bind("click",function(){
+								//alert($input.attr('name'));
+								if(that._options.uploadFun==undefined){
+									alert("上传未实现_uploadFun");
+								}
+								that._options.uploadFun($input,that);
+							});
+						}else{
+							$upbtn.find('a:eq(1)').remove();
+						}
 					}
 				}
 			}
@@ -680,7 +683,10 @@
                 });
                 var cleanBtn = $('<button class="btn btn-sm btn-danger" type="button">清除</button>');
                 ele.children('[role=action]').append(cleanBtn);
-                cleanBtn.on("click", function () {
+				var info = $('<i class="ace-icon fa fa-question-circle" data-trigger="hover" data-placement="top" style="color:#6fb3e0;font-size: 18px;margin-left: 3px;margin-right: 2px;" title="" data-content="点击“添加”添加一项，点击“清除”清除所有已添加的项，点击“x”清除对应的项。" data-original-title=""></i>');
+                ele.children('[role=action]').append(info);
+				info.popover({html:true});
+				cleanBtn.on("click", function () {
                     ele.children('[role=ele]').empty();
                 });
                 ele.data("data", data);
@@ -691,6 +697,7 @@
 				if(data.hideBtn){
 					addBtn.hide();
 					cleanBtn.hide();
+					info.hide();
 					ele.children('[role=ele]').find('button.btn-danger').hide();
 				}
                 return ele;

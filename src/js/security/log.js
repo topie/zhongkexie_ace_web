@@ -131,12 +131,12 @@
                             name: 'cdate',
                             id: 'cdate',//id
                             label: '操作时间',//左边label
-                        }, {
+                        }, /*{
                             type: 'display',//类型
                             name: 'ip',
                             id: 'ip',//id
                             label: '操作IP',//左边label
-                        }, {
+                        },*/ {
                             type: 'display',//类型
                             name: 'content',
                             id: 'content',//id

@@ -877,12 +877,12 @@
                     }
                 },
 				{
-                    text: "添加说明",
+                    text: "管理",
                     cls: "btn-primary btn-sm",
                     handle: function (index, data) {
                         var modal2 = $.orangeModal({
                             id: "scoreItemForm",
-                            title: "添加或修改指标说明",
+                            title: "添加或修改指标说明，修改上传文件",
                             destroy: true
                         });
                         var formOpts2 = {
@@ -912,6 +912,12 @@
                                     type: 'hidden',
                                     name: 'id',
                                     id: 'id'
+                                },{
+                                    type: 'radioGroup',
+                                    name: 'hideUploadFile',
+									label: '上传附件',
+                                    id: 'hideUploadFile',
+									items:[{text:'隐藏',value:false},{text:'展示上传',value:true}]
                                 },{
                                     type: 'textarea',
                                     name: 'info',

@@ -14,6 +14,7 @@
 				 '<div class="row">' +
                 '<div class="col-md-12" >' +
                 '<div class="panel-body" id="form"></div>' +
+                '<div class="panel-body"></div>' +
                 '</div>' +
                 '</div>' +
 				'<hr>'+
@@ -32,7 +33,7 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/dictItem/list?dictId=5",
+            url: App.href + "/api/dissent/info/cuserList",
             contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
@@ -47,26 +48,16 @@
             pageSelect: [2, 15, 30, 50],
             columns: [
                 {
-                    title: "标题",
-                    field: "title",
-					format:function(){return "test";}
+                    title: "有异议的学会名称",
+                    field: "dissentOrg"
                 },  {
-                    title: "内容",
-                    field: "userName",
-					format:function(){return "- - ";}
+                    title: "有异议的指标项",
+                    field: "dissentIndex"
+                },  {
+                    title: "意见",
+                    field: "content"
                 }
                 
-            ],
-            actionColumnText: "操作",//操作列文本
-            actionColumnWidth: "20%",
-            actionColumns: [
-				{
-                    text: "查看",
-                    cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
-
-						}
-				}
             ],
             search: {
                 rowEleNum: 3,
@@ -82,10 +73,16 @@
 				id: "add_dict_form",
 				name: "add_dict_form",
 				method: "POST",
-				action: App.href + "/api/core/dict/insert",
+				action: App.href + "/api/dissent/info/insert",
 				ajaxSubmit: true,
-				rowEleNum: 2,
-				ajaxSuccess: function () {
+				rowEleNum: 1,
+				ajaxSuccess: function (data) {
+					if(data.code==200){
+						bootbox.alert("提交成功，感谢您的反馈意见！");
+						form.reload();
+						grid.reload();
+					}else bootbox.alert("提交错误！请联系管理员");
+
 				},
 				submitText: "提交",//保存按钮的文本
 				showReset: true,//是否显示重置按钮
@@ -94,13 +91,18 @@
 				buttonsAlign: "center",
 				items:[{
                                     type: 'hidden',
+                                    name: 'id',
+                                    id: 'id'
+                                },/*{
+                                    type: 'display',
                                     name: 'dictId',
-                                    id: 'dictId'
-                                },{
+                                    id: 'dictId',
+									html:'<span style="font-size: 28px;">学会可以对其他学会填报信息提出异议</span>'
+                                },*/{
                                     type: 'text',
-                                    name: 'dictName',
-                                    id: 'dictName',
-                                    label: '学会名称',
+                                    name: 'dissentOrg',
+                                    id: 'dissentOrg',
+                                    label: '有异议的学会名称',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
@@ -108,18 +110,18 @@
                                     message: {
                                         required: "请输入"
                                     }
-                                },
+                                }/*,
                                 {
                                     type: 'text',
                                     name: 'dictSeq',
                                     id: 'dictSeq',
                                     label: '联系人',
                                     cls: 'input-xxlarge'
-                                },{
+                                }*/,{
                                     type: 'text',
-                                    name: 'dictName',
-                                    id: 'dictName',
-                                    label: '指标项名称',
+                                    name: 'dissentIndex',
+                                    id: 'dissentIndex',
+                                    label: '有异议的指标项',
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true
@@ -127,18 +129,18 @@
                                     message: {
                                         required: "请输入"
                                     }
-                                },
+                                }/*,
                                 {
                                     type: 'text',
                                     name: 'dictDesc',
                                     id: 'dictDesc',
                                     label: '联系电话',
                                     cls: 'input-xxlarge'
-                                }, {
+                                }*/, {
                                     type: 'textarea',
-                                    name: 'dictCode',
-                                    id: 'dictCode',
-                                    label: '意见',
+                                    name: 'content',
+                                    id: 'content',
+                                    label: '异议内容',
                                     cls: 'input-xxlarge',
 									rows:8,
                                     rule: {
@@ -149,11 +151,12 @@
                                     }
                                 },
                                 {
-                                    type: 'text',
+                                    type: 'display',
                                     name: 'dictSeq',
                                     id: 'dictSeq',
-                                    label: '邮箱',
-                                    cls: 'input-xxlarge'
+                                    label: '',
+                                    cls: 'input-xxlarge',
+									html:'注意事项：8月16日-22日学会可对其他学会填报信息提出异议，内容填写完成后，点击“提交”即可。'
                                 }]
 			};
 		   var form =   window.App.content.find("#form").orangeForm(formOpts);		

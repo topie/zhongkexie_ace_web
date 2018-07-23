@@ -152,7 +152,6 @@
                     it.score = item.score;
 					it.labelData=item.id;
 					it.readonly=true;
-					it.disabled=true;
 					it.placeholder = item.placeholder === undefined ? ""
                         : item.placeholder;
 					if(that._options.showSocre){
@@ -183,8 +182,7 @@
 							{
 								type: 'text',
 								name: item.id,
-								readonly:true,
-								disabled:true
+								readonly:true
 							}
 						]
                     } else if (item.itemType == 4) {
@@ -213,7 +211,15 @@
 								}
 								customItems[index]["name"]=item.id;
 								customItems[index]["readonly"]=true;
-								customItems[index]["disabled"]=true;
+								if(!(customItems[index]["type"]=='text'||customItems[index]["type"]=='number'||customItems[index]["type"]=='textarea'||customItems[index]["type"]=='number_input')){
+								
+									customItems[index]["disabled"]=true;
+								}
+								if(customItems[index]["type"]=='select'||customItems[index]["type"]=='radioGroup'||customItems[index]["type"]=='checkbox'){
+									 $.each(customItems[index].items, function (i, op) {
+											op['disabled']=true;
+									});
+								}
 								customItems[index]["rows"]=8;
 							});
 							if(customItems.length==3){
@@ -242,7 +248,14 @@
 								}
 								customItems[index]["name"]=item.id;
 								customItems[index]["readonly"]=true;
-								customItems[index]["disabled"]=true;
+								if(!(customItems[index]["type"]=='text'||customItems[index]["type"]=='number'||customItems[index]["type"]=='textarea'||customItems[index]["type"]=='number_input')){
+									customItems[index]["disabled"]=true;
+								}
+								if(customItems[index]["type"]=='select'||customItems[index]["type"]=='radioGroup'||customItems[index]["type"]=='checkbox'){
+									 $.each(customItems[index].items, function (i, op) {
+											op['disabled']=true;
+									});
+								}
 								customItems[index]["rows"]=8;
 							});
 							it.customItems = customItems;

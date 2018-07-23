@@ -613,7 +613,7 @@
                         label: "评估项目",
                         name: "paperId",
 						items:[],
-						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
+						itemsUrl:App.href+"/api/paperExpertConf/info/getPaperOptions"
                     }
                 ]
             }

@@ -97,7 +97,7 @@
                                     label: '部门用户',
                                     cls: 'input-xxlarge',
 									itemsUrl:App.href + "/api/sys/user/pageList?userType=2",
-									autoParam:["id","dispalyName"],
+									autoParam:["id","displayName","data","data"],
                                     rule: {
                                         required: true
                                     },

@@ -118,10 +118,6 @@
                             success: function (data) {
                                 if (data.code === 200) {
                                     paper.loadAnswer(data.data);
-									modal.$body.find('input').each(function(){
-										if($(this).attr('name')!='button')
-											$(this).attr("disabled","true");
-									});
                                 } else {
                                     alert(data.message);
                                 }
@@ -136,13 +132,9 @@
                     text: "修改",
                     cls: "btn-primary btn-sm",
                     visible: function (index, data) {
-						if(data.status==0)
-							return false;
-                        if (data.approveStatus == 1)
-                            return false;
-						if (data.approveStatus == 2)
-                            return false;
-                        return true;
+						if( data.approveStatus==1)
+                    		return true;
+						return false;
                     },
                     handle: function (index, data) {
                         var paper = {};

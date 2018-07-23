@@ -1640,11 +1640,16 @@
                     var row = {};
                     $.each(that._grids, function (i, grid) {
                         var num = (that._pageNum - 1) * that._pageSize + i + 1;
-                        if ((i + 1) % 3 == 1) {
+						var cardSpan = that._options.cardEleNum===undefined?'4':12/that._options.cardEleNum;
+						var cardNum = 12/cardSpan;
+                        if ((i + 1) % cardNum == 1) {
                             row = $('<div class="row"></div>');
                             cardRow.find("div[role=content]").append(row);
                         }
-                        var ele = $('<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">' +
+						if(that._showIndexNum==false){
+							num='';
+						}
+                        var ele = $('<div class="col-xs-12 col-sm-'+cardSpan+' col-md-'+cardSpan+' col-lg-'+cardSpan+'">' +
                             '<div class="thumbnail col-lg-12">' +
                             '<div class="caption">' +
                             '<div class="col-lg-12">' +
@@ -1684,7 +1689,7 @@
                             if (column.dataClick != undefined) {
                                 p.find('p').css("text-decoration", "underline");
                                 p.find('p').css("cursor", "pointer");
-                                p.find('p').css("color", "red");
+                               // p.find('p').css("color", "red");
                                 p.find('p').on("click", function () {
 									$this = $(this);
 									column.dataClick(num, grid,$this);
@@ -2093,6 +2098,7 @@
             options.sort(function (a, b) {
                 return a > b ? 1 : -1;
             });
+			
             for (var i in options) {
                 var option = $.tmpl(Grid.statics.optionTmpl, {
                     "value_": options[i],

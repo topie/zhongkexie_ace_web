@@ -26,46 +26,29 @@
         var tree;
         var options = {
             url: App.href + "/api/core/scorePaper/zkxcheckList",
-            contentType: "table",
+            contentType: "card",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
-            pageSize: 15,//每页显示条数
+            pageSize: 16,//每页显示条数
             idField: "id",//id域指定
             headField: "title",
             showCheck: true,//是否显示checkbox
             checkboxWidth: "3%",
 			displaySearch:false,
-            showIndexNum: true,
+			cardEleNum:4,
+            showIndexNum: false,
             indexNumWidth: "5%",
-            pageSelect: [2, 15, 30, 50],
+            pageSelect: [8, 16, 30, 60],
             columns: [
-                {
-                    title: "评估项目",
-                    field: "title"
-                },  {
-                    title: "填报单位",
+                 {
+                    title: "学会：",
                     field: "userName",
 					format:function(index,data){
-						if(data.checkStatus==0){
-							return '<span style="color:#ccc;" title="已退回">'+data.userName+'(已退回)</span>';						
-						}
-						if(data.checkStatus==1){
-							return '<span style="color:#aaa;" title="审核中">'+data.userName+'(审核中)</span>';				
-						}
+						
 						return data.userName;
-					}
-                },  {
-                    title: "总得分",
-                    field: "score"/*,
-					format:function(index,data){
-						//if(data.subjectiveScore==0)
-						//	return data.score;
-						if(data.subjectiveScore>=0)
-							return data.score+data.subjectiveScore+"("+data.score+"+"+data.subjectiveScore+")";
-						return data.score+data.subjectiveScore+"("+data.score+data.subjectiveScore+")";
-
-					}*/
-                }
+					},
+						dataClick:
+                /*}
                 
                 
             ],
@@ -75,7 +58,7 @@
 				{
                     text: "查看",
                     cls: "btn-primary btn-sm",
-                    handle: function (index, data) {
+                    handle:*/ function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
@@ -94,7 +77,7 @@
                         }).show();
 						 var contentString = "";
 						$.ajax({
-							url:App.href + "/api/core/scorePaper/getPaper",
+							url:App.href + "/api/core/scorePaper/load/"+data.id,
 							dataType: "json",
 							data: {
 								paperId: data.id
@@ -102,7 +85,7 @@
 							async:false,
 							success:function(res){
 								if(res.code==200){
-									contentString=res.message;
+									contentString=res.data.contentJson;
 								}else{
 									bootbox.alert("请求错误");
 								}
@@ -124,6 +107,15 @@
                             success: function (data) {
                                 if (data.code === 200) {
                                     paper.loadAnswer(data.data);
+									/*setTimeout(function(){
+									$("#scorePaperView").find("input:text").each(function(i,c){
+										var v = $(c).val();
+										var parent = $(c).parent();
+										var cla = parent.attr("class")
+										$('<lable class="control-label '+cla+'">'+v+'</lable>').insertAfter(parent);
+										parent.remove();
+									})
+									},1000)*/
 									
                                 } else {
                                     alert(data.message);
@@ -138,7 +130,7 @@
 				
             ],
             search: {
-                rowEleNum: 3,
+                rowEleNum: 4,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -146,8 +138,15 @@
                         type: "select",
                         label: "评估项目",
                         name: "paperId",
+						//items:[{text:"2018年度全国学会综合能力评估",value:"1"}]
 						items:[],
-						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
+						itemsUrl:App.href+"/api/publicity/info/getPaperOptions"
+                    }
+					,{
+                        type: "text",
+                        label: "学会名称",
+                        name: "userName",
+						placeholder:"学会名称搜索"
                     }
 					,{
                         type: "select",

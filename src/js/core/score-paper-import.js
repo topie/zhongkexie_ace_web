@@ -177,13 +177,8 @@
                             ajaxSubmit: true,
                             ajaxSuccess: function (res) {
 								if(res.code==200){
-									var html='导入结果：';
-									for(var i=0;i<res.data.length;i++){
-										html+="</br>"+res.data[i].msg;	
-									}
-									if(html=='导入结果：'){
-										html="导入成功";
-									}
+									var html='导入成功';
+									
 									bootbox.alert(html);
 									modal.hide();
 								}else{
