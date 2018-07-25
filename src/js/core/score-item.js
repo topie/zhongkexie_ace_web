@@ -923,6 +923,18 @@
                                     name: 'info',
 									label: '指标说明',
                                     id: 'info'
+                                },{
+                                    type: 'text',
+                                    name: 'templateFileDesc',
+									label: '下载说明',
+                                    id: 'templateFileDesc'
+                                },{
+                                    type: 'files',
+                                    name: 'templateFileId',
+									label: '上传模板',
+                                    id: 'templateFileId',
+									limit:1,
+									allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.gif,.tif,.rm,.rmvb,.avi,.wmv,.flv"
                                 }
                             ]
                         };

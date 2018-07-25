@@ -52,6 +52,8 @@
                             //it.label = item.id+"__"+item.title;// + "(" + item.score + "分)";
 							it.label = item.title;// + "(" + item.score + "分)";
 							it.uploadFile=item.hideUploadFile;
+							it.templateId = item.templateId;
+							it.templateDesc = item.templateDesc;
 							//it.labelTitle="";
 							it.info=item.info;
 							it.infoTitle="指标说明";
@@ -182,6 +184,33 @@
 									rowEleNum: 1,
 									uploadFile: true,
 									uploadFun:function($input,formPlug){
+										var items = [{
+											type: 'display',
+											name: 'id',
+											id: 'id',
+											html:'可上传图片，文档，视频等证明材料'
+										}];
+										var tempId = $input.attr('data-templateId');
+										var tempDesc = $input.attr('data-templateDesc');
+										if(tempId==''||tempId==undefined||tempId=='null'||isNaN(tempId)){
+											
+										}else{
+											items.push({
+												type: 'download',
+												templateId:tempId,
+												//downloadUrl: App.href+"/api/common/download?id="+tempId,
+												//templateName: tempDesc,
+												id: 'id',
+												templateDesc:tempDesc
+											});
+										}
+										items.push({
+											type: 'files',
+											name: 'uploadfiles',
+											label: '',
+											id: 'uploadfiles',
+											allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.gif,.tif,.rm,.rmvb,.avi,.wmv,.flv"
+										});
 										 var modalUp = $.orangeModal({
 												id: "scoreItemForm",
 												title: "上传证明材料",
@@ -200,12 +229,15 @@
 												isValidate: true,
 												buttons: [{
 													type: 'button',
+													cls:' btn-primary',
 													text: '保存',
 													handle: function () {
 														var ins = modalUp.$body.find('input[name="uploadfiles"]');
 														var value =[];
 														$.each(ins,function(){
-															value.push($(this).val());
+															if($(this).val()!=''){
+																value.push($(this).val());
+															}
 														});
 														var v  = value.join("_");
 														formPlug.setValue($input.attr("name"),v);
@@ -219,25 +251,7 @@
 													}
 												}],
 												buttonsAlign: "center",
-												items: [
-													{
-														type: 'hidden',
-														name: 'id',
-														id: 'id'
-													},
-														{
-														type: 'display',
-														name: 'id',
-														id: 'id',
-														html:'可上传图片，文档，视频等证明材料'
-													},{
-														type: 'files',
-														name: 'uploadfiles',
-														label: '',
-														id: 'uploadfiles',
-														allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.rm,.rmvb,.avi,.wmv,.flv"
-													}
-												]
+												items:items
 											};
 											var formUp = modalUp.$body.orangeForm(formOpts);
 											formUp.loadLocal({uploadfiles:$input.val().split("_")});

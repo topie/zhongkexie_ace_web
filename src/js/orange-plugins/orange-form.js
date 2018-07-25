@@ -384,8 +384,11 @@
 					var showUpload = item.uploadFile===undefined?true:item.uploadFile;
 					if(showUpload){
 						var $upbtn = $('<span id="label_upload_file_'+item.name
-							+'" role="label_upload_file"><span style="color:red;"></span><input role="labelFile-input" name="'+that._options.uploadFileName
-						+item.name+'" type="hidden"><a href="javascript:void(0);" style="display:none;">删除</a><a href="javascript:void(0);">上传证明材料</a></span>');
+							+'" role="label_upload_file"><span style="color:red;"></span><input role="labelFile-input" data-templateDesc="'
+							+item.templateDesc	
+							+'" data-templateId="'
+							+item.templateId+'" name="'+that._options.uploadFileName
+							+item.name+'" type="hidden"><a href="javascript:void(0);" style="display:none;">删除</a><a href="javascript:void(0);">上传证明材料</a></span>');
 						label.append($upbtn);
 						if(that._options.showUploadBtn){
 							var $upa=$upbtn.find('a:eq(1)');
@@ -1259,6 +1262,39 @@
                 ele.append(btn);
                 ele.append(table);
                 return ele;
+            },
+            'download': function (data, form) {
+                var template = '<tr class="template-upload fade in">'
+                + '<td style="width: 20%; border-bottom: 1px solid #ddd;border-left: 1px solid #ddd;">'
+                + '<span class="preview"><img alt="${alt_}" src="/img/file.png" style="width: 32px;height: 32px;"></span>'
+                + '</td>'
+               // + '<td style="vertical-align: middle;border-bottom: 1px solid #ddd;">'
+                //+ '<p class="name">${fileName_}</p>'
+                //+ '</td>'
+				+ '<td style="width: 60%;vertical-align: middle;border-bottom: 1px solid #ddd;">'
+                + '<p class="name">${desc_}</p>'
+                + '</td>'
+                + '<td style="width: 20%;vertical-align: middle;border-bottom: 1px solid #ddd;border-right: 1px solid #ddd;">'
+                + '    <button type="button"  class="btn btn-primary btn-sm">'
+                + '       <span>模板下载</span>'
+                + '    </button>'
+                + '</td>'
+                + '</tr>';
+                var file = $.tmpl(template, {
+                    //"fileName_": (data.templateName === undefined ? '' : data.templateName),
+                    "desc_": (data.templateDesc === undefined ? '' : data.templateDesc)
+                });
+                file.find("button").bind("click",function(){
+					App.download(App.href+"/api/common/download?id="+data.templateId)
+				});
+                var tableTmpl = '<table id="file_table_${id_}" name="'
+                    + data.name + '" role="presentation" class="table table-striped clearfix"><tbody class="files"></tbody></table>';
+                var table = $.tmpl(tableTmpl, {
+                    "id_": (data.id === undefined ? data.name : data.id)
+                });
+				table.find("tbody").append(file);
+                //ele.append(table);
+                return table;
             },
             'image': function (data, form) {
                 var imageTmpl = '<div><div class="fileinput fileinput-new" data-provides="fileinput">'
