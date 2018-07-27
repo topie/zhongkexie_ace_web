@@ -184,16 +184,16 @@
 									rowEleNum: 1,
 									uploadFile: true,
 									uploadFun:function($input,formPlug){
-										var items = [{
-											type: 'display',
-											name: 'id',
-											id: 'id',
-											html:'可上传图片，文档，视频等证明材料'
-										}];
+										var items = [];
 										var tempId = $input.attr('data-templateId');
 										var tempDesc = $input.attr('data-templateDesc');
 										if(tempId==''||tempId==undefined||tempId=='null'||isNaN(tempId)){
-											
+											items.push({
+												type: 'display',
+												name: 'id',
+												id: 'id',
+												html:'可上传图片，文档，视频等证明材料'
+											});
 										}else{
 											items.push({
 												type: 'download',

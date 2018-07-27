@@ -655,7 +655,8 @@
                         $.each(data.items, function (j, jd) {
 							if(jd.type){
 								var item = form._formEles[jd.type](jd, form);
-								item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+								//item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+								item.change(function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 								var iWrapper;
 								if (jd.label != undefined) {
 									var labelSpan = 4;
@@ -1783,15 +1784,18 @@
 					}
 					if(radioIndex==0){
 						var ele = $(eless[i]);
-						ele.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+						//ele.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+						ele.change(function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 								
 						that._loadValue(name,v,ele);
 					}else{
 						var ele = $(eless[radioIndex]);
-						ele.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+						//ele.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+						ele.change(function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 						that._loadValue(name,v,ele);
 					}
 				});
+				if(hideBtn)return;//如果是定义好的 不多渲染
 				value_arr = other_value_arr;
 				var thisItems = [];
 				if (data.items != undefined) {
@@ -1803,7 +1807,9 @@
 				}
 				if(thisItems.length>1){
 					var itemsss=[];
-					for(var i=0;i<value_arr.length;i+=thisItems.length){
+					var rows = data.row;
+					if(!hideBtn){rows=20;}
+					for(var i=0;i<value_arr.length&&i<rows*thisItems.length;i+=thisItems.length){
 						var currentItems=[];
 						for(var j=0;j<thisItems.length;j++){
 							currentItems.push(value_arr[j+i]);
@@ -1815,6 +1821,7 @@
 				var formInline = (data.formInline ? "form-inline"
                         : "");
 				$.each(value_arr, function (i, id) {
+					
 					var itemWrapper = $('<div class="row">' +
 						'<div role="s-ele" class="col-lg-' + data.span + ' form-group '+formInline+' input-group"></div>' +
 						'</div>');
@@ -1822,7 +1829,8 @@
 						if (thisItems.length == 1) {
 							var it = thisItems[0];
 							var item = that._formEles[it.type](it, that);
-							item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+							//item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+							item.change(function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 							that._loadValue(it.name, id, item);
 							var iWrapper;
 							if (it.label != undefined) {
@@ -1843,7 +1851,8 @@
 							$.each(thisItems, function (j, jd) {
 								if(jd.type){//radio checkbox选项的屏蔽掉
 									var item = that._formEles[jd.type](jd, that);
-									item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+									//item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+									item.change(function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 									that._loadValue(jd.name, id[j], item);
 									var iWrapper;
 									if (jd.label != undefined) {
@@ -1905,7 +1914,8 @@
 						if (thisItems.length == 1) {
 							var it = thisItems[0];
 							var item = that._formEles[it.type](it, that);
-							item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+							//item.bind("keyup",function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
+							item.change(function(){this.value = this.value.replace(/,/g,'，');this.value = this.value.replace(/;/g,'；');});
 							that._loadValue(it.name, id, item);
 							var iWrapper;
 							if (it.label != undefined) {
@@ -1964,7 +1974,7 @@
         },
         _renderMultipleFiles: function (table, fieldName, fileIds) {
             var elementData = $(table).data("data");
-            var template = '<tr class="template-upload fade in">'
+            var template = ''
                 + '<td style="width: 20%;">'
                 + '<span class="preview"><img src="/img/file.png" alt="${alt_}" width="32" height="32"></span>'
                 + '</td>'
@@ -1976,15 +1986,17 @@
                 + '    <button type="button" class="btn btn-warning btn-sm cancel">删除</button>        '
                 + '</td>'
                 + '<input type="hidden" name="' + fieldName + '" value="${fileIds_}" class="att"/>'
-                + '</tr>';
+                + '';
             if ($.trim(fileIds) == "")
                 return;
             var ids = fileIds.toString().split(",");
             var fileInfoUrl = (elementData.fileInfoUrl === undefined ? (App.href + "/api/common/attachment") : elementData.fileInfoUrl);
             var dataParam = (elementData.dataParam === undefined ? "attachmentId" : elementData.dataParam);
-            for (var i in ids) {
+            $.each(ids,function(i,fileId){//})for (var i in ids) {
                 var dataParamValue = {};
                 dataParamValue[dataParam] = ids[i];
+				var tr = $('<tr class="template-upload fade in"></tr>');
+				tr.appendTo(table);
                 $.ajax({
                     type: "POST",
                     data: dataParamValue,
@@ -1992,25 +2004,26 @@
                     url: fileInfoUrl,
                     success: function (data) {
                         if (data.code == 200) {
-                            var file = $.tmpl(template, {
-                                "alt_": data.data.attachmentSuffix,
-                                "fileName_": data.data.attachmentName,
-                                "fileSize_": (data.data.attachmentSize / 1000)
-                                    .toFixed(2),
-                                "fileIds_": data.data.attachmentId
-                            });
-                            if (getLowCaseType(data.data.attachmentName) == ".jpg") {
-                                file.find(".preview > img").attr("src", data.data.attachmentUrl);
-                            }
-                            file.appendTo(table);
-                            file.find("button.btn.btn-warning.cancel").bind(
+							
+							var file = $.tmpl(template, {
+								"alt_": data.data.attachmentSuffix,
+								"fileName_": data.data.attachmentName,
+								"fileSize_": (data.data.attachmentSize / 1000)
+									.toFixed(2),
+								"fileIds_": data.data.attachmentId
+							});
+							tr.append(file);
+							if (getLowCaseType(data.data.attachmentName) == ".jpg") {
+								tr.find(".preview > img").attr("src", data.data.attachmentUrl);
+							}
+                            tr.find("button.btn.btn-warning.cancel").bind(
                                 "click", function () {
                                     $(this).parent().parent().remove();
                                 });
                         }
                     }
                 });
-            }
+            });
         },
         _initHtmlHandle: function () {
             $("div[formele=html]").each(function () {
@@ -2382,7 +2395,7 @@
 								if ($.trim(fileIds) == "")
 									return;
 								var ids = fileIds.split("_");
-								var template = '<tr class="template-upload fade in">'
+								var template = ''
 									+ '<td style="width: 20%;">'
 									+ '<span class="preview"><img src="/img/file.png" alt="${alt_}" width="32" height="32"></span>'
 									+ '</td>'
@@ -2393,12 +2406,14 @@
 									+ '<td style="width: 30%;vertical-align: middle;">'
 									+ '    <button type="button" class="btn btn-info btn-sm cancel">下载</button>        '
 									+ '</td>'
-									+ '</tr>';
+									+ '';
 								var fileInfoUrl = App.href + "/api/common/attachment";
 								var dataParam = "attachmentId";
-								for (var i in ids) {
+								$.each(ids,function(i,fileid){//})for (var i in ids) {
 									var dataParamValue = {};
 									dataParamValue[dataParam] = ids[i];
+									var tr=$('<tr class="template-upload fade in"></tr>');
+									tr.appendTo(table);
 									$.ajax({
 										type: "POST",
 										data: dataParamValue,
@@ -2413,14 +2428,15 @@
 														.toFixed(2),
 													"fileIds_": data.data.attachmentId
 												});
-												file.appendTo(table);
-												file.find("button.btn.btn-info.cancel").bind("click", function () {
+												tr.append(file);
+												tr.find("button.btn.btn-info.cancel").bind("click", function () {
 														App.download(App.href+"/api/common/download?id="+ids[i]+"&itemId="+name.replace("itemFile",""),modalDwon.$body);
 												});
 											}
 										}
 									});
 								}
+								);
 							}else{
 								App.download(App.href+"/api/common/downloadzip?id="+value);
 							}
