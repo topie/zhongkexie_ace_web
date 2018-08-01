@@ -151,9 +151,9 @@
                 },{
                     text: "专家评价",
 					visible:function(index,data){
-					      if(data.checkStatus==2)return true;
-						  if(data.checkStatus==1)return true;
-						  return false;
+					      if(data.checkStatus==0)return false;
+						  if(data.checkStatus==1)return false;
+						  return true;
 					},
                     cls: "btn-primary btn-sm",
                     handle: function (index, coll) {
@@ -213,7 +213,7 @@
 							});
 						var commitTitles = [];
 						$.each(titles,function(i,conn){
-							if(conn.checkStatus==2||conn.checkStatus==1){
+							if(conn.checkStatus==3){
 								commitTitles.push(conn);
 							}
 						})
