@@ -2386,7 +2386,25 @@
 												title: "材料下载",
 													//height: "480",
 													width: "550",
-												destroy: true
+												destroy: true,
+												buttons: [
+													{
+														type: 'button',
+														text: '打包下载',
+														cls: "btn btn-primary",
+														handle: function (m) {
+															App.download(App.href+"/api/common/downloadzip?id="+value+"&itemId="+name.replace("itemFile",""),modalDwon.$body);
+															
+														}
+													},{
+														type: 'button',
+														text: '关闭',
+														cls: "btn btn-default",
+														handle: function (m) {
+															modalDwon.hide();
+															
+														}
+													}]
 											});
 								modalDwon.show();
 								var table = $('<table class="table table-striped clearfix"></tabel>');
@@ -2428,6 +2446,18 @@
 														.toFixed(2),
 													"fileIds_": data.data.attachmentId
 												});
+												if(data.data.attachmentSuffix=="jpg"||data.data.attachmentSuffix=="png"||data.data.attachmentSuffix=="jpeg"){
+													file.find("img").attr("src",data.data.attachmentUrl).parent().bind("click",function(){
+														var imageModal = $.orangeModal({
+																id: "imgmodal",
+																title: data.data.attachmentName,
+																	//height: "480",
+																destroy: true
+																}).show();
+															imageModal.$body.append('<img style="width:100%" src="'+data.data.attachmentUrl+'">');
+													});
+
+												}
 												tr.append(file);
 												tr.find("button.btn.btn-info.cancel").bind("click", function () {
 														App.download(App.href+"/api/common/download?id="+ids[i]+"&itemId="+name.replace("itemFile",""),modalDwon.$body);

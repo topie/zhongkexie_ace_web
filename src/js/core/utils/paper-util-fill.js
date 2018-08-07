@@ -209,7 +209,7 @@
 											name: 'uploadfiles',
 											label: '',
 											id: 'uploadfiles',
-											allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.gif,.tif,.rm,.rmvb,.avi,.wmv,.flv"
+											allowType:".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf,.jpg,.jpeg,.png,.gif,.tif,.rm,.mp4,.rmvb,.avi,.wmv,.flv"
 										});
 										 var modalUp = $.orangeModal({
 												id: "scoreItemForm",

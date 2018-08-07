@@ -195,7 +195,7 @@
                                     cls: "btn btn-primary",
                                     handle: function (m) {
                                         var das = {};
-                                        var as = paper.getAnswer();
+                                       /* var as = paper.getAnswer();
                                         das['answers'] = as;
                                         das['paperId'] = data.id;
                                         $.ajax({
@@ -209,7 +209,7 @@
                                             error: function (e) {
                                                 alert("请求异常。");
                                             }
-                                        });
+                                        });*/
 										
                                         var msg = paper.getValidation();
                                         if (msg.length > 0) {
