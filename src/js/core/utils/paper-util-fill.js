@@ -230,7 +230,7 @@
 												buttons: [{
 													type: 'button',
 													cls:' btn-primary',
-													text: '保存',
+													text: '确认',
 													handle: function () {
 														var ins = modalUp.$body.find('input[name="uploadfiles"]');
 														var value =[];
@@ -245,7 +245,7 @@
 													}
 												},{
 													type: 'button',
-													text: '关闭',
+													text: '取消并关闭',
 													handle: function () {
 														modalUp.hide();
 													}

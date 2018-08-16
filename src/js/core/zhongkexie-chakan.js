@@ -58,7 +58,7 @@
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
-                            title: "查看-"+data.userName,
+                            title: "查看-"+data.name,
                             destroy: true,
 							buttons: [
                                {

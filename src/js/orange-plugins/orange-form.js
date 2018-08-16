@@ -119,6 +119,9 @@
         reset: function () {
             this._reset();
         },
+        valid: function () {
+            return this.$form.valid();
+        },
 		getFormSerialize: function () {
             return this.$form.serialize();
         },
@@ -768,7 +771,7 @@
                     "attribute_": (data.attribute === undefined ? ""
                         : data.attribute)
                 });
-				ele.bind("keyup",function(){if(isNaN(this.value))this.value=''});
+				ele.bind("keyup",function(){if(this.value=='-')return;if(isNaN(this.value))this.value='';});
 				ele.blur(function(){if(isNaN(this.value))this.value=''});
                 if (data.value != undefined){
 					data.value=parseInt(data.value);
@@ -891,6 +894,9 @@
 							for(var i=2;i<param.length;i++){
 								options = options[param[i]];
 							}
+							if(data.formatData!== undefined){
+								options = data.formatData(options);
+							}
                             $.each(options, function (i, option) {
                                 var opt = $.tmpl(optionTmpl, {
                                     "value_": option[param[0]],
@@ -903,6 +909,9 @@
                         }
                     });
                 }
+				if(data.onchange!== undefined){
+					ele.bind("change",data.onchange);
+				}
                 return ele;
             },
 			'select2': function (data, form) {
@@ -1462,7 +1471,8 @@
                         url: data.url,
                         type: (data.mtype === undefined ? "POST" : data.mtype),
                         data: (data.data === undefined ? {} : data.data),
-                        autoParam: data.autoParam
+                        autoParam: data.autoParam,
+						dataFilter:(data.dataFilter === undefined ? null : data.dataFilter)
                     },
                     callback: {
                         beforeCheck: function (treeId, treeNode) {
@@ -1502,8 +1512,10 @@
                                     }
                                 }
                             }
-                            zTree.expandAll(data.expandAll === undefined ? false
+							if(data.expandAll !== undefined){
+								zTree.expandAll(data.expandAll === undefined ? false
                                 : data.expandAll);
+							}
 							onAsyncSuccess(zTree);
                         }
                     }

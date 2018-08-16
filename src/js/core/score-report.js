@@ -137,7 +137,8 @@
                         type: "POST",
                         dataType: "json",
                         data: {
-                            paperId: data.id
+                            paperId: data.id,
+							timestamp_:new Date().getTime()
                         },
                         url: App.href + "/api/core/scorePaper/getAnswer",
                         success: function (data) {
@@ -317,7 +318,8 @@
                             type: "POST",
                             dataType: "json",
                             data: {
-                                paperId: data.id
+                                paperId: data.id,
+								timestamp_:new Date().getTime()
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {

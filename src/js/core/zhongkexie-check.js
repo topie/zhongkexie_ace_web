@@ -625,7 +625,7 @@
 				}*/
             ],
             search: {
-                rowEleNum: 3,
+                rowEleNum: 4,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -635,6 +635,10 @@
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
+                    },{
+                        type: "text",
+                        label: "学会名称",
+                        name: "userName"
                     }
 					,{
                         type: "select",

@@ -94,6 +94,14 @@
                             })
                         }
                     }
+					if(tab.beforeToggle!==undefined){
+						li.find('a').bind('click', function(e) {
+							if(!tab.beforeToggle()){
+								e.preventDefault();
+								e.stopPropagation();
+							}
+						});
+					}
                 });
                 if (this._options.page.show) {
                     var nextLi = $('<li role="next"><a href="javascript:void(0);"><i class="fa fa-angle-right"></i></a></li>');

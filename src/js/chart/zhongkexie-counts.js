@@ -25,9 +25,10 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scoreCount/list",
-            contentType: "table",
-            contentTypeItems: "table,card,list",
+            url: App.href + "/api/core/scoreCount/partIndexScore",
+            contentType: "chart-bar",
+            contentTypeItems: "table,chart-bar,card",
+			showContentType:true,
             pageNum: 1,//当前页码
             pageSize: 16,//每页显示条数
             idField: "id",//id域指定
@@ -36,33 +37,42 @@
             checkboxWidth: "3%",
 			displaySearch:false,
 			cardEleNum:4,
-            showIndexNum: false,
+            showIndexNum: true,
             indexNumWidth: "5%",
             pageSelect: [8, 16, 30, 60,200],
             columns: [
-                /* {
+                 {
                     title: "学会编码",
 					width:"10%",
                     field: "loginName",
 					format:function(i,c){
-						return c.loginName.subStr(0,c.loginName.length-3);
+						return c.loginName.replace("002",'');
 					}
-                },*/ {
+                }, {
                     title: "学会",
 					width:"20%",
-                    field: "displayName"
+                    field: "displayName",
+					chartX:true
                 },
 					{
-                    title: "进度",
+                    title: "分数",
 					width:"50%",
-                    field: "count",
-					format:function(index,data){
-						return '<div class="progress pos-rel" data-percent="'+data.count+'"><div class="progress-bar" style="width:'+data.count+';"></div></div>';
-					}
+                    field: "score",
+					chartY:true
                 }
                 
                 
             ],
+			tools:[{
+                    text: "导出",
+                    cls: " btn-primary btn",
+                    icon: "fa fa-cloud-download",
+                    handle: function (grid) {
+                        var searchData = grid.$searchForm.serialize();
+						App.download(App.href+"/api/core/scoreCount/partIndexScoreExport?"+searchData);
+						
+                    }
+                }],
             actionColumnText: "操作",//操作列文本
             actionColumnWidth: "10%",
             actionColumns: [
@@ -113,7 +123,7 @@
                             dataType: "json",
                             data: {
                                 paperId: paperId,
-								deptId:data.userId
+								userId:data.userId
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {
@@ -142,7 +152,7 @@
 				
             ],
             search: {
-                rowEleNum: 3,
+                rowEleNum: 4,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -154,16 +164,206 @@
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
                     }
-					/*,{
-                        type: "text",
-                        label: "学会名称",
-                        name: "name",
-						placeholder:"学会名称搜索"
+					,{
+                        type: "inputGroupBtn",
+                        label: "指标项选择",
+                        name: "indexIds",
+						placeholder:"请选择",
+						clickCall:function(input){
+							var currentPaper =$("select[name='paperId']").val();
+							var modal = $.orangeModal({
+								id: "scorePaperIndexView",
+								title: "选择指标",
+								destroy: true,
+								buttons: [
+								   {
+										type: 'button',
+										text: '关闭',
+										cls: "btn",
+										handle: function (m) {
+											modal.hide();    
+											
+										}
+									}]
+							}).show();
+							var formOpts = {
+                            id: "add_form",
+                            name: "add_form",
+                            ajaxSubmit: true,
+                            showSubmit: false,
+                            rowEleNum: 2,
+                            ajaxSuccess: function () {
+                                modal.hide();
+                            },
+                            showReset: true,//是否显示重置按钮
+                            resetText: "重置",//重置按钮文本
+                            isValidate: true,//开启验证
+                            buttons: [{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '确认',
+                                handle: function () {
+									var id = modal.$body.find("#indexIds").val();
+									input.val(id);
+									modal.hide();
+                                }
+                            },{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal.hide();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+								/*{
+									type: 'tree',//类型
+									name: 'orgIds',
+									id: 'orgIds',//id
+									label: '机构',//左边label
+									url: App.href + "/api/core/dept/tree",
+									//url:App.href + "/api/core/scorePaper/zjcheckListName?paperId="+currentPaper,
+									//expandAll: true,
+									//mtype:"GET",
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false
+								},*/
+								{
+									type: 'tree',//类型
+									name: 'indexIds',
+									id: 'indexIds',//id
+									label: '指标',//左边label
+									url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
+									//expandAll: true,
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false,
+									rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择指标"
+                                    }
+								}
+									
+                                
+                            ]
+                        };
+                         form = modal.$body.orangeForm(formOpts);
+
+						}
+                    },{
+                        type: "inputGroupBtn",
+                        label: "题目项选择",
+                        name: "itemIds",
+						placeholder:"请选择",
+						clickCall:function(input){
+							var currentPaper =$("select[name='paperId']").val();
+							var modal = $.orangeModal({
+								id: "scorePaperIndexView",
+								title: "选择指标",
+								destroy: true,
+								buttons: [
+								   {
+										type: 'button',
+										text: '关闭',
+										cls: "btn",
+										handle: function (m) {
+											modal.hide();    
+											
+										}
+									}]
+							}).show();
+							var formOpts = {
+                            id: "add_form",
+                            name: "add_form",
+                            ajaxSubmit: true,
+                            showSubmit: false,
+                            rowEleNum: 2,
+                            ajaxSuccess: function () {
+                                modal.hide();
+                            },
+                            showReset: true,//是否显示重置按钮
+                            resetText: "重置",//重置按钮文本
+                            isValidate: true,//开启验证
+                            buttons: [{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '确认',
+                                handle: function () {
+									var id = modal.$body.find("#itemIds").val();
+									id= id.replace(/-/g,'')
+									input.val(id);
+									modal.hide();
+                                }
+                            },{
+                                type: 'button',
+                                text: '关闭',
+                                handle: function () {
+                                    modal.hide();
+                                }
+                            }],
+                            buttonsAlign: "center",
+                            items: [
+								/*{
+									type: 'tree',//类型
+									name: 'orgIds',
+									id: 'orgIds',//id
+									label: '机构',//左边label
+									url: App.href + "/api/core/dept/tree",
+									//url:App.href + "/api/core/scorePaper/zjcheckListName?paperId="+currentPaper,
+									//expandAll: true,
+									//mtype:"GET",
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"},
+									expandAll:false
+								},*/
+								{
+									type: 'tree',//类型
+									name: 'itemIds',
+									id: 'itemIds',//id
+									label: '指标',//左边label
+									dataFilter:function (treeId, parentNode, responseData) {
+										if(parentNode==undefined){
+											if (responseData) {
+											  for(var i =0; i < responseData.length; i++) {
+												responseData[i]['isParent']=true;
+												responseData[i]['nocheck']=true;
+											  }
+											}
+										}
+										return responseData;
+									},
+									url: function (treeId, treeNode) {
+										if(treeNode==undefined)return App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper;
+										
+										return App.href + "/api/core/scoreItem/getTreeNode?indexId="+treeNode.id;
+									},//App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
+									autoParam: ["id", "name", "pId"],
+									chkStyle: "checkbox",
+									chkboxType:{"Y": "ps", "N": "s"},
+									rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请选择指标"
+                                    }
+								}
+									
+                                
+                            ]
+                        };
+                         form = modal.$body.orangeForm(formOpts);
+						}
                     }
 					,{
                         type: "select",
                         label: "学会分类",
-                        name: "type",
+                        name: "deptType",
 						items:[
 								{
 								text:'全部',
@@ -193,7 +393,7 @@
 									text: '其他',
 									value: '其他'
 								}]
-                    }*/
+                    }
                 ]
             }
         };

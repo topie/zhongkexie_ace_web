@@ -4,12 +4,13 @@
 ;
 (function ($, window, document, undefined) {
     var vkey = "zhongkexie_" + new Date().getTime() + "_" + Math.floor(Math.random() * 10);
+		//var returnUrl = 'http%3A%2F%2Fznxtptyyzx.cast.org.cn%3A8010%2Fsword%3Fctrl%3DYyInstallCtrl_processInstall%26yyuuid%3Dad812d65745b4f02a80a8367e1232b96%26yybbuuid%3D7d097322b58145589388042ea2968622';
 		var returnUrl = GetQueryString("returnUrl");
 		var userUUID = GetQueryString("zhnlpgxt_YYBDXX");
-		if (returnUrl != undefined && $.trim(returnUrl) != "") {
-		   
+		if (returnUrl != undefined &&returnUrl != null && $.trim(returnUrl) != "") {
+			returnUrl = decodeURIComponent(returnUrl);
 		} else {
-			if (userUUID != undefined && $.trim(userUUID) != "") {
+			if (userUUID != undefined &&userUUID !=null && $.trim(userUUID) != "") {
 				var fields = JSON.stringify(
 						{
 							"username": "sso",
@@ -110,7 +111,11 @@
 								success: function (result) {
 									if (result.code === 200) {
 										var code = result.data.userCode;
-										var href = returnUrl+'?returnValue='+code;
+										var and = '?';
+										if(returnUrl.indexOf("?")!=-1){
+											and="&";
+										}
+										var href = returnUrl+and+'returnValue='+code;
 										window.location.href = href;
 									} else {
 										alert("获取用户失败！")

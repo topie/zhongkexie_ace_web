@@ -1,12 +1,12 @@
 /**
- * 
+ *  查看进度 所有用户的填写内容
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/core/publicity/page": "publicityPage"
+        "/api/core/counts/page": "countsPaper"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
-    App.publicityPage = {
+    App.countsPaper = {
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
@@ -25,8 +25,8 @@
         var grid;
         var tree;
         var options = {
-            url: App.href + "/api/core/scorePaper/zkxcheckList",
-            contentType: "card",
+            url: App.href + "/api/core/scoreCount/list",
+            contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
             pageSize: 16,//每页显示条数
@@ -38,27 +38,38 @@
 			cardEleNum:4,
             showIndexNum: false,
             indexNumWidth: "5%",
-            pageSelect: [8, 16, 30, 60],
+            pageSelect: [8, 16, 30, 60,200],
             columns: [
-                 {
-                    title: "学会：",
-                    field: "userName",
+                /* {
+                    title: "学会编码",
+					width:"10%",
+                    field: "loginName",
+					format:function(i,c){
+						return c.loginName.subStr(0,c.loginName.length-3);
+					}
+                },*/ {
+                    title: "学会",
+					width:"20%",
+                    field: "displayName"
+                },
+					{
+                    title: "进度",
+					width:"50%",
+                    field: "count",
 					format:function(index,data){
-						
-						return data.userName;
-					},
-						dataClick:
-                /*}
+						return '<div class="progress pos-rel" data-percent="'+data.count+'"><div class="progress-bar" style="width:'+data.count+';"></div></div>';
+					}
+                }
                 
                 
             ],
             actionColumnText: "操作",//操作列文本
-            actionColumnWidth: "20%",
+            actionColumnWidth: "10%",
             actionColumns: [
 				{
                     text: "查看",
                     cls: "btn-primary btn-sm",
-                    handle:*/ function (index, data) {
+                    handle:function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
@@ -76,11 +87,12 @@
                                 }]
                         }).show();
 						 var contentString = "";
+						 var paperId = $("select[name='paperId']").val();
 						$.ajax({
-							url:App.href + "/api/core/scorePaper/load/"+data.id,
+							url:App.href + "/api/core/scorePaper/load/"+paperId,
 							dataType: "json",
 							data: {
-								paperId: data.id
+								paperId: paperId
 							},
 							async:false,
 							success:function(res){
@@ -95,14 +107,13 @@
 							}
 						});
 						var js = JSON.parse(contentString);
-						js.showUploadFile = false;
                         paper = modal.$body.orangePaperView(js);
                         $.ajax({
                             type: "POST",
                             dataType: "json",
                             data: {
-                                paperId: data.id,
-								userId:data.userId
+                                paperId: paperId,
+								deptId:data.userId
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {
@@ -131,7 +142,7 @@
 				
             ],
             search: {
-                rowEleNum: 4,
+                rowEleNum: 3,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -141,12 +152,12 @@
                         name: "paperId",
 						//items:[{text:"2018年度全国学会综合能力评估",value:"1"}]
 						items:[],
-						itemsUrl:App.href+"/api/publicity/info/getPaperOptions"
+						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
                     }
-					,{
+					/*,{
                         type: "text",
                         label: "学会名称",
-                        name: "userName",
+                        name: "name",
 						placeholder:"学会名称搜索"
                     }
 					,{
@@ -182,7 +193,7 @@
 									text: '其他',
 									value: '其他'
 								}]
-                    }
+                    }*/
                 ]
             }
         };

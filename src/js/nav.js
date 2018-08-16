@@ -10,6 +10,14 @@
         "showUserInfo": showUserInfo,
         "showTaskInfo": showTaskInfo
     };
+	var vkey = "zhongkexie_" + new Date().getTime() + "_" + Math.floor(Math.random() * 10);
+	var userUUID = GetQueryString("zhnlpgxt_YYBDXX");
+	
+	function GetQueryString(name) {
+	   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+	   var r = window.location.search.substr(1).match(reg);
+	   if (r!=null) return (r[2]); return null;
+	}
     App.menusMapping = {};
 		String.prototype.endWith = function(str){
 			 if(str==null || str=="" || this.length == 0 ||str.length > this.length){	
@@ -652,21 +660,64 @@ App.menu.userOptionNoLinkMan = {
             }
         ]
     };
-    var toggle = App.toggle = ($.cookie('spring-menu-toggle') === undefined ? "s" : $.cookie('spring-menu-toggle'));
-    if (toggle === undefined) {
-        toggle = "s";
-    }
-    if (toggle === "s") {
-        App.menu.initSideMenu();
-    } else {
-        App.menu.initHMenu();
-    }
-    $("#orange-settings-navbar").click(function () {
-        App.menu.toggleMenu();
-        setTimeout(function () {
-            window.location.reload();
-        }, 500);
-    });
+if (userUUID != undefined &&userUUID !=null && $.trim(userUUID) != "") {
+		var fields = JSON.stringify(
+				{
+					"username": "sso",
+					"password": "pa",
+					"vcode": userUUID,
+					"vkey": vkey
+				});
+			$.ajax({
+				type: 'POST',
+				url: App.href + "/api/token/ssogenerate",
+				//async:false,
+				contentType: "application/json",
+				dataType: "json",
+				data: fields,
+				success: function (result) {
+					if (result.code === 200) {
+						$.cookie(App.token_key, result.token, {expires: 7});
+						window.location.href = App.href + "/index.html";
+					} else {
+						alert("请求错误，请联系管理员，"+result.message);
+						$.ajax(
+								{
+									type: 'GET',
+									url: App.href + "/api/logout",
+									contentType: "application/json",
+									dataType: "json",
+									success: function (result) {
+										if (result.code === 200) {
+											$.cookie(App.token_key, null);
+											window.location.href = App.href + "/login.html";
+										} else {
+											alert(result.message);
+										}
+									}
+								}
+							);
+					}
+				}
+			});
+	}else{
+	
+		var toggle = App.toggle = ($.cookie('spring-menu-toggle') === undefined ? "s" : $.cookie('spring-menu-toggle'));
+		if (toggle === undefined) {
+			toggle = "s";
+		}
+		if (toggle === "s") {
+			App.menu.initSideMenu();
+		} else {
+			App.menu.initHMenu();
+		}
+		$("#orange-settings-navbar").click(function () {
+			App.menu.toggleMenu();
+			setTimeout(function () {
+				window.location.reload();
+			}, 500);
+		});
+	}
  $("#user-info").click(function () {
             App.menu.showUserInfo();
         });

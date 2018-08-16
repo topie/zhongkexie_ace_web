@@ -56,6 +56,9 @@
 						if(data.checkStatus==1){
 							return '<span style="color:#aaa;" title="审核中">'+data.userName+'(审核中)</span>';				
 						}
+						if(data.checkStatus==3){
+							return '<span style="color:#aaa;" title="审核中">'+data.userName+'(已退回)</span>';				
+						}
 						return data.userName;
 					}
                 },
@@ -213,7 +216,7 @@
 							});
 						var commitTitles = [];
 						$.each(titles,function(i,conn){
-							if(conn.checkStatus==3){
+							if(conn.checkStatus==2){
 								commitTitles.push(conn);
 							}
 						})

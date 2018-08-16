@@ -112,7 +112,8 @@
                             type: "POST",
                             dataType: "json",
                             data: {
-                                paperId: data.id
+                                paperId: data.id,
+								timestamp_:new Date().getTime()
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {
@@ -287,7 +288,8 @@
                             type: "POST",
                             dataType: "json",
                             data: {
-                                paperId: data.id
+                                paperId: data.id,
+								timestamp_:new Date().getTime()
                             },
                             url: App.href + "/api/core/scorePaper/getAnswer",
                             success: function (data) {
@@ -348,7 +350,7 @@
 						return false;
 					},
                     handle: function (index, data) {
-						bootbox.confirm("确认上报?", function (result) {
+						bootbox.confirm("确认上报至中国科学技术协会?", function (result) {
                         if (result) {
 							var requestUrl = App.href + "/api/core/scorePaper/reportContentCheck";
 							$.ajax({

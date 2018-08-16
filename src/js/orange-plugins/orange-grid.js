@@ -791,6 +791,31 @@
                                 ele.find('span').on("click", function () {
                                     $(this).prev().click();
                                 });
+                            }else if (item.type == "inputGroupBtn") {
+                                var dateTmpl = '<div class="input-group">'
+                                    + '<input type="text" role="text" id="${id_}" name=${name_} value="${value_}" class="form-control">'
+                                    + '<span role="icon" class="input-group-btn">'
+                                    //+ '<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>'
+									+ '<button class="btn btn-sm ${cls_}" type="button">${btnText_}'
+									+ '</button>'
+									+ '<button class="btn btn-sm" type="button">重置'
+									+ '</button>'
+									+ '</span></div>';
+                                ele = $.tmpl(dateTmpl, {
+                                    "id_": (item.id == undefined ? item.name : item.id),
+                                    "name_": item.name,
+                                    "cls_": item.cls == undefined ? "btn-info" : item.cls,
+                                    "value_": (item.value == undefined ? '' : item.value),
+                                    "btnText_": (item.btnText == undefined ? '选择' : item.btnText)
+                                });
+                                itemDiv.find(".form-group").append(ele);
+								var $input = ele.find('input');
+                                ele.find('button:eq(0)').on("click", function () {
+                                    item.clickCall($input);
+                                });
+								ele.find('button:eq(1)').on("click", function () {
+                                    $input.val('');
+                                });
                             } else if (item.type == "html") {
                                 ele = item.eleHandler();
                                 itemDiv.find(".form-group").append(ele);

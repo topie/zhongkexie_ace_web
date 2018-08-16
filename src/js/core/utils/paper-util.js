@@ -105,6 +105,7 @@
 		itemActions:[],
 		showSocre:false,
 		showIndex:false,
+		showUploadFile:true,
 		showType:false
     };
     PaperView.prototype = {
@@ -312,7 +313,7 @@
                     },
                     showReset: false,
                     showSubmit: false,
-					uploadFile:true,
+					uploadFile:that._options.showUploadFile,
 					showUploadBtn:false,
 					labelInline:false,
                     isValidate: true,

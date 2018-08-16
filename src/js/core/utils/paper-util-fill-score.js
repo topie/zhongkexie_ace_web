@@ -206,6 +206,11 @@
             if (items != undefined && items.length > 0) {
                 var its = [];
 				var currentItems = [];
+				items.sort(function(a,b){//排序专家评价放前面
+					if(a.scoreType=='3')return 0;
+					if(b.scoreType=='3')return 1;
+					return 0;
+				});
                 $.each(items, function (i, item) {
 					if(item.showLevel<=App.currentUser.userType){
 						return ;
