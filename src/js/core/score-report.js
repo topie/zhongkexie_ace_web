@@ -190,13 +190,13 @@
 										}
                                         
                                     }
-                                },{
+                                }/*,{
                                     type: 'button',
                                     text: '检查并保存',
                                     cls: "btn btn-primary",
                                     handle: function (m) {
                                         var das = {};
-                                       /* var as = paper.getAnswer();
+                                        var as = paper.getAnswer();
                                         das['answers'] = as;
                                         das['paperId'] = data.id;
                                         $.ajax({
@@ -210,7 +210,7 @@
                                             error: function (e) {
                                                 alert("请求异常。");
                                             }
-                                        });*/
+                                        });
 										
                                         var msg = paper.getValidation();
                                         if (msg.length > 0) {
@@ -221,7 +221,7 @@
 										bootbox.alert('选择项已全部填写完成，请自行检查其他项');
                                         //modal.hide();
                                     }
-                                },{
+                                }*/,{
                                     type: 'button',
                                     text: '关闭',
                                     cls: "btn",

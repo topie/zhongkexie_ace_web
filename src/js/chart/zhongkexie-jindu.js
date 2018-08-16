@@ -3,7 +3,7 @@
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/core/counts/page": "countsPaper"
+        "/api/core/jindu/page": "countsPaper"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
     App.countsPaper = {
@@ -36,11 +36,11 @@
             checkboxWidth: "3%",
 			displaySearch:false,
 			cardEleNum:4,
-            showIndexNum: false,
+            showIndexNum: true,
             indexNumWidth: "5%",
             pageSelect: [8, 16, 30, 60,200],
             columns: [
-                /* {
+                 /*{
                     title: "学会编码",
 					width:"10%",
                     field: "loginName",
@@ -73,7 +73,7 @@
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",
-                            title: "查看-"+data.userName,
+                            title: "查看-"+data.displayName,
                             destroy: true,
 							buttons: [
                                {
