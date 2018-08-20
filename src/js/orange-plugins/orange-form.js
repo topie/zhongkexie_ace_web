@@ -387,7 +387,7 @@
 					var showUpload = item.uploadFile===undefined?true:item.uploadFile;
 					if(showUpload){
 						var $upbtn = $('<span id="label_upload_file_'+item.name
-							+'" role="label_upload_file"><span style="color:red;"></span><input role="labelFile-input" data-templateDesc="'
+							+'" role="label_upload_file"><span style="color:red;cursor: pointer;"></span><input role="labelFile-input" data-templateDesc="'
 							+item.templateDesc	
 							+'" data-templateId="'
 							+item.templateId+'" name="'+that._options.uploadFileName
@@ -2459,14 +2459,14 @@
 													"fileIds_": data.data.attachmentId
 												});
 												if(data.data.attachmentSuffix=="jpg"||data.data.attachmentSuffix=="png"||data.data.attachmentSuffix=="jpeg"){
-													file.find("img").attr("src",data.data.attachmentUrl).parent().bind("click",function(){
+													file.find("img").attr("src",data.data.attachmentUrl).css("cursor","pointer").parent().bind("click",function(){
 														var imageModal = $.orangeModal({
 																id: "imgmodal",
 																title: data.data.attachmentName,
 																	//height: "480",
 																destroy: true
 																}).show();
-															imageModal.$body.append('<img style="width:100%" src="'+data.data.attachmentUrl+'">');
+															imageModal.$body.append('<img style="width:100%;" src="'+data.data.attachmentUrl+'">');
 													});
 
 												}

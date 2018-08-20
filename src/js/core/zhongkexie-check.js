@@ -152,7 +152,7 @@
 											});	
 											html+="</table></div>";
 											if(res.data.length==0) html='暂无专家打分';
-											var info = $('<i class="ace-icon fa fa-info-circle" style="color:#6fb3e0;font-size: 18px;" title="打分情况" data-content="'+html+'"></i>');
+											var info = $('<i class="ace-icon fa fa-info-circle" data-trigger="hover" data-placement="bottom" style="color:#6fb3e0;font-size: 18px;" title="打分情况" data-content="'+html+'"></i>');
 												info.popover({html:true});
 												$label.append(info);
 										}

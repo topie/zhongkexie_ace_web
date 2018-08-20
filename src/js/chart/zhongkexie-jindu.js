@@ -3,10 +3,10 @@
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/core/jindu/page": "countsPaper"
+        "/api/core/jindu/page": "jinduPaper"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
-    App.countsPaper = {
+    App.jinduPaper = {
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
