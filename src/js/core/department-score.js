@@ -112,6 +112,7 @@
 									bootbox.alert("服务器内部错误");
 								}
 							});
+						contentString.showSocre=true;
                         paper = modal.$body.orangePaperView(contentString);
                         $.ajax({
                             type: "POST",
@@ -124,6 +125,7 @@
                             success: function (data) {
                                 if (data.code === 200) {
                                     paper.loadAnswer(data.data);
+									paper.loadScores(data.data);
 									/*modal.$body.find('input').each(function(){
 										if($(this).attr('name')!='button')
 											$(this).attr("disabled","true");
@@ -143,7 +145,7 @@
                 
             ],
             search: {
-                rowEleNum: 2,
+                rowEleNum: 4,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -154,29 +156,49 @@
 						items:[],
 						itemsUrl:App.href+"/api/core/scorePaper/getPaperSelect"
                     }
+					,{
+                        type: "text",
+                        label: "学会名称",
+                        name: "name",
+						placeholder:"学会名称搜索"
+                    }
+					,{
+                        type: "select",
+                        label: "学会分类",
+                        name: "type",
+						items:[
+								{
+								text:'全部',
+								value:''
+								},
+								{
+									text: '理科',
+									value: '理科'
+								},
+								{
+									text: '工科',
+									value: '工科'
+								},
+								{
+									text: '农科',
+									value: '农科'
+								},
+								{
+									text: '医科',
+									value: '医科'
+								},
+								{
+									text: '交叉学科',
+									value: '交叉学科'
+								},
+								{
+									text: '其他',
+									value: '其他'
+								}]
+                    }
                 ]
             }
         };
         grid = window.App.content.find("#grid").orangeGrid(options);
-		Date.prototype.format = function(format)
-				{
-				 var o = {
-				 "M+" : this.getMonth()+1, //month
-				 "d+" : this.getDate(),    //day
-				 "h+" : this.getHours(),   //hour
-				 "m+" : this.getMinutes(), //minute
-				 "s+" : this.getSeconds(), //second
-				 "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
-				 "S" : this.getMilliseconds() //millisecond
-				 }
-				 if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
-				 (this.getFullYear()+"").substr(4 - RegExp.$1.length));
-				 for(var k in o)if(new RegExp("("+ k +")").test(format))
-				 format = format.replace(RegExp.$1,
-				 RegExp.$1.length==1 ? o[k] :
-				 ("00"+ o[k]).substr((""+ o[k]).length));
-				 return format;
-				}
-
-    };
+	}
 })(jQuery, window, document);

@@ -54,6 +54,7 @@
         },
 		bindHead:function(){
 			var that = this;
+				//that.$tbody1.append('<tr style="height:20px;"></tr>');
 			that.$tbody2.parent().parent().scroll(function(){
 				 that.$thead2.parent().parent().scrollLeft($(this).scrollLeft());
 				 that.$tbody1.parent().parent().scrollTop($(this).scrollTop());
@@ -80,9 +81,9 @@
 							+'<table class="data-grid" ><tbody></tbody></table></div>'
 							+'<div class="data-grid-container" style="width:100%;overflow-x: hidden;position: absolute;left: 138px;margin-right: 138px;">'
 							+'<table class="data-grid" ><tbody></tbody></table></div>'
-							+'<div class="data-grid-container" style="height:600px;overflow-y: hidden;position: absolute;top: 138px;">'
+							+'<div class="data-grid-container" style="height:500px;overflow-y: hidden;position: absolute;top: 138px;margin-bottom: 138px;">'
 							+'<table class="data-grid" ><tbody></tbody></table></div>'
-							+'<div class="data-grid-container" style="height:600px;overflow: auto;position: inherit;top: 138px;left: 138px;margin-bottom: 138px;margin-right: 138px;">'
+							+'<div class="data-grid-container" style="height:500px;overflow: auto;position: inherit;top: 138px;left: 138px;margin-bottom: 138px;margin-right: 138px;">'
 							+'<table class="data-grid" ><tbody></tbody></table></div>'
 						+'</div>');
 			/*var tabel =$('<div><table style="width:100%;overflow:hidden;"><tbody><tr><td><div class="data-grid-container" >'
@@ -118,43 +119,64 @@
 					+(r.width==undefined?'':r.width)+';">'+r.displayName+'</span></td>';
 			   }
 		   })
-			th2+='<td class="cell read-only"></td>';
+			th2+='<td class="cell read-only"><span class="value-viewer" style="width:'+(width+20)+'px;"></td>';
 			th1+='</tr>';
 			th2+='</tr>';
 			that.$thead1.append(th1);
 			that.$thead2.append(th2);
-			that.$thead2.parent().parent().css('left',width+"px");
-			that.$tbody2.parent().parent().css('left',width+"px");
+			that.$thead2.parent().parent().css('left',width+"px").css('margin-right',width+"px");
+			that.$tbody2.parent().parent().css('left',width+"px").css('margin-right',width+"px");
 			var top = that.$thead2.height();
-			that.$tbody1.parent().parent().css('top',top+"px");
-			that.$tbody2.parent().parent().css('top',top+"px");
+			that.$tbody1.parent().parent().css('top',top+"px").css('margin-bottom',top+"px");
+			that.$tbody2.parent().parent().css('top',top+"px").css('margin-bottom',top+"px");
+			that.$thead1.find("tr").css("height",top+"px");
 
         },
 		renderData: function () {
 			var that = this;
 		   $.each(that.data,function(i,row){
-				var th1 = '<tr>';
-				var th2 = '<tr>';
+				var th1 = $('<tr></tr>');
+				var th2 = $('<tr></tr>');
+				var style = '';
+				if(i==0){
+					 style = ' style="width:20px;"';
+				}
 				if(that._options.showIndexNum){
-					th1+='<td class="cell read-only"><span class="value-viewer" style="width:20px;">'+(1+i)+'</span></td>';
+					th1.append('<td class="cell read-only"><span class="value-viewer"'+style+'>'+(1+i)+'</span></td>');
 				}
 				$.each(that.colInfos,function(j,r){
 					var title = row[r.name];
 					if(r.format!=undefined){
 						title=r.format(i,row);
 					}
+					var style2 = '';
+					if(i==0){
+						 style2 = ' style="text-align:'
+						+(r.align==undefined?'':r.align)+';width:'+(r.width==undefined?'':r.width)+';"';
+					}
+					var td = $('<td class="cell"><span class="value-viewer"'+style2+'>'+title+'</span></td>');
+					if(typeof r.dataClick === 'function'){
+						td.find("span.value-viewer").bind("click",function(){r.dataClick(i,row)});
+					}
 					if(r.static){
-						th1+='<td class="cell"><span class="value-viewer" style="text-align:'+(r.align==undefined?'':r.align)+';width:'+(r.width==undefined?'':r.width)+';">'+title+'</span></td>';
+						th1.append(td);
 					}else{
-						th2+='<td class="cell"><span class="value-viewer" style="text-align:'+(r.align==undefined?'':r.align)+';width:'+(r.width==undefined?'':r.width)+';">'+title+'</span></td>';
+						th2.append(td);
 					}
 			   });
-				th1+='</tr>';
-				th2+='</tr>';
 				that.$tbody1.append(th1);
 				that.$tbody2.append(th2);
 		   })
         },
+		_beforeSend:function(req){
+              this.$element.block({
+                        message: null,
+                        css: {
+                            backgroundColor: '#ddd',
+                            color: '#ddd'
+                        }
+                    });
+		},
 		loadData:function(){
 			var that = this;
 		   $.ajax({
@@ -168,18 +190,21 @@
                     },
                     success: function (data) {
                         if (data.code === 200) {
-                            //that.$element.unblock();
+                            that.$element.unblock();
 							that.data = data.data.data;
 							that.renderData();
                         } else if (data.code === 401) {
-                            //that._alert(data.message + ";请重新登录！", undefined, undefined, App.redirectLogin);
+                            that._alert(data.message + ";请重新登录！", undefined, undefined, App.redirectLogin);
+                            that.$element.unblock();
                         } else if (data.code === 403) {
+                            that.$element.unblock();
 
                         } else {
+                            that.$element.unblock();
                         }
                     },
                     error: function (jqXHR, textStatus, errorMsg) {
-                        //that.$element.unblock();
+                        that.$element.unblock();
                         console.error("请求异常！");
                     }
                 });

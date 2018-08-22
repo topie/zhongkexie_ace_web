@@ -57,7 +57,7 @@
 					width:"50%",
                     field: "count",
 					format:function(index,data){
-						return '<div class="progress pos-rel" data-percent="'+data.count+'"><div class="progress-bar" style="width:'+data.count+';"></div></div>';
+						return '<div class="progress pos-rel" data-percent="'+data.count+'%"><div class="progress-bar" style="width:'+data.count+'%;"></div></div>';
 					}
                 }
                 

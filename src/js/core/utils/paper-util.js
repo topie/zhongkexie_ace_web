@@ -169,6 +169,9 @@
 							it.label='(统计项)'+it.label;
 							it.labelClass="tongjixiang Cscore";
 						}
+					}else{
+						it.labelClass=" Cscore";
+					
 					}
                     if (item.itemType == 0) {
                         it.type = 'text';

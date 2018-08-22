@@ -607,7 +607,7 @@
                 
             ],
             search: {
-                rowEleNum: 2,
+                rowEleNum: 4,
 				hide:false,
                 //搜索栏元素
                 items: [
@@ -617,30 +617,67 @@
                         name: "paperId",
 						items:[],
 						itemsUrl:App.href+"/api/paperExpertConf/info/getPaperOptions"
+                    },{
+                        type: "text",
+                        label: "学会名称",
+                        name: "userName",
+						placeholder:"学会名称搜索"
+                    },{
+                        type: "select",
+                        label: "学会分类",
+                        name: "type",
+						items:[
+								{
+								text:'全部',
+								value:''
+								},
+								{
+									text: '理科',
+									value: '理科'
+								},
+								{
+									text: '工科',
+									value: '工科'
+								},
+								{
+									text: '农科',
+									value: '农科'
+								},
+								{
+									text: '医科',
+									value: '医科'
+								},
+								{
+									text: '交叉学科',
+									value: '交叉学科'
+								},
+								{
+									text: '其他',
+									value: '其他'
+								}]
+                    },{
+                        type: "select",
+                        label: "评价状态",
+                        name: "approveStatus",
+						items:[
+								{
+								text:'全部',
+								value:''
+								},
+								{
+									text: '已评价',
+									value: '1'
+								},
+								{
+									text: '未评价',
+									value: '0'
+								}]
                     }
                 ]
             }
         };
         grid = window.App.content.find("#grid").orangeGrid(options);
-		Date.prototype.format = function(format)
-				{
-				 var o = {
-				 "M+" : this.getMonth()+1, //month
-				 "d+" : this.getDate(),    //day
-				 "h+" : this.getHours(),   //hour
-				 "m+" : this.getMinutes(), //minute
-				 "s+" : this.getSeconds(), //second
-				 "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
-				 "S" : this.getMilliseconds() //millisecond
-				 }
-				 if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
-				 (this.getFullYear()+"").substr(4 - RegExp.$1.length));
-				 for(var k in o)if(new RegExp("("+ k +")").test(format))
-				 format = format.replace(RegExp.$1,
-				 RegExp.$1.length==1 ? o[k] :
-				 ("00"+ o[k]).substr((""+ o[k]).length));
-				 return format;
-				}
+		
 
     };
 })(jQuery, window, document);
