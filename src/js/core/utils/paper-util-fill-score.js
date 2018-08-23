@@ -68,10 +68,10 @@
 					var dept = "专家评价-"+data.userName;
 					$("#scorePaperViewtitle").html(dept);
 					that.$main.find("label.expert-score").each(function(ele){
-						$(this).html($(this).html().replace(/专家评分项/g, '<font style="background-color:#FF6600;border-radius:8px;">$&</font>'));
+						$(this).html($(this).html().replace(/专家评分项/g, '<font style="background-color: #e61c25;border-radius:8px;padding: 0px 6px;color: white;">$&</font>'));
 					});
 					that.$main.find("label.normal-score").each(function(ele){
-						$(this).html($(this).html().replace(/参考项/g, '<font style="background-color:#ccc;border-radius:8px;">$&</font>'));
+						$(this).html($(this).html().replace(/参考项/g, '<font style="background-color:#ccc;border-radius:8px;padding: 0px 6px;color: white;">$&</font>'));
 					});
 					$.ajax({
 						type: "POST",
@@ -218,6 +218,7 @@
                     var it = {};
 					it.itemActions = that._options.itemActions;
                     it.name = item.id;
+                    it.id = item.id;
 					it.hideBtn = true;
                     it.label = item.title;
                     it.score = item.score;
@@ -226,7 +227,59 @@
 					it.placeholder = item.placeholder === undefined ? ""
                         : item.placeholder;
 						if(item.scoreType==3){
-							currentItems.push(item);
+							//currentItems.push(item);
+							it.right=function(currentItem){
+								var  subs = $('<div class="form-group">'
+									+'请对专家评分项进行评分：'
+									+'</div><div class="form-group">'
+									+'<input drole="main" type="text" showicon="false" name="itemId_'+currentItem.id+'" class="form-control " placeholder=" [数字]  ">'
+									+'</div><div class="form-group">'
+									+'<button type="button" class="btn btn-info btn-sm" data-item="'+currentItem.id+'">评分</button>'
+									+'</div>');
+								subs.find('button[data-item="'+currentItem.id+'"]').data("info",currentItem);
+								subs.on("click",'button[data-item="'+currentItem.id+'"]',function(){
+									var currentItem = $(this).data("info");
+									var value = $('input[name="itemId_'+currentItem.id+'"]').val();
+									if(isNaN(value)||value==null||value==''){
+										bootbox.alert("请输入数字");
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
+										return false;
+									}
+									if(parseFloat(value)>currentItem.score){
+										bootbox.alert("输入不能超过满分！满分为"+currentItem.score+"分!");
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
+										return false;
+									}
+									if(parseInt(value)<0){
+										bootbox.alert("输入分数不能为负分！");
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
+										return false;
+									}
+									$.ajax({
+											type: "POST",
+											dataType: "json",
+											data: {
+												paperId: that._options.paperId,
+												userId:that._options.userId,
+												itemId:currentItem.id,
+												answerScore:value
+											},
+											url: App.href + "/api/core/scorePaper/updateAnswerScore",
+											success: function (data) {
+												if (data.code === 200) {
+													bootbox.alert("评分成功！");
+												} else {
+													bootbox.alert(data.message);
+												}
+											},
+											error: function (e) {
+												alert("请求异常。");
+											}
+										});
+
+								});
+								return subs;
+							}
 						}
 						if(that._options.showSocre){
 						it.label = item.title+"（"+item.score+"分）";
@@ -363,7 +416,6 @@
 						it.label='(参考项)   '+it.label;
 						it.labelClass = 'normal-score';
 					}
-					
                     its.push(it);
                 });
 				var subss = [];
@@ -439,7 +491,13 @@
                     action: "",
                     ajaxSubmit: true,
                     rowEleNum: 1,
-                    formBodyTmpl: getFormBodyTmpl,
+					formWrapperTmpl:'<div class="col-md-${span_}">'
+										+'<div class="col-md-9" style="border-right: dashed 2px #ca9d9d;">'
+											+'<div class="form-group"></div>'
+										+'</div>'
+										+'<div class="col-md-3 right-ele"></div>'
+									+'</div>',
+                    //formBodyTmpl: getFormBodyTmpl,
 					ajaxSuccess: function () {
                     },
                     showReset: false,

@@ -325,11 +325,16 @@
                                 formBody.append(row);
                             }
                             count += itemSpan;
-                            var wrapper = $.tmpl(Form.statics.eleTmpl,
+							// row 添加rigth
+							var formWrapperTmpl =that._options.formWrapperTmpl==undefined ? Form.statics.eleTmpl : that._options.formWrapperTmpl;
+							var wrapper = $.tmpl(formWrapperTmpl,  {
+                                    "span_": rowEleSpan * itemSpan
+                                });
+                            /*var wrapper = $.tmpl(Form.statics.eleTmpl,
                                 {
                                     "span_": rowEleSpan * itemSpan
                                 }
-                            );
+                            );*/
 
                             // 构建元素
                             that._buildModuleWrapper(wrapper, item);
@@ -498,6 +503,11 @@
                     });
                 }
             }
+			// row 添加rigth
+			if(item.right!==undefined && (typeof item.right =="function")){
+				var rightEleId = item.rightEleId == undefined?'div.right-ele':item.rightEleId;
+				wrapper.find(rightEleId).append(item.right(item));
+			}
             // 记录元素数据
             wrapper.data("data", item);
             this._module[item.name] = wrapper;
@@ -748,10 +758,22 @@
                     "readonly_": (data.readonly ? "readonly" : ""),
                     "disabled_": (data.disabled ? "disabled" : ""),
                     "attribute_": (data.attribute === undefined ? ""
-                        : data.attribute)
+                        : data.attribute)+(data.ajaxUrl==undefined?"": ' autocomplete="off"')
                 });
                 if (data.value != undefined)
                     ele.val(data.value);
+				if(data.ajaxUrl!=undefined){
+					var param = data.param==undefined?"query":data.param;
+					ele.typeahead({
+							source: function (query, process) {
+								alert(1);
+								var parameter = {param: query};
+								return $.post(data.ajaxUrl, parameter, function (data) {
+									return process(data);
+								});
+							}
+						});
+				}
                 return ele;
             },
 			'number': function (data, form) {
