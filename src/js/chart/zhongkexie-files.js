@@ -95,7 +95,7 @@
 							}
 							if(data[item.id]==undefined||data[item.id]=='')
 								return '无';
-							var href= App.href+'/api/common/downloadzip?id='+data[item.id]+'&itemId='+item.id;
+							//var href= App.href+'/api/common/downloadzip?id='+data[item.id]+'&itemId='+item.id;
 							return '<a href="javascript:void();">查看</a>';
 						},
 						dataClick:function(index,data){
@@ -107,6 +107,7 @@
 							//var href= App.href+'/api/common/downloadzip?id='+data[item.id]+'&itemId='+item.id;
 							var value = data[item.id];
 							var itemId = item.id;
+							var userId = data.userId;
 							var modalDwon = $.orangeModal({
 												id: "scorm",
 												title: "材料下载",
@@ -119,7 +120,7 @@
 														text: '打包下载',
 														cls: "btn btn-primary",
 														handle: function (m) {
-															App.download(App.href+"/api/common/downloadzip?id="+value+"&itemId="+itemId,modalDwon.$body);
+															App.download(App.href+"/api/common/downloadzip?id="+value+"&itemId="+itemId+"&userId="+userId,modalDwon.$body);
 															
 														}
 													},{
@@ -186,7 +187,8 @@
 												}
 												tr.append(file);
 												tr.find("button.btn.btn-info.cancel").bind("click", function () {
-														App.download(App.href+"/api/common/download?id="+ids[i]+"&itemId="+name.replace("itemFile",""),modalDwon.$body);
+														App.download(App.href+"/api/common/download?id="
+															+ids[i]+"&itemId="+itemId+"&userId="+userId,modalDwon.$body);
 												});
 											}
 										}

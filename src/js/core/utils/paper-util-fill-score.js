@@ -227,15 +227,20 @@
 					it.placeholder = item.placeholder === undefined ? ""
                         : item.placeholder;
 						if(item.scoreType==3){
+							it.optionLogicDesc = item.optionLogicDesc;
 							//currentItems.push(item);
 							it.right=function(currentItem){
+								//currentItem.optionLogicDesc='1.信息化建设成效显著，日常办公、会员管理、学术交流、决策咨询、科普宣传等主要业务都实现了信息化，“一站两微一端”平台完善，信息更新及时、关注度高，基本实现了“数字学会”“互联网+学会”；得分80%-100%;</br>2.信息化建设取得一定成效，主要业务3项以上实现了信息化，建立了“一站两微一端”宣传平台，但在使用率、关注度方面有待提高。得分50%-80%；</br>3.信息化建设落后，较少使用信息化手段开展工作，进行宣传。主要业务2项及以下实现了信息化，“一站两微一端”平台不完善，使用率低。得分0%-50%。</br>联系方式：学会部改革处 68581366 王立波';
 								var  subs = $('<div class="form-group">'
 									+'请对专家评分项进行评分：'
 									+'</div><div class="form-group">'
 									+'<input drole="main" type="text" showicon="false" name="itemId_'+currentItem.id+'" class="form-control " placeholder=" [数字]  ">'
 									+'</div><div class="form-group">'
-									+'<button type="button" class="btn btn-info btn-sm" data-item="'+currentItem.id+'">评分</button>'
-									+'</div>');
+									+'<button type="button" class="btn btn-info btn-sm" data-item="'+currentItem.id
+									+'">评分</button><i class="ace-icon fa fa-info-circle" data-trigger="hover" data-placement="bottom" style="color:#6fb3e0;font-size: 18px;" title="评分标准" data-content="'+currentItem.optionLogicDesc+'">评分标准</i>'
+									+'</div>');//<div class="form-group">'+currentItem.optionLogicDesc
+									//+'</div>');
+								subs.find('i').popover({html:true});
 								subs.find('button[data-item="'+currentItem.id+'"]').data("info",currentItem);
 								subs.on("click",'button[data-item="'+currentItem.id+'"]',function(){
 									var currentItem = $(this).data("info");

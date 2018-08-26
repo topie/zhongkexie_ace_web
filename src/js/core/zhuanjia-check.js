@@ -163,7 +163,8 @@
 						var modal = $.orangeModal({
                             id: "scorePaperView",
                             title: "专家评价-"+coll.userName,
-                            destroy: true,
+							width:"100%",
+							destroy: true,
 							buttons: [
 								{
 									type: 'button',
