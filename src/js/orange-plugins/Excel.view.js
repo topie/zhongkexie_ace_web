@@ -166,7 +166,17 @@
 			   });
 				that.$tbody1.append(th1);
 				that.$tbody2.append(th2);
+				
 		   })
+			   that.$tbody2.find("tr").bind("click",function(){
+					 that.$tbody2.find("tr.selected").removeClass("selected");
+					 $(this).addClass("selected");
+					 var index = that.$tbody2.find("tr").index(this);
+					 that.$tbody1.find("tr.selected").removeClass("selected");
+					 that.$tbody1.find('tr:eq('+index+')').addClass("selected");
+
+				})
+					setTimeout(function(){that.$tbody1.append('<tr><td class="cell read-only"><span class="value-viewer"></span></td><td class="cell"><span class="value-viewer"></span></td></tr>')},2000);
         },
 		_beforeSend:function(req){
               this.$element.block({

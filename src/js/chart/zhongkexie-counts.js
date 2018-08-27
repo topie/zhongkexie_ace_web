@@ -292,6 +292,87 @@
                             buttons: [{
                                 type: 'button',
 								cls: "btn btn-primary",
+                                text: '选择线性打分项',
+                                handle: function () {
+									$.ajax({
+										type:"GET",
+										url:App.href+"/api/core/scoreItem/list",
+										data:{scoreType:"2",pageSize:999},
+										success:function(res){
+											if(res.code==200){
+												var id = [];
+												$.each(res.data.data,function(i,c){
+													id.push(c.id);
+												})
+												input.val(id);
+												modal.hide();
+											
+											}else{
+												bootbox.alert("请求错误");
+											}
+										},
+										error:function(){
+											bootbox.alert("请求错误");
+										}
+									})
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '选择专家打分项',
+                                handle: function () {
+									$.ajax({
+										type:"GET",
+										url:App.href+"/api/core/scoreItem/list",
+										data:{scoreType:"3",pageSize:999},
+										success:function(res){
+											if(res.code==200){
+												var id = [];
+												$.each(res.data.data,function(i,c){
+													id.push(c.id);
+												})
+												input.val(id);
+												modal.hide();
+											
+											}else{
+												bootbox.alert("请求错误");
+											}
+										},
+										error:function(){
+											bootbox.alert("请求错误");
+										}
+									})
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '选择其他打分项（重大任务/满意度）',
+                                handle: function () {
+									$.ajax({
+										type:"GET",
+										url:App.href+"/api/core/scoreItem/list",
+										data:{scoreType:"4",pageSize:999},
+										success:function(res){
+											if(res.code==200){
+												var id = [];
+												$.each(res.data.data,function(i,c){
+													id.push(c.id);
+												})
+												input.val(id);
+												modal.hide();
+											
+											}else{
+												bootbox.alert("请求错误");
+											}
+										},
+										error:function(){
+											bootbox.alert("请求错误");
+										}
+									})
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
                                 text: '确认',
                                 handle: function () {
 									var id = modal.$body.find("#itemIds").val();
