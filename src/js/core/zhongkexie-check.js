@@ -447,7 +447,8 @@
 												var ss = '';
 											if(res.code==200){
 												titles = res.data.data;
-												 var treeObj = $.fn.zTree.getZTreeObj("tree_orgIds");
+												var treeId = "tree_orgIds";
+												 var treeObj = $.fn.zTree.getZTreeObj(treeId);
 												 $.each(titles,function(){
 													var name = this["userName"].trim();
 													var nodes = treeObj.getNodesByParam("name", name, null);
@@ -456,6 +457,20 @@
 													else 
 														ss+=" "+name;
 												 })
+												  var zTree = $.fn.zTree.getZTreeObj(treeId);
+												var nodes = zTree.getCheckedNodes(true);
+												var ids = [];
+												if (nodes.length > 0) {
+													for (var i in nodes) {
+														ids.push(nodes[i].id);
+													}
+													$("[role='" + treeId + "_input']").val(ids)
+														.attr("value", ids);
+												} else {
+													$("[role='" + treeId + "_input']").val("")
+														.attr("value", "");
+												}
+												$("[role='" + treeId + "_input']").trigger("change");
 												if(ss!=''){
 												 form._alert(ss+"  未选中，请手动选中","danger",500);
 												 }

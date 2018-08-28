@@ -166,7 +166,7 @@
                     }
 					,{
                         type: "inputGroupBtn",
-                        label: "指标项选择",
+                        label: "指标分类选择",
                         name: "indexIds",
 						placeholder:"请选择",
 						clickCall:function(input){
@@ -238,6 +238,7 @@
 									url: App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
 									//expandAll: true,
 									autoParam: ["id", "name", "pId"],
+									//hideSearch:false,
 									chkStyle: "checkbox",
 									chkboxType:{"Y": "ps", "N": "s"},
 									expandAll:false,
@@ -257,7 +258,7 @@
 						}
                     },{
                         type: "inputGroupBtn",
-                        label: "题目项选择",
+                        label: "指标项选择",
                         name: "itemIds",
 						placeholder:"请选择",
 						clickCall:function(input){
@@ -292,12 +293,12 @@
                             buttons: [{
                                 type: 'button',
 								cls: "btn btn-primary",
-                                text: '选择线性打分项',
+                                text: '线性打分项',
                                 handle: function () {
 									$.ajax({
 										type:"GET",
 										url:App.href+"/api/core/scoreItem/list",
-										data:{scoreType:"2",pageSize:999},
+										data:{scoreType:"2",pageSize:999999},
 										success:function(res){
 											if(res.code==200){
 												var id = [];
@@ -319,12 +320,12 @@
                             },{
                                 type: 'button',
 								cls: "btn btn-primary",
-                                text: '选择专家打分项',
+                                text: '专家打分项',
                                 handle: function () {
 									$.ajax({
 										type:"GET",
 										url:App.href+"/api/core/scoreItem/list",
-										data:{scoreType:"3",pageSize:999},
+										data:{scoreType:"3",pageSize:999999},
 										success:function(res){
 											if(res.code==200){
 												var id = [];
@@ -346,12 +347,12 @@
                             },{
                                 type: 'button',
 								cls: "btn btn-primary",
-                                text: '选择其他打分项（重大任务/满意度）',
+                                text: '重大任务/满意度',
                                 handle: function () {
 									$.ajax({
 										type:"GET",
 										url:App.href+"/api/core/scoreItem/list",
-										data:{scoreType:"4",pageSize:999},
+										data:{scoreType:"4",pageSize:999999},
 										success:function(res){
 											if(res.code==200){
 												var id = [];
@@ -370,6 +371,35 @@
 										}
 									})
                                 }
+                            },{
+                                type: 'buttonGroup',
+								cls: "btn btn-primary",
+                                text: '选择部门',
+								actions:[],
+								actionsUrl:App.href +"/api/core/dict/getItems?code=ZZBM",
+								handle: function (dept) {
+									$.ajax({
+										type:"GET",
+										url:App.href+"/api/core/scoreItem/list",
+										data:{responsibleDepartment:dept.value,pageSize:999999},
+										success:function(res){
+											if(res.code==200){
+												var id = [];
+												$.each(res.data.data,function(i,c){
+													id.push(c.id);
+												})
+												input.val(id);
+												modal.hide();
+											
+											}else{
+												bootbox.alert("请求错误");
+											}
+										},
+										error:function(){
+											bootbox.alert("请求错误");
+										}
+									})
+								}
                             },{
                                 type: 'button',
 								cls: "btn btn-primary",
@@ -426,6 +456,7 @@
 									},//App.href + "/api/core/scoreIndex/treeNodes?sort_=sort_asc&paperId="+currentPaper,
 									autoParam: ["id", "name", "pId"],
 									chkStyle: "checkbox",
+									//hideSearch:false,
 									chkboxType:{"Y": "ps", "N": "s"},
 									rule: {
                                         required: true

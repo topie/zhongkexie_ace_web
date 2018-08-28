@@ -2212,6 +2212,13 @@
                 ul.append(lastLi);
             };
             var renderSimplePageEle = function (ul, pageNum, totalP) {
+                var firstLi = $.tmpl(liTmpl, {
+                    "class_": pageNum == 1 ? "prev disabled" : "prev",
+                    "id_": "",
+                    "pageto_":  1,
+                    "num_": '首页'
+                });
+                ul.append(firstLi);
                 var pervLi = $.tmpl(liTmpl, {
                     "class_": pageNum == 1 ? "prev disabled" : "prev",
                     "id_": "",
@@ -2226,6 +2233,13 @@
                     "num_": '下一页'
                 });
                 ul.append(nextLi);
+				var lastLi = $.tmpl(liTmpl, {
+                    "class_": pageNum == totalP ? "next disabled" : "next",
+                    "id_": "",
+                    "pageto_": totalP,
+                    "num_": '尾页'
+                });
+                ul.append(lastLi);
             };
             var page = $('<div class="dataTables_paginate" id="'
                 + this._elementId + '_paginate"></div>');

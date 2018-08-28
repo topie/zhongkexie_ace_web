@@ -539,22 +539,92 @@
             }
             if (this._buttons !== undefined && this._buttons.length > 0) {
                 $.each(this._buttons, function (i, button) {
-                    var btn = $.tmpl(Form.statics.buttonTmpl, {
-                        "type_": button.type === undefined ? "button"
-                            : button.type,
-                        "attribute_": button.attribute === undefined ? ""
-                            : button.attribute,
-                        "cls_": button.cls === undefined ? "btn-default "
-                            : button.cls,
-                        "text_": button.text
-                    });
-                    if (button.handle !== undefined) {
-                        btn.on("click", function () {
-                            button.handle();
-                        });
-                    }
-                    formAction.append(btn);
-                    btn.after("&nbsp;");
+					if(button.type=="buttonGroup"){
+						var buttonGroupTmpl = '<div class="btn-group">'
+									+'<button data-toggle="dropdown" class="btn ${cls_} dropdown-toggle" aria-expanded="true" ${attribute_}>'
+									+'${text_}'
+									+'<span class="ace-icon fa fa-caret-down icon-on-right"></span>'
+									+'</button>'
+									+'<ul class="dropdown-menu dropdown-info dropdown-menu-right"></ul>'
+									+'</div>';
+						var btn = $.tmpl(buttonGroupTmpl, {
+							"type_": button.type === undefined ? "button"
+								: button.type,
+							"attribute_": button.attribute === undefined ? ""
+								: button.attribute,
+							"cls_": button.cls === undefined ? "btn-default "
+								: button.cls,
+							"text_": button.text
+						});
+						var ul = btn.find("ul");
+						var liTmpl = '<li><a href="javascript:;">${text_}</a></li>';
+						$.each(button.actions,function(index,act){
+							var li = $.tmpl(liTmpl, {
+										"text_": act.text
+									});
+							if (act.handle !== undefined) {
+								li.on("click", function () {
+									button.handle(act);
+								});
+							}
+							ul.append(li);
+						
+						})
+						 if (button.actionsUrl !== undefined) {
+							var methodType="GET";
+							if(button.methodType){
+								methodType = button.methodType;
+							}
+							var param = ["value",'text'];
+							if(button.autoParam!== undefined){
+								param = button.autoParam;
+							}
+							$.ajax({
+								type: methodType,
+								dataType: "json",
+								async: button.async ? true : false,
+								url: button.actionsUrl,
+								success: function (options) {
+									for(var i=2;i<param.length;i++){
+										options = options[param[i]];
+									}
+									if(button.formatData!== undefined){
+										options = button.formatData(options);
+									}
+									$.each(options, function (i, act) {
+										var li = $.tmpl(liTmpl, {
+													"text_": act.text
+												});
+										if (button.handle !== undefined) {
+											li.on("click", function () {
+												button.handle(act);
+											});
+										}
+										ul.append(li);
+									});
+								}
+							});
+						}
+						formAction.append(btn);
+						btn.after("&nbsp;");
+					}else{
+						var btn = $.tmpl(Form.statics.buttonTmpl, {
+							"type_": button.type === undefined ? "button"
+								: button.type,
+							"attribute_": button.attribute === undefined ? ""
+								: button.attribute,
+							"cls_": button.cls === undefined ? "btn-default "
+								: button.cls,
+							"text_": button.text
+						});
+						if (button.handle !== undefined) {
+							btn.on("click", function () {
+								button.handle();
+							});
+						}
+						formAction.append(btn);
+						btn.after("&nbsp;");
+					}
                 });
             }
         },
