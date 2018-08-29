@@ -76,12 +76,16 @@
     var getBarOrLineChartOption = function (xData, yData) {
         var mode = xData['selectedMode'] || 'multiple';
         return {
-            legend: {
+            /*legend: {
                 x: 'center',
                 y: 'bottom',
                 selectedMode: mode,
                 data: xData['legend']
-            },
+            },*/
+			grid: {
+				left: '10%',
+				bottom:'25%'
+			},
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -97,7 +101,18 @@
             },
             xAxis: {
                 type: 'category',
-                data: xData['data']
+                data: xData['data'],
+				axisLabel: {
+					interval: 0,
+					rotate: 30,
+					formatter:function(value,index){
+						if(xData['data'].length>30){
+							var sp=parseInt((xData['data'].length-1)/30)+1;
+							if(index%sp==0)return value;
+							return '';
+						}return value;
+					}
+				}
             },
             yAxis: xData['axis'],
             series: yData
@@ -1457,6 +1472,10 @@
                         default:
                             xData['data'] = [];
                             xData['axis'] = [];
+							xData['axisLabel']= {
+											interval: 0,
+											rotate: 30
+										};
                             xData['legend'] = [];
                             fullData['x'] !== undefined && $.each(fullData['x'], function (f, d) {
                                 xData['data'].push(d);

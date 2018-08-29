@@ -30,7 +30,7 @@
             contentTypeItems: "table,card,chart-bar",
 			showContentType:true,
             pageNum: 1,//当前页码
-            pageSize: 15,//每页显示条数
+            pageSize: 30,//每页显示条数
             idField: "id",//id域指定
             headField: "title",
             showCheck: true,//是否显示checkbox
@@ -38,7 +38,7 @@
 			displaySearch:false,
             showIndexNum: true,
             indexNumWidth: "5%",
-            pageSelect: [2, 15, 30, 50,100,200,300],
+            pageSelect: [10, 15, 30, 50,100,150,200,300],
             columns: [
                 {
                     title: "评估项目",

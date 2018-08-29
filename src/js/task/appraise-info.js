@@ -97,8 +97,21 @@
 				return;
 			}
 			var value = {};
+			var itemStatus =2;
+			var appraiseId =0;
 			$.each(values,function(i,val){
 				value[val.itemId+""]=val.itemValue;
+				itemStatus = val.itemStatus;
+				if(itemStatus==1){
+					$(".appform").append('<font style="color:red;">（审核中）</font>');
+				}
+				if(itemStatus==2){
+					$(".appform").append('<font style="color:green;">（审核已通过！）</font>');
+				}
+				if(itemStatus==3){
+					$(".appform").append('<font style="color:red;">（退回）</font>')
+				}
+				appraiseId = val.id;
 			})
 			var formItems = [];
 			 $.each(items, function (ii, item) {
@@ -126,10 +139,14 @@
 				}else if (item.type == 7) {
 					it.type = 'list';
 					it.row = item.row;
-					it.hideBtn = item.hideBtn;
+					if(itemStatus==1||itemStatus==2){
+						it.hideBtn = true;
+					}else{
+						it.hideBtn = item.hideBtn;
+					}
 					try{
 						var customItems = JSON.parse(item.items);
-						it.span = 8;
+						it.span = 11;
 						$.each(customItems,function(index,cont){
 							if(index==0){
 								it.formInline = cont.formInline;
@@ -141,6 +158,10 @@
 								}
 							}
 							customItems[index]["name"]=item.id;
+							customItems[index]["labelSpan"]=3;
+							if(itemStatus==1||itemStatus==2){
+								customItems[index]["readonly"]=true;
+							}
 						});
 						if(customItems.length==3){
 							it.span = 9;
@@ -220,6 +241,39 @@
 				
 				formItems.push(it);
 			});
+			var btns=[];
+			if(itemStatus==undefined||itemStatus==null||itemStatus==0||itemStatus==3){
+				var jsondata={id:appraiseId,itemStatus:1};
+				btns.push({text:'上报',cls:'btn-info',handle:function(){
+					bootbox.confirm("确认上报？",function(res){
+						if(res){
+						
+							$.ajax({
+								url:App.href+"/api/score/appraise/update",
+								type:'POST',
+								data:jsondata,
+								success:function(res){
+									if(res.code==200){
+										bootbox.alert("操作成功！");
+										reRendPaper();
+									}else{
+										bootbox.alert(res.msg);
+									}
+								},
+								error:function(){
+									alert("请求错误");
+								}
+							})
+						}
+					});
+				}});
+			}
+			var showSub = true;
+			var showRes = true;
+			if(itemStatus==1||itemStatus==2){
+				showSub= false;
+				showRes= false;
+			}
 			var formOpts = {
                             id: "edit_form",
                             name: "edit_form",
@@ -238,6 +292,7 @@
 							beforeSubmitFormatData:function(data){
 								var answers = [];
 								var tmpAs = {};
+								data = data.replace(/\+/g,'');
 								var ps = data.split("&");
 								$.each(ps, function (ii, ppss) {
 									var pss = ppss.split('=');
@@ -264,12 +319,13 @@
 								return JSON.stringify(das);
 							},
                             submitText: "保存",
-							//showSubmit:false,
-                            showReset: true,
+							showSubmit:showSub,
+                            showReset: showRes,
                             resetText: "重置",
                             isValidate: false,
 							labelInline:false,
                             buttonsAlign: "center",
+							buttons:btns,
                             items: formItems
                         };
 

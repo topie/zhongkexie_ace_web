@@ -26,7 +26,7 @@
         var tree;
         var options = {
             url: App.href + "/api/core/dept/list?pid=1",
-            contentType: "card",
+            contentType: "table",
             contentTypeItems: "table,card,list",
             pageNum: 1,//当前页码
             pageSize: 16,//每页显示条数
@@ -41,10 +41,15 @@
             pageSelect: [8, 16, 30, 60],
             columns: [
                  {
-                    title: "学会：",
-                    field: "name",
-					dataClick:
-                /*}
+                    title: "编码",
+                    field: "code"
+                },{
+                    title: "学会名称",
+                    field: "name"
+                },{
+                    title: "学会分类",
+                    field: "type"
+                }
                 
                 
             ],
@@ -54,7 +59,7 @@
 				{
                     text: "查看",
                     cls: "btn-primary btn-sm",
-                    handle:*/ function (index, data) {
+                    handle: function (index, data) {
                         var paper = {};
                         var modal = $.orangeModal({
                             id: "scorePaperView",

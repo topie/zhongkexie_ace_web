@@ -30,7 +30,7 @@
             contentTypeItems: "table,chart-bar,card",
 			showContentType:true,
             pageNum: 1,//当前页码
-            pageSize: 16,//每页显示条数
+            pageSize: 30,//每页显示条数
             idField: "id",//id域指定
             headField: "title",
             showCheck: true,//是否显示checkbox
@@ -39,7 +39,7 @@
 			cardEleNum:4,
             showIndexNum: true,
             indexNumWidth: "5%",
-            pageSelect: [8, 16, 30, 60,200],
+            pageSelect: [10, 15, 30, 50,100,150,200,300],
             columns: [
                  {
                     title: "学会编码",

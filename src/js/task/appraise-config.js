@@ -26,7 +26,7 @@
     };
     var initEvents = function () {
 		var grid;
-        var tree;
+        var tree,mapData;
         var options = {
             url: App.href + "/api/score/appraise/list",
             contentType: "table",
@@ -43,7 +43,24 @@
             columns: [
                 {
                     title: "部门用户",
-                    field: "userId"
+                    field: "userId",
+					format:function(index,data){
+						if(mapData){
+							return mapData[data.userId];
+						}else{
+							$.ajax({url:App.href + "/api/sys/user/pageList?userType=2",
+									async:false,
+									type:'GET',success:function(res){
+									mapData={};
+									$.each(res.data.data,function(i,c){
+										mapData[c.id]=c.displayName;
+									});
+								}
+							})
+							return mapData[data.userId];
+							
+						}
+					}
                 },  {
                     title: "指标",
                     field: "itemId",

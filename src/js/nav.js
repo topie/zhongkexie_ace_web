@@ -407,7 +407,7 @@ App.menu.userOptionNoLinkMan = {
                 type: 'display',//类型
                 name: 'displayName',//name
                 id: 'displayName',//id
-                label: '学会名称',//左边label
+                label: '名称',//左边label
                 cls: 'input-large'
             }, {
                 type: 'password',//类型
@@ -505,7 +505,7 @@ App.menu.userOptionNoLinkMan = {
                 type: 'display',//类型
                 name: 'displayName',//name
                 id: 'displayName',//id
-                label: '学会名称',//左边label
+                label: '名称',//左边label
                 cls: 'input-large'
             }, {
                 type: 'text',//类型
