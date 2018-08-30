@@ -465,6 +465,7 @@
                                     id: 'displayName',
                                     span: 2,
                                     label: '昵称',
+									ajaxUrl:App.href +"/api/core/dict/getItems?code=YHLX",
                                     cls: 'input-large',
                                     rule: {
                                         required: true

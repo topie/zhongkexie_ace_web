@@ -200,9 +200,8 @@
 							$.ajax({
 								url:App.href + "/api/core/scorePaper/zjcheckListName",
 								dataType: "json",
-								data: {
-									paperId: coll.id
-								},
+								data: grid.$searchForm == undefined ? {} : grid.$searchForm
+                        .serialize(),
 								async:false,
 								success:function(res){
 									if(res.code==200){
@@ -241,6 +240,7 @@
 											paper.$tab.currentLi().find("a").prepend('<i class="ace-icon fa fa-check"></i>');
 										}
                                        btn.prepend(che);
+										grid.reload();
 									   setTimeout(function(){che.remove();},3000);
 									}else{
 										bootbox.alert("请求错误");

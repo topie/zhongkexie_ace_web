@@ -147,7 +147,7 @@
 										if (res.code === 200) {
 											var html='<div><table>';
 											$.each(res.data,function(i,c){
-												html+="<tr><td style='padding-right: 20px;'>"+c.display_name+"</td><td>"+c.item_score+'</td></tr>';
+												html+="<tr><td style='padding-right: 20px;'>"+c.display_name+"</td><td>"+c.item_score+'%</td></tr>';
 												
 											});	
 											html+="</table></div>";
