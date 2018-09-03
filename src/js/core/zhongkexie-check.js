@@ -285,7 +285,7 @@
 									});*/
 									//paper.loadReals(data.data,"虚假");
 									
-									paper.loadScores(data.data);
+									//paper.loadScores(data.data);
                                 } else {
                                     alert(data.message);
                                 }

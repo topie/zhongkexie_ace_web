@@ -105,6 +105,9 @@
 		itemActions:[],
 		showSocre:false,
 		showIndex:false,
+		showNumIndex:false,
+		numIndexExCludeIds:[],
+		numIndex:1,
 		showUploadFile:true,
 		showType:false
     };
@@ -303,6 +306,19 @@
                     if (item.value != undefined && item.value != '') {
                         it.value = item.value;
                     }
+					if(that._options.showNumIndex){
+						it.label = it.label.replace(/^\d+\./,'');
+						var notIn = true;
+						for(var i=0;i<that._options.numIndexExCludeIds.length;i++){
+							if(it.name==that._options.numIndexExCludeIds[i]){
+								notIn=false;
+								break;
+							}
+						}
+						if(item.showLevel==7 && notIn){
+							it.label = (that._options.numIndex++)+'.  '+it.label;	
+						}
+					}
                     its.push(it);
                 });
                 var qi = that.getQi();

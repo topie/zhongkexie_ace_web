@@ -65,8 +65,24 @@
                             id: "scorePaperView",
                             title: "查看-"+data.name,
                             destroy: true,
-							buttons: [
-                               {
+						buttons: [
+                                {
+                                    type: 'button',
+                                    text: '导出模板',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExport("模板导出");
+										
+                                    }
+                                }, {
+                                    type: 'button',
+                                    text: '导出数据',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExportValue(data.name+"_数据导出");
+                                        
+                                    }
+                                },{
                                     type: 'button',
                                     text: '关闭',
                                     cls: "btn",
@@ -97,6 +113,8 @@
 							}
 						});
 						var js = JSON.parse(contentString);
+						js.showNumIndex=true;
+						js.numIndexExCludeIds=[118,172,205,198,200];
                         paper = modal.$body.orangePaperView(js);
                         $.ajax({
                             type: "POST",
