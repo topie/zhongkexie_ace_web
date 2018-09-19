@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Created by chenguojun on 2017/2/10.
  */
 (function ($, window, document, undefined) {
@@ -314,7 +314,7 @@
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true,
-                                        minlength: 8,
+                                        minlength: 6,
                                         maxlength: 64
                                     },
                                     message: {

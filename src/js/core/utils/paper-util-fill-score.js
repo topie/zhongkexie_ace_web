@@ -22,7 +22,8 @@
 		paperId:1,
 		userId:1,
 		userIndex:0,
-		showSocre:false
+		showSocre:false,
+		showNumIndex:true
     };
     PaperFillScore.prototype = {
         load: function () {
@@ -186,7 +187,14 @@
             var that = this;
             var mainPanel = $('<div></div>');
             if (this._options.data !== undefined && this._options.data.length > 0) {
-                $.each(this._options.data, function (i, idx) {
+				var items = [];
+				$.each(this._options.data, function (i, idx) {
+					items = items.concat(idx.items);
+				});
+				var r = that.getRow("指标");
+				mainPanel.append(r);
+				that.renderSubRow(that, r, items);
+                /*$.each(this._options.data, function (i, idx) {
 					var hasItem = false;
 					 $.each(idx.items, function (i, item) {
 						if(item.showLevel>=App.currentUser.userType){
@@ -198,7 +206,7 @@
 						mainPanel.append(r);
 						that.renderSubRow(that, r, idx.items);
 					 }
-                });
+                });*/
             }
 			return mainPanel;
             /*this.$main.find("label.control-label").each(function (i, d) {
@@ -210,8 +218,15 @@
                 var its = [];
 				var currentItems = [];
 				items.sort(function(a,b){//排序专家评价放前面
-					if(a.scoreType=='3')return 0;
-					if(b.scoreType=='3')return 1;
+					if(a.scoreType=='3'){
+						if(b.scoreType=='3')return 0;
+						return -1;
+					}
+					if(b.scoreType=='3'){
+						if(a.scoreType=='3')return 0;
+						return 1;
+					}
+					//if(b.scoreType=='3')return 1;
 					return 0;
 				});
                 $.each(items, function (i, item) {
@@ -301,7 +316,7 @@
 									var currentItem = $(this).data("info");
 									var value = $('input[name="itemId_'+currentItem.id+'"]').val();
 									if(isNaN(value)||value==null||value==''){
-										bootbox.alert("请输入数字");
+										bootbox.alert("请输入0~100之间的数字");
 										$('input[name="itemId_'+currentItem.id+'"]').val('0');
 										return false;
 									}
@@ -468,7 +483,9 @@
                     if (item.value != undefined && item.value != '') {
                         it.value = item.value;
                     }
-
+					if(that._options.showNumIndex){
+						it.label = it.label.replace(/^\d+\./,'');
+					}
 					if(item.scoreType==3){
 						it.label='(专家评分项)   '+it.label;
 						it.labelClass = 'expert-score';

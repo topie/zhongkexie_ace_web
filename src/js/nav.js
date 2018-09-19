@@ -12,7 +12,7 @@
     };
 	var vkey = "zhongkexie_" + new Date().getTime() + "_" + Math.floor(Math.random() * 10);
 	var userUUID = GetQueryString("zhnlpgxt_YYBDXX");
-	
+	document.getElementsByTagName('body')[0].style.zoom=0.85;
 	function GetQueryString(name) {
 	   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
 	   var r = window.location.search.substr(1).match(reg);
@@ -67,6 +67,9 @@
 		var uoption = App.menu.userOptionNoLinkMan;
 		if(App.currentUser.loginName.endWith("001")){
 			uoption = App.menu.userOption;
+		}
+		if(App.currentUser.userType==4){
+			uoption.items[1].label="姓名";
 		}
         var form = modal.$body.orangeForm(uoption);
         form.loadRemote(App.href + "/api/index/loadCurrentUser");

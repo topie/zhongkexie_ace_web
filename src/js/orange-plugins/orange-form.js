@@ -2273,6 +2273,13 @@
 					value = value.replace(/%2F/g,"/");
 					value = value.replace(/%20/g,"/");
 					value = value.replace(/%2C/g,"，");
+					value = value.replace(/%26/g,"&");
+					value = value.replace(/%3A/g,"：");
+					value = value.replace(/%3B/g,"；");
+					value = value.replace(/%3C/g,"<");
+					value = value.replace(/%3D/g,"=");
+					value = value.replace(/%3E/g,">");
+					value = value.replace(/%3E/g,">");
 					
 				}
 			}
@@ -2433,7 +2440,7 @@
 					}
                 }
             } else if (ele.is('input[type="hidden"]')) {
-                if (value != null && value != "") {
+                if (value !== undefined &&value !== null && value !== "") {
                     if (ele.attr("data-type") == "tree-input") {
                         if ($.isArray(value)) {
                             value = value.toString();
@@ -2578,6 +2585,7 @@
 						ele.parent().find("span").append($down);
                     } else {
                         ele.val(value);
+
                     }
                 }
             } else if (ele.is('select')) {
