@@ -3,10 +3,10 @@
  */
 (function ($, window, document, undefined) {
     var mapping = {
-        "/api/task/task/taskInfo": "taskTaskInfo"
+        "/api/task/task/taskAll": "taskAll"
     };
     App.requestMapping = $.extend({}, window.App.requestMapping, mapping);
-    App.taskTaskInfo = {
+    App.taskAll = {
         page: function (title) {
             window.App.content.empty();
             window.App.title(title);
@@ -23,10 +23,11 @@
 					   // '<div class="panel panel-default" >' +
 					  //  '<div class="panel-heading"></div>' +
 							'<div id="grid"><form id="mainForm"><div class="appform"></div></form></div>' +
-							'<div class="form-actions center" style="border-top: 0px;padding: 0px 0px 0px;background: none;">'+
-								'<button type="button" class="btn btn-sm btn-info" id="subform" title="暂存" style="display: inline-block;">暂存</button>'+
-								'&nbsp;<button type="button" class="btn btn-sm btn-primary" id="commitForm" title="上报到审核员" >提交审核</button>&nbsp;'+
-							'</div>'+
+					/*		'<div class="form-actions center" style="border-top: 0px;padding: 0px 0px 0px;background: none;">'+
+								'<button type="button" class="btn btn-sm btn-warning" id="subform" title="" >退回</button>'+
+								'<button type="button" class="btn btn-sm btn-warning" id="saveForm" title="" >保存</button>'+
+								'&nbsp;<button type="button" class="btn btn-sm btn-primary" id="commitForm" title=""  >通过</button>&nbsp;'+
+							'</div>'+*/
 					   // '</div>' +
 					'</div>' +
                 '</div>' +
@@ -36,8 +37,9 @@
         }
     };
     var initEvents = function () {
+		var deptDict;
 		var $body = $(".appform");
-		var numIndex = ["一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五"];
+		var numIndex = ["一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","二十一","二十二","二十三","二十四","二十五","二十六","二十七"];
 		var levelLabel = ["主要负责","承担部分任务","提供专家或派人参与","提供相关材料"];
 		var taskIds=[];
 		var currentPaper = 1;
@@ -69,12 +71,10 @@
 			currentPaper = $(this).val();
 			reRendPaper();
 		});
-		$("#subform").bind("click",submitForm);
-		$("#commitForm").bind("click",cmmit);
 		
 		function reRendPaper(){
 			$body.html('');
-			$.ajax({url:App.href+"/api/task/task/deptTask",
+			$.ajax({url:App.href+"/api/task/task/allTask",
 				data:{paperId:currentPaper},
 				type:"GET",
 				success:function(res){
@@ -94,24 +94,23 @@
 			}
 			var top=getTopIndex(items);
 			$.each(top,function(index,item){
-				if(index==0){
+				/*if(index==0){
 					if(item.taskStatus=='0')
 						$body.html('<h3>填报中</h3>');
 					else if(item.taskStatus=='1'){
-						$body.html('<h3>正在审核中</h3>');
-						$('#subform').hide();
-						$('#commitForm').hide();
+						$body.html('<h3>未审核</h3>');
+						$('#subform').show();
+						$('#commitForm').show();
 					}
 					else if(item.taskStatus=='2'){
-						$body.html('<h3>已审核通过</h3>');
-						$('#subform').hide();
-						$('#commitForm').hide();
+						$body.html('<h3>审核已通过</h3>');
+						$('#subform').show();
 					}
 					else if(item.taskStatus=='3')
-						$body.html('<h3>审核退回，请重新填写</h3>');
+						$body.html('<h3>审核退回</h3>');
 					else
 						$body.html('<h3>填报中</h3>');
-				}
+				}*/
 				createParentTitle(index,item);
 				if(item.hasChild==true){
 					var child = getChildIndex(items,item.id);
@@ -125,7 +124,20 @@
 		}
 		
 		function createParentTitle(index,item){
-			$body.append('<h3 class="header smaller lighter red">'+numIndex[index]+'.'+item.taskName+'</h3>');
+			var status = '';
+			if(item.taskStatus=='0')
+				status = '<span class="blue">填报中</span>';
+			else if(item.taskStatus=='1'){
+				status = '<span class="green">未审核</span>';
+			}
+			else if(item.taskStatus=='2'){
+				status = '<span>审核已通过</span>';
+			}
+			else if(item.taskStatus=='3')
+				status = '<span class="yellow">审核退回</span>';
+			else
+				status = '<span class="green">填报中</span>';
+			$body.append('<h3 class="header smaller lighter red">（'+status+'）'+numIndex[index]+'.'+item.taskName+'</h3>');
 		}
 		/*function createParent(item){
 			$body.append('<h3 class="lighter block blue" style="margin-left: 40px;">'+item.taskName+'</h3>');
@@ -153,10 +165,8 @@
 				//if(item.taskCweight!=null)
 					cw=item.taskCweight.split(',')[i];
 				}catch(e){}
-				var readonly = false;
-				if(item.taskStatus=='1'||item.taskStatus=='2'){
-					readonly=true;
-				}
+				var	readonly=true;
+				
 				well1.append(getInput({name:"weight_"+item.id,value:cw,readonly:readonly}));
 				well2.append(getTextArea({name:"org_"+item.id,value:value,readonly:readonly}));
 				var row=$('<div class="row"><div>');
@@ -201,7 +211,9 @@
 				if(item.parentId==0){
 					top.push(item)
 				}
-				taskIds.push(item.id);
+				if(item.taskStatus==1){
+					taskIds.push(item.id);
+				}
 			});
 			return top;
 		
@@ -215,68 +227,9 @@
 			});
 			return child;
 		}
-		function submitForm(s){
-			var jsondata = $("#mainForm").serialize();
-			$.ajax({
-				url:App.href+"/api/task/task/deptCommit",
-				type:'POST',
-				data:jsondata,
-				success:function(res){
-					if(res.code==200){
-						bootbox.alert("操作成功！");
-						reRendPaper();
-						
-					}else{
-						bootbox.alert(res.msg);
-					}
-				},
-				error:function(){
-					alert("请求错误");
-				}
-			})
-				
-		}
-		function cmmit(){
-			bootbox.confirm("确认提交审核，提交后将不能修改？",function(res){
-				if(res){
-					var jsondata = $("#mainForm").serialize();
-					$.ajax({
-						url:App.href+"/api/task/task/deptCommit",
-						type:'POST',
-						data:jsondata,
-						success:function(res){
-							if(res.code==200){
-							
-								var jsondata2 = {taskIds:taskIds.join(","),status:1};
-								$.ajax({
-									url:App.href+"/api/task/task/updateStatus",
-									type:'POST',
-									data:jsondata2,
-									success:function(res){
-										if(res.code==200){
-											bootbox.alert("操作成功！");
-											reRendPaper();
-											
-										}else{
-											bootbox.alert(res.msg);
-										}
-									},
-									error:function(){
-										alert("请求错误");
-									}
-								})
-										
-							}else{
-								bootbox.alert(res.msg);
-							}
-						},
-						error:function(){
-							alert("请求错误");
-						}
-					})
-				}
-			});
-		}
+		
+
+	
 		
     }
 })(jQuery, window, document);

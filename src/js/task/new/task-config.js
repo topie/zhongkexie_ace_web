@@ -82,13 +82,13 @@
 						if(deptDict==undefined){
 							$.ajax({
 								async:false,
-								url:App.href + "/api/sys/user/pageList?userType=2",
+								url:App.href + "/api/sys/user/pageList?userType=2&pageSize=50",
 								success:function(res){
 									deptDict=res.data.data;
 								}
 							})
 						}
-							var s = '- -';
+							var s = data.taskDept;
 						for(var i=0;i<deptDict.length;i++){
 							if(deptDict[i].id==data.taskDept){
 								s= deptDict[i].displayName;
@@ -196,12 +196,26 @@
                                         required: "请输入"
                                     }
                                 }, {
-                                    type: 'select',
+                                    type: 'select2',
                                     name: 'taskDept',
                                     id: 'taskDept',
                                     label: '牵头部门',
                                     cls: 'input-xxlarge',
-									itemsUrl:App.href + "/api/sys/user/pageList?userType=2",
+									itemsUrl:App.href + "/api/sys/user/pageList?userType=2&pageSize=50",
+									autoParam:["id","displayName","data","data"],
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入"
+                                    }
+                                }, {
+                                    type: 'select2',
+                                    name: 'taskCheckUser',
+                                    id: 'taskCheckUser',
+                                    label: '审核人',
+                                    cls: 'input-xxlarge',
+									itemsUrl:App.href + "/api/sys/user/pageList?userType=2&pageSize=50",
 									autoParam:["id","displayName","data","data"],
                                     rule: {
                                         required: true
@@ -282,7 +296,7 @@
                                             method: "POST",
 											action: App.href + "/api/task/task/insert",
                                             ajaxSubmit: true,
-											rowEleNum:2,
+											rowEleNum:3,
                                             ajaxSuccess: function () {
                                                 document.getElementById("static_item_edit_form").reset();
                                                 itemGrid.reload();
@@ -318,6 +332,11 @@
                                                     name: 'hasChild',
                                                     id: 'hasChild',
                                                     value: 'false'
+                                                }, {
+                                                    type: 'hidden',
+                                                    name: 'taskCheckUser',
+                                                    id: 'taskCheckUser',
+                                                    value: parentData.taskCheckUser
                                                 },
 												 {
 													type: 'hidden',
@@ -333,7 +352,7 @@
 													label: '牵头部门',
 													cls: 'input-xxlarge',
                                                     value: parentData.taskDept
-												},{
+												}/*,{
 													type: 'text',
 													name: 'taskCode',
 													id: 'taskCode',
@@ -345,7 +364,7 @@
 													message: {
 														required: "请输入"
 													}
-												}, {
+												}*/, {
                                                     type: 'text',
                                                     name: 'taskName',
                                                     id: 'taskName',
@@ -396,11 +415,7 @@
                             pageSelect: [2, 15, 30, 50],
                             sort: "id_asc",
                             columns: [
-                                {
-									title: "任务编号",
-									field: "taskCode"
-									
-								},
+                                
 								{
 									title: "任务名称",
 									field: "taskName"
@@ -412,7 +427,7 @@
 										if(deptDict==undefined){
 											$.ajax({
 												async:false,
-												url:App.href + "/api/sys/user/pageList?userType=2",
+												url:App.href + "/api/sys/user/pageList?userType=2&pageSize=50",
 												success:function(res){
 													deptDict=res.data.data;
 												}
@@ -483,12 +498,26 @@
 													name: 'parentId',
 													id: 'parentId'
 												},
-												{
+												/*{
 													type: 'text',
 													name: 'taskCode',
 													id: 'taskCode',
 													label: '任务编号',
 													cls: 'input-xxlarge',
+													rule: {
+														required: true
+													},
+													message: {
+														required: "请输入"
+													}
+												},*/ {
+													type: 'select2',
+													name: 'taskCheckUser',
+													id: 'taskCheckUser',
+													label: '审核人',
+													cls: 'input-xxlarge',
+													itemsUrl:App.href + "/api/sys/user/pageList?userType=2&pageSize=50",
+													autoParam:["id","displayName","data","data"],
 													rule: {
 														required: true
 													},
@@ -610,7 +639,7 @@
                     cls: "btn btn-primary",
                     icon: "fa fa-plus",
                     handle: function (grid) {
-					   var pid = $("#paperId_select").val();
+					   var paperId_select = $("#paperId_select").val();
                         var modal = $.orangeModal({
                             id: "add_modal",
                             title: "添加",
@@ -679,9 +708,37 @@
                                     }
                                 }, {
                                     type: 'select',
+                                    name: 'indexId',
+                                    id: 'indexId',
+                                    label: '所属分类',
+                                    cls: 'input-xxlarge',
+									itemsUrl:App.href + "/api/core/scoreIndex/list?parentId=0&paperId="+paperId_select,
+									autoParam:["id","name","data","data"],
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入"
+                                    }
+                                }, {
+                                    type: 'select2',
                                     name: 'taskDept',
                                     id: 'taskDept',
                                     label: '牵头部门',
+                                    cls: 'input-xxlarge',
+									itemsUrl:App.href + "/api/sys/user/pageList?userType=2",
+									autoParam:["id","displayName","data","data"],
+                                    rule: {
+                                        required: true
+                                    },
+                                    message: {
+                                        required: "请输入"
+                                    }
+                                }, {
+                                    type: 'select2',
+                                    name: 'taskCheckUser',
+                                    id: 'taskCheckUser',
+                                    label: '审核人',
                                     cls: 'input-xxlarge',
 									itemsUrl:App.href + "/api/sys/user/pageList?userType=2",
 									autoParam:["id","displayName","data","data"],
@@ -738,7 +795,7 @@
                             ]
                         };
                        var form =  modal.$body.orangeForm(formOpts);
-					   form.loadLocal({paperId:pid,parentId:"0",hasChild:true});
+					   form.loadLocal({paperId:paperId_select,parentId:"0",hasChild:true});
                     }
 				}
             ],

@@ -832,7 +832,7 @@
                 });
                 if (data.value != undefined)
                     ele.val(data.value);
-				if(data.ajaxUrl!=undefined){
+				/*if(data.ajaxUrl!=undefined){
 					var param = data.param==undefined?"query":data.param;
 					ele.typeahead({
 							source: function (query, process) {
@@ -843,7 +843,7 @@
 								});
 							}
 						});
-				}
+				}*/
                 return ele;
             },
 			'number': function (data, form) {
@@ -1035,16 +1035,26 @@
 					if(data.methodType){
 						methodType = data.methodType;
 					}
+					var param = ["value",'text'];
+					if(data.autoParam!== undefined){
+						param = data.autoParam;
+					}
                     $.ajax({
                         type: methodType,
                         dataType: "json",
                         async: data.async ? true : false,
                         url: data.itemsUrl,
                         success: function (options) {
+							for(var i=2;i<param.length;i++){
+								options = options[param[i]];
+							}
+							if(data.formatData!== undefined){
+								options = data.formatData(options);
+							}
                             $.each(options, function (i, option) {
                                 var opt = $.tmpl(optionTmpl, {
-                                    "value_": option.value,
-                                    "text_": option.text,
+                                    "value_": option[param[0]],
+                                    "text_": option[param[1]],
                                     "selected": (option.selected ? "selected"
                                         : "")
                                 });

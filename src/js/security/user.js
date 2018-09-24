@@ -436,7 +436,7 @@
                                     cls: 'input-medium',
                                     rule: {
                                         required: true,
-                                        minlength: 8,
+                                        minlength: 6,
                                         maxlength: 64
                                     },
                                     message: {
@@ -465,7 +465,6 @@
                                     id: 'displayName',
                                     span: 2,
                                     label: '昵称',
-									ajaxUrl:App.href +"/api/core/dict/getItems?code=YHLX",
                                     cls: 'input-large',
                                     rule: {
                                         required: true

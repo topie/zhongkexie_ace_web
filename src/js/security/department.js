@@ -294,7 +294,7 @@
                                     cls: 'input-xxlarge',
                                     rule: {
                                         required: true,
-                                        minlength: 8,
+                                        minlength: 6,
                                         maxlength: 64
                                     },
                                     message: {
