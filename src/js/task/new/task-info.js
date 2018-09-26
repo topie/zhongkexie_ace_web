@@ -227,7 +227,7 @@
 						reRendPaper();
 						
 					}else{
-						bootbox.alert(res.msg);
+						bootbox.alert(res.message);
 					}
 				},
 				error:function(){
@@ -258,7 +258,7 @@
 											reRendPaper();
 											
 										}else{
-											bootbox.alert(res.msg);
+											bootbox.alert(res.message);
 										}
 									},
 									error:function(){
@@ -267,7 +267,7 @@
 								})
 										
 							}else{
-								bootbox.alert(res.msg);
+								bootbox.alert(res.message);
 							}
 						},
 						error:function(){

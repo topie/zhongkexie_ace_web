@@ -25,7 +25,7 @@
 							'<div id="grid"><form id="mainForm"><div class="appform"></div></form></div>' +
 							'<div class="form-actions center" style="border-top: 0px;padding: 0px 0px 0px;background: none;">'+
 								'<button type="button" class="btn btn-sm btn-warning" id="subform" title="" >退回</button>'+
-								'<button type="button" class="btn btn-sm btn-warning" id="saveForm" title="" >保存</button>'+
+								'&nbsp;<button type="button" class="btn btn-sm btn-info" id="saveForm" title="" >保存</button>'+
 								'&nbsp;<button type="button" class="btn btn-sm btn-primary" id="commitForm" title=""  >通过</button>&nbsp;'+
 							'</div>'+
 					   // '</div>' +
@@ -272,7 +272,7 @@
 								reRendPaper();
 								
 							}else{
-								bootbox.alert(res.msg);
+								bootbox.alert(res.message);
 							}
 						},
 						error:function(){
@@ -298,7 +298,7 @@
 								reRendPaper();
 								
 							}else{
-								bootbox.alert(res.msg);
+								bootbox.alert(res.message);
 							}
 						},
 						error:function(){
@@ -326,7 +326,7 @@
 								reRendPaper();
 								
 							}else{
-								bootbox.alert(res.msg);
+								bootbox.alert(res.message);
 							}
 						},
 						error:function(){
