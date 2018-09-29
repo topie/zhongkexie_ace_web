@@ -253,7 +253,10 @@
 									+'请对专家评分项进行评分（%）：'
 									+'</div><div class="form-group">'+
 									'<div class="input-group">'+
-									'<input type="text" class="spinbox-input form-control text-center " placeholder="" autocomplete="off" name="itemId_'+currentItem.id+'" placeholder=" [数字] 百分比 ">'+
+									'<span class="input-icon" style="display: block;">'+
+										'<input type="text" class="spinbox-input form-control text-center " autocomplete="off" name="itemId_'+currentItem.id+'" placeholder=" [数字] 百分比 ">'+
+										'<i class="ace-icon fa fa-check green" style="display:none;"></i>'+
+									'</span>'+
 									'<div class="spinbox-buttons input-group-btn btn-group-vertical">'+
 									'<button type="button" class="btn spinbox-up btn-sm btn-info">'+
 									'<i class="icon-only  ace-icon fa fa-chevron-up"></i>'+
@@ -287,6 +290,7 @@
 												value=0;
 											}
 											subs.find('input').val(value);
+											subs.find('input[name="itemId_'+currentItem.id+'"]').trigger("change");
 										});
 									}
 									if($btn.is(".spinbox-down")){
@@ -308,9 +312,51 @@
 												value=0;
 											}
 											subs.find('input').val(value);
+											subs.find('input[name="itemId_'+currentItem.id+'"]').trigger("change");
 										});
 									}
-								})
+								});
+								subs.find('input[name="itemId_'+currentItem.id+'"]').bind("change",function(){
+									var value = this.value;
+									if(isNaN(value)||value==null||value==''){
+										bootbox.alert("请输入0~100之间的数字");
+										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										return false;
+									}
+									if(parseFloat(value)>100){
+										bootbox.alert("输入不能超过100!");
+										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										return false;
+									}
+									if(parseInt(value)<0){
+										bootbox.alert("输入分数不能为负数！");
+										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										return false;
+									}
+									$.ajax({
+											type: "POST",
+											dataType: "json",
+											data: {
+												paperId: that._options.paperId,
+												userId:that._options.userId,
+												itemId:currentItem.id,
+												answerScore:value
+											},
+											url: App.href + "/api/core/scorePaper/updateAnswerScore",
+											success: function (data) {
+												if (data.code === 200) {
+													//bootbox.alert("评分成功！");
+													subs.find(".input-icon>i").show();
+												} else {
+													bootbox.alert(data.message);
+												}
+											},
+											error: function (e) {
+												alert("请求异常。");
+											}
+										});
+
+								});
 								subs.find('button[data-item="'+currentItem.id+'"]').data("info",currentItem);
 								subs.on("click",'button[data-item="'+currentItem.id+'"]',function(){
 									var currentItem = $(this).data("info");
@@ -342,7 +388,8 @@
 											url: App.href + "/api/core/scorePaper/updateAnswerScore",
 											success: function (data) {
 												if (data.code === 200) {
-													bootbox.alert("评分成功！");
+													bootbox.alert({ message: "评分成功!",backdrop: true});
+													subs.find(".input-icon>i").show();
 												} else {
 													bootbox.alert(data.message);
 												}

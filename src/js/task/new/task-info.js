@@ -90,6 +90,8 @@
 		function renderForm(items){
 			if(items.length==0){
 				$body.html('<h3>您没有可操作的任务</h3>');
+				$("#subform").hide();
+				$("#commitForm").hide();
 				return;
 			}
 			var top=getTopIndex(items);

@@ -134,7 +134,7 @@
 							$body.append('<h3 class="header smaller lighter red">'+numIndex[index]+'.'+item.taskName+'</h3>');
 						}
 						function createChild(ci,item){
-							var str = '<span class="blue">（未参与）(0分)</span>';
+							var str = '<span class="green">（未参与）</span>';
 							for(var i=0;i<taskValue.length;i++){
 								if(item.id==taskValue[i].taskId){
 									if(taskValue[i].value==0){
@@ -181,6 +181,18 @@
 				
             ],
 			tools:[{
+                    text: "重新计算分数",
+                    cls: " btn-info btn",
+                    icon: "fa fa-reflush",
+                    handle: function (grid) {
+                        var searchData = grid.$searchForm.serialize();
+						$.ajax(App.href+"/api/task/task/updateScore?"+searchData,function(res){
+							if(res.code==200)bootbox.alert("更新成功");
+							else bootbox.alert(res.message);
+						});
+						
+                    }
+                },{
                     text: "导出",
                     cls: " btn-primary btn",
                     icon: "fa fa-cloud-download",

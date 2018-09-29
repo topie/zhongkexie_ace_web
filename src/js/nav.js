@@ -65,11 +65,15 @@
 			window.location.href = '../login.html';
         };
 		var uoption = App.menu.userOptionNoLinkMan;
-		if(App.currentUser.loginName.endWith("001")){
+		if(App.currentUser.loginName.endWith("001")&&App.currentUser.userType==7){
 			uoption = App.menu.userOption;
 		}
 		if(App.currentUser.userType==4){
 			uoption.items[1].label="姓名";
+		}
+		if(App.currentUser.userType==2){
+			uoption.items[5].type="hidden";
+			uoption.items[6].type="hidden";
 		}
         var form = modal.$body.orangeForm(uoption);
         form.loadRemote(App.href + "/api/index/loadCurrentUser");
