@@ -17,7 +17,8 @@
     window.App = {
         token_key: "zhongkexie_token",
 		//href:"http://192.168.43.130:81",
-        href: "http://webreport:81",//测试环境
+		href:"",
+        //href: "http://webreport:81",//测试环境
         requestMapping: {}
     };
 
@@ -36,6 +37,7 @@
                         }
                     });
         var xhr = new XMLHttpRequest();
+		xhr.timeout = 0;
         xhr.open('GET', href, true);
         xhr.responseType = 'arraybuffer';
         xhr.onload = function () {

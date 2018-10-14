@@ -458,6 +458,18 @@
 									chkStyle: "checkbox",
 									//hideSearch:false,
 									chkboxType:{"Y": "ps", "N": "s"},
+									addDiyDom:function(treeId, treeNode){
+										if(treeNode.type==null)return;
+										var spantxt=$("#" + treeNode.tId + "_span").html();
+										var type = '';
+										if(treeNode.type==1)type= '(统计项)';
+										 if(treeNode.type==2)type= '(线性打分项)';
+										 if(treeNode.type==3)type= '(专家打分项)';
+										 if(treeNode.type==4)type= '(其他打分项)';
+
+										spantxt=spantxt+type;
+										$("#" + treeNode.tId + "_span").html(spantxt);
+									},
 									rule: {
                                         required: true
                                     },

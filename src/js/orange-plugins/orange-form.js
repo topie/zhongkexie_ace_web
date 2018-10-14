@@ -1568,6 +1568,7 @@
                             enable: true
                         }
                     },
+					view:{addDiyDom:null},
                     async: {
                         enable: true,
                         url: data.url,
@@ -1622,6 +1623,8 @@
                         }
                     }
                 };
+				setting.view.addDiyDom=data.addDiyDom;
+				console.log(setting.view.addDiyDom);
                 ele.data("setting", setting);
                 return ele;
             },

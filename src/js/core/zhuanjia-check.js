@@ -225,7 +225,7 @@
 						data.paperId=coll.id;
 						data.userId=coll.userId;
 						data.tabTitles = commitTitles;
-						data.finish=function(paper,btn){
+						/*data.finish=function(paper,btn){
 							var currentItem = paper.$tab.currentLi().data("tab-data");
 							var json = {paperId:coll.id,userId:currentItem.userId,status:1};
 							$.ajax({
@@ -251,7 +251,7 @@
 								}
 							})
 							
-						}
+						}*/
 						//var paper = modal.$body.orangePaperViewScore(data);
 						var paper = modal.$body.orangePaperFillScore(data);
 						paper.go();
@@ -412,7 +412,7 @@
                             }
                         });
                     }*/
-                },{
+                }/*,{
                     textHandle: function(index,data){
 						if(data.approveStatus==1)return '标记为未评价';
 						return '标记为已评价';
@@ -443,7 +443,7 @@
 							}
 						})
 					}
-				}/*{
+				}*//*{
                     text: "退回",
                     cls: "btn-danger btn-sm",
                     handle: function (index, data) {

@@ -132,11 +132,22 @@
                     that.$ul.find('li[role=tab]:lt(' + first + ')').hide();
                     that.$ul.find('li[role=tab]:gt(' + final + ')').hide();
 					if((typeof that._options.callback) =="function"){
-						that._options.callback(current,current.data("tab-data"));
+						if(that._options.beforeToggle!==undefined){
+							if(that._options.beforeToggle()){
+								that._options.callback(current,current.data("tab-data"));
+							}
+						}else{
+							that._options.callback(current,current.data("tab-data"));
+						}
 					}
 				
                 });
                 this.$ul.find('li[role=prev]').find('a').on("click", function () {
+					if(that._options.beforeToggle!==undefined){
+						if(!that._options.beforeToggle()){
+							return false;
+						}
+					}
                     var firstLi = that.$ul.find('li[role=tab]:visible').first();
                     var final = parseInt(firstLi.attr('role-index'));
                     var first = final - that._options.page.size + 1;
@@ -148,6 +159,11 @@
 
                 });
                 this.$ul.find('li[role=next]').find('a').on("click", function () {
+					if(that._options.beforeToggle!==undefined){
+						if(!that._options.beforeToggle()){
+							return false;
+						}
+					}
                     var lastLi = that.$ul.find('li[role=tab]:visible').last();
                     var first = parseInt(lastLi.attr('role-index'));
                     var final = first + that._options.page.size - 1;

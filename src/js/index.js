@@ -69,9 +69,62 @@
         initMessage();
 		initDownload();
 		if(App.currentUser.userType==4){
-			initWord();
+			//initWord();
+			zhuangjia();
 		}
     };
+	function zhuangjia(){
+		$('#content4').parent().parent().show();
+		$.ajax({
+            url: App.href + "/api/core/scorePaper/zjcheckListNotFinished",
+            type: "GET",
+            resultType: "json",
+            success: function (result) {
+                if (result.code != 200) {
+                    console.log("信息加载失败");
+                }
+				var inner = '<table class="table table-striped table-bordered table-hover dataTable no-footer"><tbody><tr><td>评价指标</td><td>已完成个数</td><td>未完成个数</td></tr>';
+				for(var i = 0;i<result.data.length;i++){
+					var item = result.data[i];
+					var title = item.title;
+					if(title.length>15){
+						title = title.substr(0,20)+"...";
+					}
+					inner += '<tr><td>'+title+'</td><td>'+(189-item.list.length)+'</td><td>'+item.list.length+'</td></tr>';
+				}
+				inner+='</tbody></table>';
+				inner+='<a href="/index.html?u=/api/core/scorePaper/ncheckpage" style="color:red;">点击进入未评价页面》》</a>'
+                $('#content4').append(inner);
+				/*$('.easy-pie-chart.percentage').each(function(){
+					var $box = $(this).closest('.infobox');
+					var barColor = $(this).data('color') || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+					var trackColor = barColor == 'rgba(255,255,255,0.95)' ? 'rgba(255,255,255,0.25)' : '#E2E2E2';
+					var size = parseInt($(this).data('size')) || 50;
+					$(this).easyPieChart({
+						barColor: barColor,
+						trackColor: trackColor,
+						scaleColor: false,
+						lineCap: 'butt',
+						lineWidth: parseInt(size/10),
+						animate: ace.vars['old_ie'] ? false : 1000,
+						size: size
+					});
+				})
+				$('.sparkline').each(function(){
+					var $box = $(this).closest('.infobox');
+					var barColor = !$box.hasClass('infobox-dark') ? $box.css('color') : '#FFF';
+					$(this).sparkline('html',
+									 {
+										tagValuesAttribute:'data-values',
+										type: 'bar',
+										barColor: barColor ,
+										chartRangeMin:$(this).data('min') || 0
+									 });
+				});*/
+			},
+			error:function(){}
+		});
+	}
 	function initWord(){
 		$('#content4').parent().parent().show();
 		$.ajax({

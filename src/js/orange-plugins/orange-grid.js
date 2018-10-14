@@ -2095,7 +2095,11 @@
                 var td = $.tmpl(tdTmpl, {});
                 td.css("text-align", "center");
                 td.attr("colspan", cols);
-                td.html("没有数据！");
+				var infolable = "没有数据！";
+				if(that._options.renderEmptyTbodyText!=undefined){
+					infolable=that._options.renderEmptyTbodyText;
+				}
+                td.html(infolable);
                 tr.append(td);
                 tbody.append(tr);
             };

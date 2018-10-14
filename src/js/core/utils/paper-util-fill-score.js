@@ -51,7 +51,33 @@
 							itemIndex++;
 							if(idx.userId==that._options.userId){
 								that._options.userIndex = itemIndex-2;
-							}
+							};
+							tab['beforeToggle']=function(){
+								var f = true;
+								that.$main.find(".paperPanel").find("input.spinbox-input.form-control.text-center").each(function(i,c){
+										var $thisinput = $(this);
+									var value = $thisinput.val();
+									if(value =='' || value==null|| value.trim()==''){
+										f = false;
+										$thisinput.focus();
+										layer.tips('未评价，请评价！', $thisinput, {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										return false;
+									}
+									if(isNaN(value)){
+										f = false;
+										$thisinput.parent().focus();
+										layer.tips('未评价，请评价！', $thisinput, {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										return false;
+									}
+								})
+								return f;
+							};
                 });
             }
             tabs[0].active = true;
@@ -63,6 +89,32 @@
                 },
                 lazy: false,
                 tabs: tabs,
+				beforeToggle:function(){
+								var f = true;
+								that.$main.find(".paperPanel").find("input.spinbox-input.form-control.text-center").each(function(i,c){
+										var $thisinput = $(this);
+									var value = $thisinput.val();
+									if(value =='' || value==null|| value.trim()==''){
+										f = false;
+										$thisinput.parent().focus();
+										layer.tips('未评价，请评价！', $thisinput, {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										return false;
+									}
+									if(isNaN(value)){
+										f = false;
+										$thisinput.parent().focus();
+										layer.tips('未评价，请评价！', $thisinput, {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										return false;
+									}
+								})
+								return f;
+							},
 				callback:function(li,data){
 					that.$main.find(".paperPanel").html("");
 					that.$main.find(".paperPanel").append(that.renderSubTab(that._options.data));
@@ -144,12 +196,10 @@
 				
             });
 			mainPanel.find(".panel-body").append('<div class="paperPanel"></div>')
-            var prevBtn = $('<button type="button" class="btn btn btn-info">上一项</button>');
-            var nextBtn = $('<button type="button" class="btn btn btn-success">下一项</button>');
-            var finishBtn = $('<button type="button" class="btn btn btn-success commit">完成该学会评分</button>');
+            var prevBtn = $('<button type="button" class="btn btn btn-info">上一个</button>');
+            var nextBtn = $('<button type="button" class="btn btn btn-success">下一个</button>');
             mainPanel.find('div.panel-footer:eq(0)').append(prevBtn);
             mainPanel.find('div.panel-footer:eq(0)').append(nextBtn);
-            mainPanel.find('div.panel-footer:eq(0)').append(finishBtn);
             prevBtn.on("click", function () {
 				var $this = $(this);
                 if (that._options.prev !== undefined) {
@@ -166,14 +216,18 @@
                     tab.next();
                 }
             });
-			finishBtn.on("click", function () {
-				var $this = $(this);
-                if (that._options.finish !== undefined) {
-                    that._options.finish(that,$this);
-                } else {
-                    tab.next();
-                }
-            });
+			if (that._options.finish !== undefined) {
+				var finishBtn = $('<button type="button" class="btn btn btn-success commit">完成该学会评分</button>');
+				mainPanel.find('div.panel-footer:eq(0)').append(finishBtn);
+				finishBtn.on("click", function () {
+					var $this = $(this);
+					if (that._options.finish !== undefined) {
+						that._options.finish(that,$this);
+					} else {
+						tab.next();
+					}
+				});
+			}
             this.$tab = tab;
            /* this.$main.find('form').each(
                 function () {
@@ -254,7 +308,8 @@
 									+'</div><div class="form-group">'+
 									'<div class="input-group">'+
 									'<span class="input-icon" style="display: block;">'+
-										'<input type="text" class="spinbox-input form-control text-center " autocomplete="off" name="itemId_'+currentItem.id+'" placeholder=" [数字] 百分比 ">'+
+										'<input type="hidden" class="hide">'+
+										'<input type="text" class="spinbox-input form-control text-center" autocomplete="off" name="itemId_'+currentItem.id+'" placeholder=" [数字] 百分比 ">'+
 										'<i class="ace-icon fa fa-check green" style="display:none;"></i>'+
 									'</span>'+
 									'<div class="spinbox-buttons input-group-btn btn-group-vertical">'+
@@ -290,7 +345,7 @@
 												value=0;
 											}
 											subs.find('input').val(value);
-											subs.find('input[name="itemId_'+currentItem.id+'"]').trigger("change");
+											subs.find('input[name="itemId_'+currentItem.id+'"]').blur();
 										});
 									}
 									if($btn.is(".spinbox-down")){
@@ -312,25 +367,75 @@
 												value=0;
 											}
 											subs.find('input').val(value);
-											subs.find('input[name="itemId_'+currentItem.id+'"]').trigger("change");
+											//subs.find('input[name="itemId_'+currentItem.id+'"]').trigger("change");
+											subs.find('input[name="itemId_'+currentItem.id+'"]').blur();
 										});
 									}
 								});
-								subs.find('input[name="itemId_'+currentItem.id+'"]').bind("change",function(){
+								var finishFun_ = function (){
+									var f =true;
+									that.$main.find(".paperPanel").find("input.spinbox-input.form-control.text-center").each(function(i,c){
+										var $thisinput = $(this);
+										var value = $thisinput.val();
+										if(value =='' || value==null|| value.trim()==''){
+											f = false;
+											return false;
+										}
+										if(isNaN(value)){
+											f = false;
+											return false;
+										}
+									})
+									if(f){
+										finishFun();
+									}
+								};
+								var finishFun = function(){
+									var json = {paperId:that._options.paperId,userId:that._options.userId,status:1};
+									$.ajax({
+										url:App.href + "/api/expert/paper/zjFinish",
+										dataType: "json",
+										data: json,
+										async:false,
+										success:function(res){
+											if(res.code==200){
+												
+											}else{
+												bootbox.alert("请求错误");
+											}
+										},
+										error:function(){
+											bootbox.alert("服务器内部错误");
+										}
+									});
+								};
+								subs.find('input[name="itemId_'+currentItem.id+'"]').blur(function(){
 									var value = this.value;
 									if(isNaN(value)||value==null||value==''){
-										bootbox.alert("请输入0~100之间的数字");
-										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										//bootbox.alert("请输入0~100之间的数字");
+										layer.tips('请输入0~100之间的数字', 'input[name="itemId_'+currentItem.id+'"]', {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
 										return false;
 									}
 									if(parseFloat(value)>100){
-										bootbox.alert("输入不能超过100!");
-										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										//bootbox.alert("输入不能超过100!");
+										layer.tips('输入不能超过100', 'input[name="itemId_'+currentItem.id+'"]', {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
 										return false;
 									}
 									if(parseInt(value)<0){
-										bootbox.alert("输入分数不能为负数！");
-										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										//bootbox.alert("输入分数不能为负数！");
+										layer.tips('输入分数不能为负数！', 'input[name="itemId_'+currentItem.id+'"]', {
+										  tips: [1, '#3595CC'],
+										  time: 4000
+										});
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
 										return false;
 									}
 									$.ajax({
@@ -347,6 +452,7 @@
 												if (data.code === 200) {
 													//bootbox.alert("评分成功！");
 													subs.find(".input-icon>i").show();
+													finishFun_();
 												} else {
 													bootbox.alert(data.message);
 												}
@@ -363,17 +469,17 @@
 									var value = $('input[name="itemId_'+currentItem.id+'"]').val();
 									if(isNaN(value)||value==null||value==''){
 										bootbox.alert("请输入0~100之间的数字");
-										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
 										return false;
 									}
 									if(parseFloat(value)>100){
 										bootbox.alert("输入不能超过100!");
-										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
 										return false;
 									}
 									if(parseInt(value)<0){
 										bootbox.alert("输入分数不能为负数！");
-										$('input[name="itemId_'+currentItem.id+'"]').val('0');
+										$('input[name="itemId_'+currentItem.id+'"]').val('');
 										return false;
 									}
 									$.ajax({
@@ -390,6 +496,7 @@
 												if (data.code === 200) {
 													bootbox.alert({ message: "评分成功!",backdrop: true});
 													subs.find(".input-icon>i").show();
+													finishFun_();
 												} else {
 													bootbox.alert(data.message);
 												}

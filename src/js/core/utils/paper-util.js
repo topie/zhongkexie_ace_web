@@ -125,7 +125,13 @@
 					var hasItem = false;
 					 $.each(idx.items, function (i, item) {
 						if(item.showLevel>=App.currentUser.userType){
-							hasItem = true ;
+							if(that._options.scoreType!=undefined){
+								if(that._options.scoreType==item.scoreType){
+									hasItem = true ;
+								}
+							}else{
+								hasItem = true;
+							}
 						}
 					 });
 					 if(hasItem){
@@ -144,7 +150,11 @@
             if (items != undefined && items.length > 0) {
                 var its = [];
                 $.each(items, function (i, item) {
-					
+					if(that._options.scoreType!=undefined){
+						if(that._options.scoreType!=item.scoreType){
+							return ;
+						}
+					}
 					if(item.showLevel<App.currentUser.userType){
 						return ;
 				   }

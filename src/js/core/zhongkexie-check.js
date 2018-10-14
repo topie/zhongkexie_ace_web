@@ -42,8 +42,12 @@
                 {
                     title: "评估项目",
                     field: "title"
+                },{
+                    title: "学会编码",
+                    field: "code",
+					sort:true
                 },  {
-                    title: "填报单位",
+                    title: "学会名称",
                     field: "userName",
 					format:function(index,data){
 						if(data.checkStatus==0){
@@ -130,6 +134,136 @@
 						var js = JSON.parse(contentString);
 						js.showSocre=true;
 						js.showType=true;
+                        paper = modal.$body.orangePaperView(js);
+						//添加详细打分情况start
+						paper.$element.find(".zhuanjiapingfen").each(function(index,label){
+							var $label = $(label);
+							var itemId = $label.data("label-data");
+							$.ajax({
+									type: "get",
+									dataType: "json",
+									data: {
+										itemId: itemId,
+										userId:data.userId
+									},
+									url: App.href + "/api/expert/paper/getScoreInfo",
+									success: function (res) {
+										if (res.code === 200) {
+											var html='<div><table>';
+											$.each(res.data,function(i,c){
+												html+="<tr><td style='padding-right: 20px;'>"+c.display_name+"</td><td>"+c.item_score+'%</td></tr>';
+												
+											});	
+											html+="</table></div>";
+											if(res.data.length==0) html='暂无专家打分';
+											var info = $('<i class="ace-icon fa fa-info-circle" data-trigger="hover" data-placement="bottom" style="color:#6fb3e0;font-size: 18px;" title="打分情况" data-content="'+html+'"></i>');
+												info.popover({html:true});
+												$label.append(info);
+										}
+										else{
+											bootbox.alert(res.msg);
+										}
+									},
+									error:function(){
+										alert("请求错误");
+									}
+								})
+							
+						});
+						//详细end
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {
+                                paperId: data.id,
+								userId:data.userId
+                            },
+                            url: App.href + "/api/core/scorePaper/getAnswer",
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    paper.loadAnswer(data.data);
+									/*modal.$body.find('input[type="text"]').each(function(){
+										var $this = $(this);
+										$this.parent().append('<span style="background-color:#ccc;height:'+$this.parent().height()+'px">'+$this.val()+'</span>');
+										$this.remove();
+										   /*console.log($this.val()+"==="+$this.get(0).offsetWidth);
+										   var text_length = $this.val().length;//获取当前文本框的长度
+										   var current_width = parseInt(text_length) *16;//该16是改变前的宽度除以当前字符串的长度,算出每个字符的长度
+											
+										   if($this.parent().width()<current_width)
+											 $this.css("width",current_width+"px");
+									});*/
+									//paper.loadReals(data.data,"虚假");
+									
+									paper.loadScores(data.data);
+                                } else {
+                                    alert(data.message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("请求异常。");
+                            }
+                        });
+                    }
+                },{
+                    text: "只查看专家评分项",
+                    cls: "btn-primary btn-sm",
+                    handle: function (index, data) {
+                        var paper = {};
+                        var modal = $.orangeModal({
+                            id: "scorePaperView",
+                            title: "查看-"+data.userName,
+                            destroy: true,
+							buttons: [
+                                {
+                                    type: 'button',
+                                    text: '导出模板',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExport(data.title+"_导出");
+										
+                                    }
+                                }, {
+                                    type: 'button',
+                                    text: '导出数据',
+                                    cls: "btn btn-primary",
+                                    handle: function (m) {
+                                        $("#scorePaperView_panel").wordExportValue(data.title+"_数据导出");
+                                        
+                                    }
+                                },{
+                                    type: 'button',
+                                    text: '关闭',
+                                    cls: "btn",
+                                    handle: function (m) {
+                                        modal.hide();    
+                                        
+                                    }
+                                }]
+                        }).show();
+						 var contentString = "";
+						$.ajax({
+							url:App.href + "/api/core/scorePaper/getPaper",
+							dataType: "json",
+							data: {
+								paperId: data.id
+							},
+							async:false,
+							success:function(res){
+								if(res.code==200){
+									contentString=res.message;
+								}else{
+									bootbox.alert("请求错误");
+								}
+							},
+							error:function(){
+								bootbox.alert("服务器内部错误");
+							}
+						});
+						var js = JSON.parse(contentString);
+						js.showSocre=true;
+						js.showType=true;
+						js.scoreType=3;
                         paper = modal.$body.orangePaperView(js);
 						//添加详细打分情况start
 						paper.$element.find(".zhuanjiapingfen").each(function(index,label){
@@ -506,6 +640,22 @@
                                 handle: function () {
 									var data = form.getFormSerialize()+"&paperId="+currentPaper+"";
 									App.download(App.href+"/api/core/scorePaper/exportPaper?"+data,modal.$body)
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '导出专家详细评分',
+                                handle: function () {
+									var data = form.getFormSerialize()+"&paperId="+currentPaper+"&scoreType=3";
+									App.download(App.href+"/api/core/scorePaper/exportEPScore?"+data,modal.$body)
+                                }
+                            },{
+                                type: 'button',
+								cls: "btn btn-primary",
+                                text: '导出专家未评分学会名',
+                                handle: function () {
+									var data = "paperId="+currentPaper+"";
+									App.download(App.href+"/api/core/scorePaper/exportEPNotFinished?"+data,modal.$body)
                                 }
                             },{
                                 type: 'button',
