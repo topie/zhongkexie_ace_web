@@ -52,6 +52,8 @@
 					format:function(index,data){
 						var ss = data.deptNames==null?'':data.deptNames;//'中国数学学会,中国物理学会,中国化学学会,中国学会,理学会,中国化学会,中国学会,中国物理学会,中国化学学会,中国学会,理学会,中国化学会,中国学会,中国物理学会,中国化学学会,中国学会,理学会,中国化学会,中国学会';
 						var html='<div title="'+ss+'">';
+						//var deptIds = data.deptIds==null?'':data.deptIds;
+						//var ids = deptIds.split(',');
 						for(var i=0,sm=ss.split(',');i<sm.length;i++){
 							html+='<span class="label label-info  arrowed arrowed-right">'+sm[i]+'</span>';
 							if(i%3==2) html+='</br>';
@@ -59,6 +61,7 @@
 								html+='<span class="label label-info ">...</span>';
 								return html+'</div>';
 							}
+
 						}
 						return html+'</div>';
 					}

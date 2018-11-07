@@ -201,6 +201,15 @@
 						App.download(App.href+"/api/task/scoreCounts/taskScoreListExport?"+searchData);
 						
                     }
+                },{
+                    text: "导出详细评分情况",
+                    cls: " btn-primary btn",
+                    icon: "fa fa-cloud-download",
+                    handle: function (grid) {
+                        var searchData = grid.$searchForm.serialize();
+						App.download(App.href+"/api/task/scoreCounts/taskScoreInfoExport?"+searchData);
+						
+                    }
                 }],
             search: {
                 rowEleNum: 3,
